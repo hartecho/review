@@ -6,11 +6,11 @@ export default defineEventHandler((event) => {
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
   console.log("Token in middleware: ", token);
   
-  if (event.req.url === '/api/users/login' || event.req.url === '/' || event.req.url.startsWith('/public')) {
-    return;
-  }
+  // if (event.req.url === '/api/users/login' || event.req.url === '/' || event.req.url.startsWith('/public')) {
+  //   return;
+  // }
 
-  if (!event.req.url.startsWith('/api')) {
+  if (!event.req.url.startsWith('/api/review')) {
     return;
   }
   

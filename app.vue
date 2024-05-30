@@ -32,7 +32,7 @@ const isLoggedIn = computed(() => !!store.token);
 /* Content styling */
 .content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 0px;
   /* background: #2e2e3e; */
   color: #fff;
   font-family: "Montserrat", sans-serif;

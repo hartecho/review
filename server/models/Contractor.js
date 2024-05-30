@@ -22,11 +22,11 @@ const reviewSchema = new mongoose.Schema({
 });
 
 const contractorSchema = new mongoose.Schema({
-  name: {
+  company: {
     type: String,
     required: true,
   },
-  company: {
+  picture: {
     type: String,
     required: true,
   },

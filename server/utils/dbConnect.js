@@ -8,7 +8,7 @@ export const connectDB = async () => {
     return;
   }
   
-  return mongoose.connect(`mongodb+srv://thomas:8ylQuAYP3fZCtQ2b@cluster0.vfkpn24.mongodb.net/${process.env.CLIENT_USERNAME}`
+  return mongoose.connect(`mongodb+srv://thomas:8ylQuAYP3fZCtQ2b@cluster0.vfkpn24.mongodb.net/ContractorReview`
   ,{
     // useNewUrlParser: true,
     // useUnifiedTopology: true,

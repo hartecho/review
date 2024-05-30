@@ -4,9 +4,9 @@
 
 <template>
   <div class="home">
-    <section class="intro-section wave-bottom-blue"></section>
-
-    <section></section>
+    <section class="search-section">
+      <WebSectionsSearch />
+    </section>
 
     <section class="services-section boil-bot-white">
       <!-- prettier-ignore -->
@@ -35,6 +35,18 @@ useSeoMeta({
 
 <style scoped media="screen">
 .home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background: blue; */
+  height: auto;
+}
+
+.search-section {
+  min-height: 30rem;
+  width: 100%;
+  /* background: green; */
   display: flex;
   flex-direction: column;
   justify-content: center;
