@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.DB_URI; // Ensure your DB URI is correctly set in your environment
 
+// This is for when I'm storing user info in a separate database.
 export const connectUserDB = async () => {
   if (mongoose.connection.readyState === 1) {
     console.log('Database already connected');

@@ -10,8 +10,6 @@
 </template>
 
 <script setup>
-const store = useStore();
-const isLoggedIn = computed(() => !!store.token);
 </script>
 
 <style scoped>

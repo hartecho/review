@@ -17,7 +17,14 @@
           </div>
         </div>
         <div class="login-link">
-          <NuxtLink to="/login" class="login-button">Login</NuxtLink>
+          <button
+            v-if="!isLoggedIn"
+            @click="openLoginModal"
+            class="login-button"
+          >
+            Login
+          </button>
+          <button v-else class="login-button" @click="logout">Logout</button>
         </div>
       </div>
     </div>
@@ -35,7 +42,7 @@
       </div>
     </div>
     <!-- Mobile Section -->
-    <div class="mobile-bars">
+    <!-- <div class="mobile-bars">
       <div class="brand">
         <NuxtLink to="/" class="nav-logo-box">
           <img
@@ -52,15 +59,22 @@
       <div class="nav-img-wrapper" @click="$emit('toggleMobileNav')">
         <img :src="resolvedNavBarsPath()" loading="eager" alt="nav-bars" />
       </div>
-    </div>
+    </div> -->
+    <LoginModal v-if="showLoginModal" @close="closeLoginModal" />
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
-
+const store = useStore();
+const isLoggedIn = computed(() => !!store.token);
+const showLoginModal = ref(false);
 let navbar = ref(null);
 let lastScrollPosition = ref(0);
+
+const logout = () => {
+  store.logout();
+  console.log("Logged out");
+};
 
 const props = defineProps({
   navPaths: {
@@ -107,13 +121,23 @@ function handleScroll() {
   }
   lastScrollPosition.value = currentScrollPosition;
 }
+
+function openLoginModal() {
+  showLoginModal.value = true;
+  document.body.classList.add("no-scroll");
+}
+
+function closeLoginModal() {
+  showLoginModal.value = false;
+  document.body.classList.remove("no-scroll");
+}
 </script>
 
 <style scoped>
 .nav-bar {
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 7;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -168,8 +192,8 @@ function handleScroll() {
 }
 
 .nav-logo-box {
-  width: 40px;
-  height: 35px;
+  width: 50px;
+  height: 45px;
 }
 
 .nav-logo {
@@ -178,7 +202,7 @@ function handleScroll() {
 }
 
 .nav-name h1 {
-  font-size: 20px;
+  font-size: 25px;
   margin-left: 1rem;
 }
 
@@ -192,6 +216,7 @@ function handleScroll() {
   border: 2px solid #c0c0c0;
   border-radius: 4px;
   transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
 }
 
 .login-button:hover {
@@ -250,5 +275,12 @@ a.router-link-exact-active {
     font-size: 4vw;
     font-weight: bold;
   }
+}
+</style>
+
+<style>
+.no-scroll {
+  overflow: hidden;
+  padding-right: 1rem;
 }
 </style>

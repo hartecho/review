@@ -9,6 +9,9 @@ export default defineNuxtConfig({
   },
   css: ['~/css/Transitions/Fade.css'],
   modules: [
-    '@nuxtjs/google-fonts', "@nuxt/image", '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'
+    '@nuxtjs/google-fonts', "@nuxt/image", '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-vue3-google-signin'
   ],
+  googleSignIn: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+  }
 })

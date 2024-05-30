@@ -168,6 +168,7 @@ async function getContractors() {
   try {
     const response = await $fetch("/api/contractors");
     contractors.value = response || [];
+    console.log(contractors.value);
   } catch (error) {
     alert("Error fetching contractors: " + error.message);
     console.error("Error fetching contractors:", error);

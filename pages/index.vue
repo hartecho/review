@@ -4,8 +4,11 @@
 
 <template>
   <div class="home">
-    <section class="search-section">
+    <section id="search-section" class="search-section">
       <WebSectionsSearch />
+      <NuxtLink to="/contractor/editContractors" class="edit-button-link">
+        <button class="edit-button">Edit Contractors</button>
+      </NuxtLink>
     </section>
 
     <section class="services-section boil-bot-white">
@@ -18,7 +21,10 @@
   </div>
 </template>
 
+
 <script setup>
+import { onMounted, onUnmounted } from "vue";
+
 await preloadComponents("WebSectionsIntroWithVid");
 
 useSeoMeta({
@@ -31,7 +37,24 @@ useSeoMeta({
   ogImage: "/HARTECHOLogo.webp",
   twitterCard: "/HARTECHOLogo.webp",
 });
+
+onMounted(() => {
+  const searchSection = document.getElementById("search-section");
+
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY;
+    const offset = scrollPosition * 0.5; // Adjust this multiplier to change the effect
+    searchSection.style.backgroundPosition = `center ${offset}px`;
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+  });
+});
 </script>
+
 
 <style scoped media="screen">
 .home {
@@ -39,17 +62,21 @@ useSeoMeta({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* background: blue; */
   height: auto;
 }
 
 .search-section {
-  min-height: 30rem;
+  /* margin-top: -10rem; */
+  position: relative;
+  height: 45rem;
   width: 100%;
-  /* background: green; */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: url("/IntroBG.jpg") no-repeat center top;
+  background-size: cover;
 }
 </style>
+

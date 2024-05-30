@@ -1,47 +1,79 @@
 <template>
-  <div class="login-container">
-    <form @submit.prevent="submitLogin">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input id="email" v-model="email" type="text" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input id="password" v-model="password" type="password" required />
-      </div>
-      <button type="submit" :disabled="!canSubmit">Login</button>
-      <p v-if="message">{{ message }}</p>
-    </form>
+  <div>
+    <h1>Login</h1>
+    <div v-if="emailSignIn">
+      <form @submit.prevent="handleEmailLogin">
+        <input v-model="email" type="email" placeholder="Email" required />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+      <button @click="emailSignIn = false">Back</button>
+    </div>
+    <div v-else>
+      <button class="sign-in-button" @click="emailSignIn = true">
+        Email Sign In
+      </button>
+      <GoogleSignInButton
+        @success="handleGoogleLogin"
+        @error="handleLoginError"
+      ></GoogleSignInButton>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { GoogleSignInButton } from "vue3-google-signin";
+
+const store = useStore();
+const emailSignIn = ref(false);
 const email = ref("");
 const password = ref("");
-const message = ref("");
 
-const canSubmit = computed(() => email.value.trim() && password.value.trim());
-
-const submitLogin = async () => {
-  if (!canSubmit.value) {
-    message.value = "Please fill in all fields.";
-    return;
-  }
-
+const handleEmailLogin = async () => {
   try {
     const response = await $fetch("/api/users/login", {
       method: "POST",
-      body: {
-        email: email.value,
-        password: password.value,
-      },
+      body: { email: email.value, password: password.value },
     });
-
-    message.value = "Login successful! Redirecting...";
-    console.log("Token:", response.token); // Handle the token as needed
+    console.log("JWT Token from email sign in:", response.token);
     store.setToken(response.token);
   } catch (error) {
-    message.value = error.data?.message || "Failed to login";
+    console.error("Login failed:", error);
   }
 };
+
+const handleGoogleLogin = async (response) => {
+  const { credential } = response;
+  if (credential) {
+    try {
+      const response = await $fetch("/api/users/google-login", {
+        method: "POST",
+        body: { token: credential },
+      });
+      console.log("JWT Token from Google sign in:", response.token);
+      store.setToken(response.token);
+    } catch (error) {
+      console.error("Google login failed:", error);
+    }
+  }
+};
+
+// handle an error event
+const handleLoginError = () => {
+  console.error("Login failed");
+};
 </script>
+
+<style>
+.sign-in-button {
+  width: 5rem;
+  /* height: 2rem; */
+  color: black;
+  background: white;
+}
+</style>
