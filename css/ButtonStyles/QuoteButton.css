@@ -1,0 +1,22 @@
+.quote-button {
+    background-color: #1DACC7;
+    border: .15vw solid transparent;
+    border-radius: 10px;
+    height: 3rem;
+    width: 100%;
+    font-family: inherit;
+    font-weight: bolder;
+    font-size: 1.3rem;
+    color: white;
+    transition: all .2s ease-in-out;
+    cursor: pointer;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .quote-button:hover {
+    background-color: #f0f2f5;
+    color: black;
+    overflow: hidden;
+    border: .15vw solid #1DACC7;
+    /* box-shadow: none; */
+  }
