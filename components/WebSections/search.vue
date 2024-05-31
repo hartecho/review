@@ -1,12 +1,13 @@
 <template>
   <div class="search-container">
+    <h2 class="search-title">Search for Contractors</h2>
     <input
       type="text"
       v-model="searchQuery"
       @focus="showList = true"
       @blur="hideList"
       @input="filterList"
-      placeholder="Search contractors..."
+      placeholder="Search contractors by name, city, or state..."
       class="search-input"
     />
     <transition name="dropdown">
@@ -121,16 +122,17 @@ const tagDescriptions = {
 
 const filteredContractors = computed(() => {
   if (!searchQuery.value) return [];
+  const query = searchQuery.value.toLowerCase();
   return contractors.value.filter(
     (contractor) =>
       (contractor.company &&
-        contractor.company
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase())) ||
+        contractor.company.toLowerCase().includes(query)) ||
+      (contractor.address.city &&
+        contractor.address.city.toLowerCase().includes(query)) ||
+      (contractor.address.state &&
+        contractor.address.state.toLowerCase().includes(query)) ||
       contractor.tags.some((tag) =>
-        tagDescriptions[tag]
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase())
+        tagDescriptions[tag].toLowerCase().includes(query)
       )
   );
 });
@@ -164,19 +166,33 @@ function splitText(text) {
 <style scoped>
 .search-container {
   position: relative;
-  width: 400px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
   text-align: center;
   color: black;
+}
+
+.search-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: white;
 }
 
 .search-input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 25px;
   box-sizing: border-box;
   font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
 }
 
 .dropdown-list {
@@ -184,31 +200,57 @@ function splitText(text) {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: rgba(30, 30, 30, 0.9);
   border: 1px solid #ccc;
-  border-radius: 4px;
-  max-height: 200px;
+  border-radius: 10px;
+  max-height: 300px;
   overflow-y: auto;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  transition: scrollbar-color 0.3s ease;
 }
 
-.dropdown-enter-active,
-.dropdown-leave-active {
-  transition: all 0.3s ease;
+/* Webkit-based browsers (Chrome, Safari, Edge) */
+.dropdown-list::-webkit-scrollbar {
+  width: 8px;
 }
 
-.dropdown-enter, .dropdown-leave-to /* .dropdown-leave-active in <2.1.8 */ {
-  max-height: 0;
+.dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
   opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dropdown-list:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+/* Firefox */
+.dropdown-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.dropdown-list:hover {
+  scrollbar-color: rgba(255, 255, 255, 1) transparent;
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
   font-size: 14px;
+  color: white;
 }
 
 .dropdown-item:last-child {
@@ -218,7 +260,8 @@ function splitText(text) {
 .contractor-logo {
   width: 40px;
   height: 40px;
-  margin-right: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
 }
 
 .contractor-info {
@@ -228,7 +271,8 @@ function splitText(text) {
 .contractor-info h3,
 .contractor-info p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
+  color: #fff;
 }
 
 .jobs-list {
@@ -238,11 +282,42 @@ function splitText(text) {
 }
 
 .jobs-list li {
-  font-size: 12px;
+  font-size: 14px;
+  display: inline;
+  margin-right: 5px;
 }
 
 .highlight {
   background-color: darkcyan;
   color: white;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+
+  .dropdown-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contractor-logo {
+    margin-bottom: 10px;
+  }
 }
 </style>

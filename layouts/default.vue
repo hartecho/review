@@ -37,8 +37,21 @@ const isLoggedIn = computed(() => !!store.token);
 
 let paths = ["home", "login", "register", "settings", "blog", "contact"];
 // Define the two arrays
-const paths1 = ["home", "search", "articles", "contact"];
-const paths2 = ["home", "profile", "search", "articles", "contact"];
+const paths1 = [
+  "home",
+  "search Contractors",
+  "search Subcontractors",
+  "articles",
+  "contact",
+];
+const paths2 = [
+  "home",
+  "profile",
+  "search Contractors",
+  "search Subcontractors",
+  "articles",
+  "contact",
+];
 
 // Reactive variable to control which array is active
 const usePaths1 = ref(true);

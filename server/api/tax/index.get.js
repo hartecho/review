@@ -1,4 +1,4 @@
-import Transaction from '~/server/models/Transaction.js';
+import Transaction from '~/server/models/Ecommerce/Transaction.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import authMiddleware from '~/server/middleware/auth.js';

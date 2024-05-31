@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { connectUserDB } from '~/server/utils/dbUserConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
-import User from '~/server/models/User.js'; // Make sure your User model path is correct
+import User from '~/server/models/Users/User.js'; // Make sure your User model path is correct
 
 export default defineEventHandler(async (event) => {
     await connectUserDB(); // Ensure the database connection is established

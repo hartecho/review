@@ -51,9 +51,12 @@ const props = defineProps({
   slogan: String,
 });
 
-const getRoute = (link) => {
-  return link === "home" ? "/" : `/${link}`;
-};
+function getRoute(link) {
+  if (link == "home") return "/";
+  else if (link == "search Contractors") return "/searchContract";
+  else if (link == "search Subcontractors") return "/searchSub";
+  else return `/${link}`;
+}
 </script>
 
 <style scoped>
@@ -169,7 +172,7 @@ a.router-link-exact-active {
     gap: 3rem;
   }
 }
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .footer-wrapper {
     padding: 0 1rem;
   }
@@ -193,5 +196,5 @@ a.router-link-exact-active {
   .contact-info p {
     font-size: 0.8rem;
   }
-}
+} */
 </style>

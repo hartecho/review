@@ -1,4 +1,4 @@
-import Blog from '~/server/models/Blog.js'; 
+import Blog from '~/server/models/Blogs/Blog.js'; 
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 

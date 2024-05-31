@@ -1,4 +1,5 @@
 <template lang="html">
+  <div class="content">
   <div class="body-wrapper">
     <div class="contact-elementTop">
       <div class="top-left">
@@ -46,6 +47,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -125,14 +127,20 @@ const submit = () => {
 </script>
 
 <style lang="css" scoped>
+.content {
+  background: url("/IntroBG.jpg") no-repeat center top;
+  background-size: cover;
+}
+
 .body-wrapper {
+  max-width: 1200px;
+  margin: 0rem auto;
   max-height: 60rem;
   height: auto;
   width: 100%;
   position: relative;
   z-index: 3;
-  max-width: 1200px;
-  margin: 2rem auto;
+  padding: 2rem 0;
 }
 
 .contact-elementTop {
@@ -172,6 +180,7 @@ p {
 
 .info {
   background-color: white;
+  color: black;
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);

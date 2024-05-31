@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { connectUserDB } from '~/server/utils/dbUserConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
-import User from '~/server/models/User.js'; // Ensure the User model path is correct
+import User from '~/server/models/Users/User.js'; // Ensure the User model path is correct
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

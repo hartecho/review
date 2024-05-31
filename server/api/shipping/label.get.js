@@ -1,4 +1,4 @@
-import Label from '~/server/models/Label.js';
+import Label from '~/server/models/Ecommerce/Label.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import authMiddleware from '~/server/middleware/auth.js';

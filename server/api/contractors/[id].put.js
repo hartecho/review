@@ -1,4 +1,4 @@
-import Contractor from '~/server/models/Contractor.js'; 
+import Contractor from '~/server/models/Users/Contractor.js'; 
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 

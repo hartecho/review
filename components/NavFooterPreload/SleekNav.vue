@@ -106,7 +106,10 @@ function resolvedNavBarsPath() {
 }
 
 function getRoute(link) {
-  return link === "home" ? "/" : `/${link}`;
+  if (link == "home") return "/";
+  else if (link == "search Contractors") return "/searchContract";
+  else if (link == "search Subcontractors") return "/searchSub";
+  else return `/${link}`;
 }
 
 function handleScroll() {
@@ -266,7 +269,7 @@ a.router-link-exact-active {
   }
 }
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .link {
     font-size: 1.5rem;
   }
@@ -275,7 +278,7 @@ a.router-link-exact-active {
     font-size: 4vw;
     font-weight: bold;
   }
-}
+} */
 </style>
 
 <style>

@@ -86,7 +86,7 @@ function getRoute(link) {
   }
 }
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   a,
   .link {
     font-size: 2rem;
@@ -96,5 +96,5 @@ function getRoute(link) {
     height: 1.5rem;
     width: 1.5rem;
   }
-}
+} */
 </style>

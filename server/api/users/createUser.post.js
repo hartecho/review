@@ -1,7 +1,7 @@
 // server/api/users.post.js
 import { connectUserDB } from '~/server/utils/dbUserConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
-import User from '~/server/models/User.js'; // Ensure your User model path is correct
+import User from '~/server/models/Users/User.js'; // Ensure your User model path is correct
 import bcrypt from 'bcrypt';
 
 export default defineEventHandler(async (event) => {

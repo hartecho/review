@@ -1,4 +1,4 @@
-import Item from '~/server/models/Item.js';
+import Item from '~/server/models/Ecommerce/Item.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 

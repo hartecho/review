@@ -154,13 +154,16 @@ const contactContractor = () => {
 
 <style scoped>
 .wrapper {
+  background: url("/IntroBG.jpg") no-repeat center top;
+  background-size: cover;
   padding: 2rem;
+  color: #f1b55c;
+  font-family: Bebas Neue, cursive;
 }
 
 .item-wrapper {
   background-size: cover;
   color: #f1b55c;
-  font-family: Bebas Neue, cursive;
 }
 
 .item-container {
@@ -170,6 +173,9 @@ const contactContractor = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 10px white;
 }
 
 .left-column,
@@ -188,22 +194,26 @@ const contactContractor = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
 
 .right-column h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: bolder;
+  color: white;
 }
 
 .right-column .preview {
   font-size: 1rem;
   margin-bottom: 1rem;
+  color: white;
 }
 
 .right-column .description {
   font-size: 1.2rem;
   margin-bottom: 1em;
+  color: white;
   white-space: pre-line;
 }
 
@@ -212,7 +222,7 @@ const contactContractor = () => {
   padding: 8px 16px;
   background-color: #f7c781;
   border: 2px solid #c0c0c0;
-  border-radius: 4px;
+  border-radius: 25px;
   transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
 }
@@ -231,6 +241,7 @@ const contactContractor = () => {
 .job-types li {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  color: white;
 }
 
 .reviews-section {
@@ -240,10 +251,11 @@ const contactContractor = () => {
 .reviews-section h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: white;
 }
 
 .review {
-  background-color: #f9f9f9;
+  background-color: rgba(30, 30, 30, 0.9);
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
@@ -253,6 +265,7 @@ const contactContractor = () => {
 .review h3 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+  color: white;
 }
 
 .review .rating,
@@ -260,6 +273,7 @@ const contactContractor = () => {
 .review .date {
   font-size: 1rem;
   margin-bottom: 0.5rem;
+  color: white;
 }
 
 @media (max-width: 768px) {
