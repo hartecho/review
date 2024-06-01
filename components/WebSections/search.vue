@@ -168,9 +168,15 @@ function splitText(text) {
   position: relative;
   width: 100%;
   max-width: 600px;
+  padding-top: 10rem;
   margin: 0 auto;
   text-align: center;
   color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background: blue; */
 }
 
 .search-title {

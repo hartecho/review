@@ -6,9 +6,9 @@
   <div class="home">
     <section id="search-section" class="search-section">
       <WebSectionsSearch />
-      <NuxtLink to="/contractor/editContractors" class="edit-button-link">
+      <!-- <NuxtLink to="/contractor/editContractors" class="edit-button-link">
         <button class="edit-button">Edit Contractors</button>
-      </NuxtLink>
+      </NuxtLink> -->
     </section>
 
     <section class="services-section boil-bot-white">
@@ -73,7 +73,7 @@ onMounted(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;

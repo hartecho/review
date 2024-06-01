@@ -33,6 +33,8 @@ export default defineEventHandler(async (event) => {
             });
         }
 
+        console.log(payload);
+
         let user = await User.findOne({ email: payload.email });
         if (!user) {
             user = new User({
@@ -46,6 +48,7 @@ export default defineEventHandler(async (event) => {
         } else {
             // Update user info in case any details have changed
             user.googleId = payload.sub;
+            user.name = payload.name;
             user.profilePicture = payload.picture; // Ensure this field exists in your schema
             await user.save();
         }

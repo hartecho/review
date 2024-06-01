@@ -60,7 +60,9 @@
         <img :src="resolvedNavBarsPath()" loading="eager" alt="nav-bars" />
       </div>
     </div> -->
-    <LoginModal v-if="showLoginModal" @close="closeLoginModal" />
+    <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
+      <LoginModal @close="closeLoginModal" />
+    </div>
   </nav>
 </template>
 
@@ -250,6 +252,27 @@ a.router-link-exact-active {
   display: none;
 }
 
+.modal-wrapper {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background: rgba(0, 0, 0, 0.8); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.modal-wrapper.is-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .nav-bar {
     height: auto;
@@ -285,5 +308,22 @@ a.router-link-exact-active {
 .no-scroll {
   overflow: hidden;
   padding-right: 1rem;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.5s;
+}
+
+.modal-enter,
+.modal-leave-to /* .modal-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+* {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard syntax */
 }
 </style>
