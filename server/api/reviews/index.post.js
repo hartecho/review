@@ -1,4 +1,4 @@
-import Review from '~/server/models/Review.js';
+import Review from '~/server/models/Users/Review.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 

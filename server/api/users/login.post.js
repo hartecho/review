@@ -28,11 +28,14 @@ export default defineEventHandler(async (event) => {
         );
 
         // Returning the token to the client
-        return { token };
+        return { token, user: { name: user.name } };
 
     } catch (error) {
         console.error('Error in POST /api/login:', error);
-        throw createError({ statusCode: 500, message: 'Server Error' });
+        if (error.statusCode === 401) {
+            throw createError({ statusCode: 401, message: 'Invalid credentials' });
+        }
+        throw createError({ statusCode: 500, message: 'An unexpected error occurred. Please try again later.' });
     } finally {
         // Ensure the database connection is closed after handling the request
         await disconnectDB();

@@ -66,7 +66,7 @@ const router = useRouter();
 const { data: contractors } = await useFetch("/api/contractors");
 
 const tagDescriptions = {
-  GEN: "General Contractors",
+  GEN: "General Contractor",
   FLR: "Flooring",
   CTP: "Countertops",
   CAB: "Cabinets",

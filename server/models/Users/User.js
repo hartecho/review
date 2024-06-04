@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
@@ -20,14 +20,6 @@ const userSchema = new mongoose.Schema({
     default: ''
   },
   bio: {
-    type: String,
-    default: ''
-  },
-  isBusiness: {
-    type: Boolean,
-    default: false
-  },
-  website: {
     type: String,
     default: ''
   },
@@ -63,6 +55,11 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+// Clear model cache
+if (mongoose.models.User) {
+  delete mongoose.models.User;
+}
 
 const User = mongoose.model('User', userSchema);
 

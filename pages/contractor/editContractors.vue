@@ -98,7 +98,7 @@ const contractor = ref({
 });
 
 const availableTags = [
-  { enum: "GEN", description: "General Contractors" },
+  { enum: "GEN", description: "General Contractor" },
   { enum: "FLR", description: "Flooring" },
   { enum: "CTP", description: "Countertops" },
   { enum: "CAB", description: "Cabinets" },

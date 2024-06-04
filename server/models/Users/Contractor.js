@@ -50,7 +50,11 @@ const contractorSchema = new mongoose.Schema({
       'CUR', 'OTH'
     ],
     required: true
-  }]
+  }],
+  isPro: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true
 });
