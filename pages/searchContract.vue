@@ -3,8 +3,8 @@
     <div class="page-header">
       <h1>Find General Contractors</h1>
       <p>
-        Search for general contractors by name, city, state, or zip, and filter
-        by star rating.
+        Search for general contractors by name, city, or state, and filter by
+        star rating.
       </p>
     </div>
     <div class="filter-page">

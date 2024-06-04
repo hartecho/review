@@ -1,91 +1,101 @@
 <template>
-  <div class="wrapper">
-    <section class="item-wrapper point-bot">
-      <div class="item-container">
-        <div class="left-column">
-          <div class="img-wrapper">
+  <div class="profile-page">
+    <section class="profile-header-section">
+      <div class="profile-header">
+        <div class="profile-left-column">
+          <div class="profile-image">
             <img :src="resolvedImgPath()" alt="Contractor Picture" />
           </div>
+          <div class="job-types-section">
+            <div class="subtitle">
+              <h2>Job Types</h2>
+              <div class="gray-line"></div>
+            </div>
+            <ul class="job-types">
+              <li v-for="tag in contractor.tags" :key="tag">
+                {{ tagDescriptions[tag] }}
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="right-column" v-if="contractor">
+        <div class="profile-right-column">
           <h1>{{ contractor.company }}</h1>
-          <p class="preview">{{ contractor.email }}</p>
-          <p class="preview">{{ contractor.phone }}</p>
-          <p class="preview">
+          <p class="location">
             {{ contractor.address.city }}, {{ contractor.address.state }}
           </p>
-          <button class="honey-button" @click="contactContractor">
-            Contact Contractor
-          </button>
-          <p class="description">Types of Jobs:</p>
-          <ul class="job-types">
-            <li v-for="tag in contractor.tags" :key="tag">
-              {{ getTagDescription(tag) }}
-            </li>
-          </ul>
-          <p class="description">Ratings: {{ contractor.ratings }}</p>
+          <div class="ratings-section">
+            <h2>Ratings</h2>
+            <div class="rating-row">
+              <p class="star-rating">{{ roundedRating }}</p>
+              <div class="star-rating-image-wrapper">
+                <img :src="getStarImage()" alt="Star Rating" />
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <button
+              class="contact-contractor-button"
+              @click="contactContractor"
+            >
+              Contact Contractor
+            </button>
+            <button class="report-button">Report an Issue</button>
+          </div>
+          <div class="tabs">
+            <button
+              @click="activeTab = 'about'"
+              :class="{ active: activeTab === 'about' }"
+            >
+              About
+            </button>
+            <button
+              @click="activeTab = 'reviews'"
+              :class="{ active: activeTab === 'reviews' }"
+            >
+              Leave a Review
+            </button>
+          </div>
+          <div class="tab-content" v-if="activeTab === 'about'">
+            <h3>Contact Information</h3>
+            <div class="contact-info">
+              <p><strong>Email:</strong> {{ contractor.email }}</p>
+              <p><strong>Phone:</strong> {{ contractor.phone }}</p>
+              <p>
+                <strong>Address:</strong> {{ contractor.address.city }},
+                {{ contractor.address.state }}
+              </p>
+            </div>
+          </div>
+          <div class="tab-content" v-if="activeTab === 'reviews'">
+            <h3>Leave a Review</h3>
+            <ReviewForm
+              :contractor="contractor"
+              :tagDescriptions="tagDescriptions"
+            />
+          </div>
         </div>
       </div>
     </section>
+
     <section class="reviews-section">
       <h2>Reviews</h2>
-      <div
-        class="review"
-        v-for="review in contractor.reviews"
-        :key="review._id"
-      >
-        <h3>{{ review.reviewer }}</h3>
-        <p class="rating">Rating: {{ review.rating }} / 5</p>
-        <p class="comment">{{ review.comment }}</p>
-        <p class="date">{{ new Date(review.date).toLocaleDateString() }}</p>
-      </div>
+      <Reviews :contractor="contractor" :tagDescriptions="tagDescriptions" />
     </section>
+
+    <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
+      <LoginModal @close="closeLoginModal" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-
 const route = useRoute();
-const contractor = ref({
-  company: "Doe Construction",
-  email: "johndoe@example.com",
-  phone: "555-1234",
-  address: {
-    city: "Anytown",
-    state: "CA",
-  },
-  tags: ["GEN", "FLR", "CTP"],
-  ratings: 4.5,
-  picture: "HARTECHOLogo.webp",
-  reviews: [
-    {
-      _id: "1",
-      reviewer: "Alice Johnson",
-      rating: 5,
-      comment: "Excellent work! Highly recommend.",
-      date: "2023-01-15",
-    },
-    {
-      _id: "2",
-      reviewer: "Bob Smith",
-      rating: 4,
-      comment: "Great job, but a bit pricey.",
-      date: "2023-02-10",
-    },
-    {
-      _id: "3",
-      reviewer: "Charlie Brown",
-      rating: 3,
-      comment: "Average experience, nothing special.",
-      date: "2023-03-05",
-    },
-  ],
-});
+const { data: contractor } = await useFetch(
+  `/api/contractors?_id=${route.params.id}`
+);
 
 const tagDescriptions = {
-  GEN: "General Contractors",
+  GEN: "General Contractor",
   FLR: "Flooring",
   CTP: "Countertops",
   CAB: "Cabinets",
@@ -139,162 +149,266 @@ const tagDescriptions = {
   OTH: "Other",
 };
 
-function getTagDescription(tag) {
-  return tagDescriptions[tag] || tag;
-}
+const showLoginModal = ref(false);
+const activeTab = ref("about");
+const store = useStore();
 
 function resolvedImgPath() {
   return `/${contractor.value.picture}`;
 }
 
-const contactContractor = () => {
+function contactContractor() {
   alert(`Contacting ${contractor.value.company}`);
+}
+
+const starImages = {
+  0: "/1Star.svg",
+  0.5: "/1Star.svg",
+  1: "/1Star.svg",
+  1.5: "/1.5Star.svg",
+  2: "/2Star.svg",
+  2.5: "/2.5Star.svg",
+  3: "/3Star.svg",
+  3.5: "/3.5Star.svg",
+  4: "/4Star.svg",
+  4.5: "/4.5Star.svg",
+  5: "/5Star.svg",
 };
+
+const roundedRating = computed(() => {
+  return Math.round(contractor.value.ratings * 2) / 2;
+});
+
+function getStarImage() {
+  return starImages[roundedRating.value];
+}
+
+function openLoginModal() {
+  showLoginModal.value = true;
+  document.body.classList.add("no-scroll");
+}
+
+function closeLoginModal() {
+  showLoginModal.value = false;
+  document.body.classList.remove("no-scroll");
+}
 </script>
 
 <style scoped>
-.wrapper {
-  background: url("/IntroBG.jpg") no-repeat center top;
-  background-size: cover;
-  padding: 2rem;
-  color: #f1b55c;
-  font-family: Bebas Neue, cursive;
+.profile-page {
 }
 
-.item-wrapper {
+.profile-header-section {
+  background: url("/BG2.jpg") no-repeat center top;
   background-size: cover;
-  color: #f1b55c;
+  font-family: Arial, sans-serif;
+  color: white;
+  width: 100%;
+  padding: 2rem 2rem 5rem 2rem;
+  min-height: 55rem;
 }
 
-.item-container {
+.profile-header-section,
+.review-form-section,
+.reviews-section {
+  margin-bottom: 40px;
+}
+
+.profile-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  box-shadow: 0 0 10px white;
 }
 
-.left-column,
-.right-column {
-  width: 45%;
+.profile-left-column {
+  width: 25%;
+  padding-right: 20px;
 }
 
-.img-wrapper {
+.profile-right-column {
+  width: 75%;
+  padding-left: 40px;
+}
+
+.profile-image img {
   width: 100%;
   height: auto;
-  overflow: hidden;
-  position: relative;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
-.img-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.job-types-section {
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
   border-radius: 10px;
 }
 
-.right-column h1 {
-  font-size: 2rem;
+.subtitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: black;
+}
+
+h2 {
   margin-bottom: 1rem;
-  font-weight: bolder;
-  color: white;
-}
-
-.right-column .preview {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  color: white;
-}
-
-.right-column .description {
-  font-size: 1.2rem;
-  margin-bottom: 1em;
-  color: white;
-  white-space: pre-line;
-}
-
-.honey-button {
   font-size: 18px;
-  padding: 8px 16px;
-  background-color: #f7c781;
-  border: 2px solid #c0c0c0;
-  border-radius: 25px;
-  transition: background-color 0.3s, color 0.3s;
-  cursor: pointer;
+  font-weight: normal;
+  color: black;
 }
 
-.honey-button:hover {
-  background-color: #c0c0c0;
-  color: #1e1e1e;
+h3 {
+  color: black;
+  margin-bottom: 1rem;
+}
+
+.gray-line {
+  border-bottom: 1px solid black;
+  height: 1px;
+  flex-grow: 1;
+  margin-left: 10px;
 }
 
 .job-types {
   list-style: none;
   padding: 0;
-  margin: 0;
+  font-weight: bold;
 }
 
 .job-types li {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: black;
+}
+
+.profile-right-column h1 {
+  font-size: 28px;
+  margin: 3rem 0 10px 0;
   color: white;
 }
 
-.reviews-section {
-  margin-top: 2rem;
+.profile-right-column .location {
+  font-size: 16px;
+  color: white;
+  margin-bottom: 30px;
 }
 
-.reviews-section h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.ratings-section {
+  margin-bottom: 40px;
+}
+
+.ratings-section h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: normal;
   color: white;
 }
 
-.review {
-  background-color: rgba(30, 30, 30, 0.9);
-  padding: 1rem;
-  margin-bottom: 1rem;
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-row .star-rating {
+  font-size: 26px;
+  color: white;
+}
+
+.star-rating-image-wrapper {
+  height: 3rem;
+  width: 25rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+.star-rating-image-wrapper img {
+  display: block;
+  object-fit: contain;
+  height: 20rem;
+}
+
+.actions {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.contact-contractor-button,
+.report-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.contact-contractor-button:hover,
+.report-button:hover {
+  background-color: #0056b3;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+  color: white;
+  transition: color 0.3s, border-bottom 0.3s;
+}
+
+.tabs button:hover {
+  color: white;
+}
+
+.tabs button.active {
+  border-bottom: 2px solid white;
+  font-weight: bold;
+}
+
+.tab-content {
+  padding: 20px;
+  background: #fff;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.review h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: white;
+.contact-info p {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
 }
 
-.review .rating,
-.review .comment,
-.review .date {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  color: white;
+.modal-wrapper {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-@media (max-width: 768px) {
-  .item-container {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
-  .left-column,
-  .right-column {
-    width: 100%;
-  }
-
-  .right-column h1 {
-    margin-top: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .item-container {
-    padding: 1rem;
-  }
+.modal-wrapper.is-visible {
+  visibility: visible;
+  opacity: 1;
 }
 </style>

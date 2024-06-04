@@ -131,7 +131,7 @@ const router = useRouter();
 const { data: contractors } = await useFetch("/api/contractors");
 
 const tagDescriptions = {
-  // Tag descriptions excluding "GEN"
+  // GEN: "General Contractor",
   FLR: "Flooring",
   CTP: "Countertops",
   CAB: "Cabinets",
@@ -416,6 +416,10 @@ onMounted(() => {
   width: 100%;
   padding: 10px;
   transition: scrollbar-color 0.3s ease;
+}
+
+.dropdown-menu input {
+  margin-right: 0.5rem;
 }
 
 /* Webkit-based browsers (Chrome, Safari, Edge) */
