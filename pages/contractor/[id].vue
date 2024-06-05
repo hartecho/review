@@ -268,6 +268,7 @@ h3 {
 h6 {
   color: white;
   font-size: 1.5rem;
+  text-shadow: 1px 1px 2px black;
   margin-bottom: 1rem;
 }
 
@@ -291,13 +292,15 @@ h6 {
 }
 
 .profile-right-column h1 {
-  font-size: 28px;
+  font-size: 32px;
   color: white;
+  text-shadow: 2px 2px 2px black;
 }
 
 .profile-right-column .location {
-  font-size: 16px;
+  font-size: 20px;
   color: white;
+  text-shadow: 1px 1px 2px black;
   margin-bottom: 30px;
 }
 
@@ -307,9 +310,10 @@ h6 {
 
 .ratings-section h2 {
   margin: 0 0 10px 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: normal;
   color: white;
+  text-shadow: 1px 1px 2px black;
 }
 
 .rating-row {
@@ -321,6 +325,7 @@ h6 {
 .rating-row .star-rating {
   font-size: 36px;
   color: white;
+  text-shadow: 1px 1px 2px black;
 }
 
 .stars {
@@ -330,6 +335,7 @@ h6 {
 .star {
   color: #ff9900;
   font-size: 60px;
+  text-shadow: 2px 2px 5px black;
 }
 
 .actions {
@@ -342,6 +348,7 @@ h6 {
 .report-button {
   background-color: #007bff;
   color: white;
+  text-shadow: 1px 1px 2px black;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -365,14 +372,16 @@ h6 {
   border: none;
   padding: 10px 20px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 20px;
   margin-right: 10px;
   color: white;
+  text-shadow: 2px 2px 1px black;
   transition: color 0.3s, border-bottom 0.3s;
 }
 
 .tabs button:hover {
   color: white;
+  text-shadow: 1px 1px 2px black;
 }
 
 .tabs button.active {
