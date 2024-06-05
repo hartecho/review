@@ -39,13 +39,16 @@
           </ul>
         </div>
         <div class="star-rating">
-          <span
-            v-for="n in 5"
-            :key="n"
-            class="star"
-            :class="{ filled: n <= contractor.rating }"
-            >&#9733;</span
-          >
+          <template v-if="contractor.ratings && contractor.ratings > 0">
+            <span
+              v-for="n in 5"
+              :key="n"
+              class="star"
+              :class="{ filled: n <= Math.round(contractor.ratings) }"
+              >&#9733;</span
+            >
+          </template>
+          <p v-else>No Reviews</p>
         </div>
       </li>
     </ul>
@@ -61,6 +64,8 @@ const props = defineProps({
   searchQuery: String,
   tagDescriptions: Object,
 });
+
+console.log("Filtered Contractors: ", props.filteredContractors);
 
 const router = useRouter();
 
@@ -210,6 +215,7 @@ function highlightMatch(text) {
   position: absolute;
   top: 10px;
   right: 15px;
+  text-align: center;
 }
 
 .star {

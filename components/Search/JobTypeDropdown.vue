@@ -1,6 +1,6 @@
 <template>
-  <div class="dropdown">
-    <button @click="$emit('toggleDropdown')" class="dropdown-button">
+  <div class="dropdown" ref="dropdown">
+    <button @click="toggleDropdown" class="dropdown-button">
       Select Job Types
     </button>
     <div v-if="showDropdown" class="dropdown-menu">
@@ -23,7 +23,7 @@
 </template>
   
   <script setup>
-import { computed } from "vue";
+import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps({
   showDropdown: Boolean,
@@ -50,6 +50,26 @@ const updateSelectedTags = (tag) => {
     : [...props.selectedTags, tag];
   emit("update:selectedTags", newTags);
 };
+
+const dropdown = ref(null);
+
+const handleClickOutside = (event) => {
+  if (dropdown.value && !dropdown.value.contains(event.target)) {
+    emit("toggleDropdown");
+  }
+};
+
+const toggleDropdown = () => {
+  emit("toggleDropdown");
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
   
   <style scoped>
