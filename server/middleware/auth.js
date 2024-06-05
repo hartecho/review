@@ -10,7 +10,7 @@ export default defineEventHandler((event) => {
   //   return;
   // }
 
-  if (!event.req.url.startsWith('/api/review')) {
+  if (!event.req.url.startsWith('/api/reviews/post')) {
     return;
   }
   

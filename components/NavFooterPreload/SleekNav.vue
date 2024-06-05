@@ -16,13 +16,16 @@
             <h1>{{ companyName }}</h1>
           </div>
         </div>
-        <div class="login-link">
+        <div class="login-info">
+          <span v-if="isLoggedIn" class="logged-in-message"
+            >Logged in as {{ userName }}</span
+          >
           <button
             v-if="!isLoggedIn"
             @click="openLoginModal"
             class="login-button"
           >
-            Login
+            Sign In / Sign Up
           </button>
           <button v-else class="login-button" @click="logout">Logout</button>
         </div>
@@ -69,6 +72,9 @@
 <script setup>
 const store = useStore();
 const isLoggedIn = computed(() => !!store.token);
+const userName = computed(() =>
+  store.user && store.user.name ? store.user.name : ""
+);
 const showLoginModal = ref(false);
 let navbar = ref(null);
 let lastScrollPosition = ref(0);
@@ -211,22 +217,36 @@ function closeLoginModal() {
   margin-left: 1rem;
 }
 
-.login-link {
-  font-size: 15px;
+.login-info {
+  display: flex;
+  align-items: center;
+}
+
+.logged-in-message {
+  margin-right: 1rem;
+  font-size: 16px;
 }
 
 .login-button {
   font-size: 18px;
   padding: 8px 16px;
-  border: 2px solid #c0c0c0;
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
+  border: none;
+  border-radius: 20px;
+  background-color: #4caf50;
+  color: white;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
   cursor: pointer;
+  outline: none;
 }
 
 .login-button:hover {
-  background-color: #c0c0c0;
-  color: #1e1e1e;
+  background-color: #45a049;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:active {
+  background-color: #388e3c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .link {

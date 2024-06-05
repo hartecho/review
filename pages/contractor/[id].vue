@@ -26,10 +26,11 @@
           <div class="ratings-section">
             <h2>Ratings</h2>
             <div class="rating-row">
-              <p class="star-rating">{{ roundedRating }}</p>
-              <div class="star-rating-image-wrapper">
-                <img :src="getStarImage()" alt="Star Rating" />
-              </div>
+              <p class="star-rating">{{ contractor.ratings }}</p>
+              <div
+                class="stars"
+                :style="{ '--rating': contractor.ratings }"
+              ></div>
             </div>
           </div>
           <div class="actions">
@@ -66,8 +67,10 @@
               </p>
             </div>
           </div>
-          <div class="tab-content" v-if="activeTab === 'reviews'">
-            <h3>Leave a Review</h3>
+          <div
+            class="tab-content"
+            v-if="!isBusinessOwner && activeTab === 'reviews'"
+          >
             <ReviewForm
               :contractor="contractor"
               :tagDescriptions="tagDescriptions"
@@ -78,8 +81,11 @@
     </section>
 
     <section class="reviews-section">
-      <h2>Reviews</h2>
-      <Reviews :contractor="contractor" :tagDescriptions="tagDescriptions" />
+      <Reviews
+        :contractor="contractor"
+        :tagDescriptions="tagDescriptions"
+        :isBusinessOwner="isBusinessOwner"
+      />
     </section>
 
     <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
@@ -90,6 +96,8 @@
 
 <script setup>
 const route = useRoute();
+const store = useStore();
+
 const { data: contractor } = await useFetch(
   `/api/contractors?_id=${route.params.id}`
 );
@@ -150,49 +158,31 @@ const tagDescriptions = {
 };
 
 const showLoginModal = ref(false);
-const activeTab = ref("about");
-const store = useStore();
+const activeTab = ref("reviews");
 
-function resolvedImgPath() {
+const resolvedImgPath = () => {
   return `/${contractor.value.picture}`;
-}
-
-function contactContractor() {
-  alert(`Contacting ${contractor.value.company}`);
-}
-
-const starImages = {
-  0: "/1Star.svg",
-  0.5: "/1Star.svg",
-  1: "/1Star.svg",
-  1.5: "/1.5Star.svg",
-  2: "/2Star.svg",
-  2.5: "/2.5Star.svg",
-  3: "/3Star.svg",
-  3.5: "/3.5Star.svg",
-  4: "/4Star.svg",
-  4.5: "/4.5Star.svg",
-  5: "/5Star.svg",
 };
 
-const roundedRating = computed(() => {
-  return Math.round(contractor.value.ratings * 2) / 2;
-});
+const contactContractor = () => {
+  alert(`Contacting ${contractor.value.company}`);
+};
 
-function getStarImage() {
-  return starImages[roundedRating.value];
-}
-
-function openLoginModal() {
+const openLoginModal = () => {
   showLoginModal.value = true;
   document.body.classList.add("no-scroll");
-}
+};
 
-function closeLoginModal() {
+const closeLoginModal = () => {
   showLoginModal.value = false;
   document.body.classList.remove("no-scroll");
-}
+};
+
+const isBusinessOwner = computed(() => {
+  return store.user && store.user.contractor === contractor.value._id;
+});
 </script>
+
 
 <style scoped>
 .profile-page {
@@ -316,19 +306,24 @@ h3 {
   color: white;
 }
 
-.star-rating-image-wrapper {
-  height: 3rem;
-  width: 25rem;
+.stars {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  overflow: hidden;
+  --rating: 0;
+  font-size: 50px;
+  position: relative;
+  unicode-bidi: bidi-override;
+  direction: rtl;
 }
 
-.star-rating-image-wrapper img {
-  display: block;
-  object-fit: contain;
-  height: 20rem;
+.stars::before {
+  content: "☆☆☆☆☆";
+  display: inline-block;
+  background: linear-gradient(90deg, #ff9900 var(--rating), #ddd var(--rating));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .actions {

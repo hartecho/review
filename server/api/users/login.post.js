@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
         );
 
         // Returning the token to the client
-        return { token, user: { name: user.name } };
+        return { token, user: user };
 
     } catch (error) {
         console.error('Error in POST /api/login:', error);

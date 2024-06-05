@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
             { expiresIn: '1h' }
         );
 
-        return { token: jwtToken, email: user.email, name: user.name, picture: user.profilePicture };
+        return { token: jwtToken, user: user };
     } catch (error) {
         console.error('Error in POST /api/google-login:', error);
         throw createError({ statusCode: 500, message: 'Server Error' });

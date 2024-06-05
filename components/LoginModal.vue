@@ -62,6 +62,7 @@ const handleEmailLogin = async (loginData) => {
     });
     console.log("JWT Token from email sign in:", response.token);
     store.setToken(response.token);
+    store.setUser(response.user);
     closeModal();
   } catch (error) {
     console.error("Login failed:", error);
@@ -83,6 +84,7 @@ const handleGoogleLogin = async (response) => {
       });
       console.log("JWT Token from Google sign in:", response.token);
       store.setToken(response.token);
+      store.setUser(response.user);
       closeModal();
     } catch (error) {
       console.error("Google login failed:", error);

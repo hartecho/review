@@ -8,8 +8,8 @@
     <span v-else class="spinner"></span>
   </button>
 </template>
-  
-  <script setup>
+
+<script setup>
 const props = defineProps({
   text: {
     type: String,
@@ -41,8 +41,8 @@ const buttonClasses = computed(() => {
   return ["loading-button", props.class];
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .loading-button {
   position: relative;
   padding: 10px 20px;
@@ -56,6 +56,7 @@ const buttonClasses = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
 }
 
 .loading-button:hover {
@@ -84,4 +85,3 @@ const buttonClasses = computed(() => {
   }
 }
 </style>
-  
