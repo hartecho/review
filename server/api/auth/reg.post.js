@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
         return { message: 'User created successfully' };
     } catch (error) {
-        console.error('Error in POST /api/users/createUser:', error);
+        console.error('Error in POST /api/auth/createUser:', error);
         await disconnectDB();
 
         if (error.statusCode === 409) {

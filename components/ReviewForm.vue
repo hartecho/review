@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="isLoggedIn">
+    <div v-if="isBusinessOwner && isLoggedIn">
+      <p>You are the business owner. You can reply to reviews below.</p>
+    </div>
+    <div v-else-if="isLoggedIn">
       <div v-if="existingReview" class="review">
         <div class="review-header">
           <h4>Original Review</h4>
@@ -45,7 +48,9 @@
           </div>
         </div>
       </div>
-      <h4 class="update-review-title">Update Your Review</h4>
+      <h4 class="review-title">
+        {{ existingReview ? "Update Your Review" : "Leave a Review" }}
+      </h4>
       <div class="star-rating">
         <p>Choose your star rating:</p>
         <div class="stars-input">
@@ -84,50 +89,17 @@
       />
     </div>
     <div v-else>
-      <h4 class="leave-review-title">Leave a Review</h4>
-      <div class="star-rating">
-        <p>Choose your star rating:</p>
-        <div class="stars-input">
-          <span
-            v-for="n in 5"
-            :key="n"
-            class="star"
-            :class="{ filled: n <= newReview.rating || n <= hoverRating }"
-            @mouseover="hoverRating = n"
-            @mouseleave="hoverRating = 0"
-            @click="setRating(n)"
-          >
-            ★
-          </span>
-        </div>
-      </div>
-      <div class="checkboxes">
-        <div class="checkbox-group">
-          <h4>Select Job Types</h4>
-          <div class="checkbox-row">
-            <label v-for="tag in contractor.tags" :key="tag">
-              <input type="checkbox" :value="tag" v-model="newReview.tags" />
-              {{ tagDescriptions[tag] }}
-            </label>
-          </div>
-        </div>
-      </div>
-      <textarea
-        v-model="newReview.comment"
-        placeholder="Write your review..."
-      ></textarea>
-      <SubcomponentsLoadingButton
-        :text="'Submit Review'"
-        :isLoading="loading"
-        @click="submitReview"
-      />
+      <p>You need to sign in to leave a review.</p>
+      <button @click="openLoginModal">Login</button>
     </div>
+    <LoginModal v-if="showLoginModal" @close="closeLoginModal" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import SubcomponentsLoadingButton from "~/components/Subcomponents/LoadingButton.vue";
+import LoginModal from "~/components/LoginModal.vue";
 
 const props = defineProps({
   contractor: {
@@ -138,6 +110,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isBusinessOwner: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const newReview = ref({ rating: null, comment: "", tags: [] });
@@ -146,6 +122,7 @@ const existingReview = ref(null);
 const store = useStore();
 const isLoggedIn = computed(() => !!store.token);
 const loading = ref(false);
+const showLoginModal = ref(false);
 
 async function fetchExistingReview() {
   if (isLoggedIn.value) {
@@ -196,6 +173,14 @@ async function submitReview() {
       loading.value = false;
     }
   }
+}
+
+function openLoginModal() {
+  showLoginModal.value = true;
+}
+
+function closeLoginModal() {
+  showLoginModal.value = false;
 }
 
 onMounted(fetchExistingReview);
@@ -353,8 +338,7 @@ button:hover {
   margin-top: 10px;
 }
 
-.update-review-title,
-.leave-review-title {
+.review-title {
   font-size: 24px;
   font-weight: bold;
   margin: 10px 0 10px;
@@ -370,6 +354,7 @@ button:hover {
 
 p {
   color: black;
+  margin-bottom: 1rem;
 }
 
 .stars-input {

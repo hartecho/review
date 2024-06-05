@@ -15,11 +15,6 @@ const reviewUpdateSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  reviewer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
 });
 
 const businessReplySchema = new mongoose.Schema({

@@ -6,7 +6,7 @@ export default defineEventHandler((event) => {
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
   console.log("Token in middleware: ", token);
   
-  // if (event.req.url === '/api/users/login' || event.req.url === '/' || event.req.url.startsWith('/public')) {
+  // if (event.req.url === '/api/auth/login' || event.req.url === '/' || event.req.url.startsWith('/public')) {
   //   return;
   // }
 

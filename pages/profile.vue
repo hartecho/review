@@ -104,7 +104,7 @@ const changePassword = async () => {
       return;
     }
     // Implement the API call to change the password
-    const response = await $fetch("/api/users/change-password", {
+    const response = await $fetch("/api/auth/change-password", {
       method: "POST",
       body: passwords.value,
     });
@@ -117,7 +117,7 @@ const changePassword = async () => {
 onMounted(async () => {
   try {
     // Fetch the current user's profile data
-    const response = await $fetch("/api/users/profile");
+    const response = await $fetch("/api/auth/profile");
     profile.value = response;
   } catch (error) {
     alert("Failed to load profile. Please try again.");

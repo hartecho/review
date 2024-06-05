@@ -36,7 +36,7 @@ const password = ref("");
 
 const handleEmailLogin = async () => {
   try {
-    const response = await $fetch("/api/users/login", {
+    const response = await $fetch("/api/auth/login", {
       method: "POST",
       body: { email: email.value, password: password.value },
     });
@@ -51,7 +51,7 @@ const handleGoogleLogin = async (response) => {
   const { credential } = response;
   if (credential) {
     try {
-      const response = await $fetch("/api/users/google-login", {
+      const response = await $fetch("/api/auth/google-login", {
         method: "POST",
         body: { token: credential },
       });

@@ -56,7 +56,7 @@ const handleEmailLogin = async (loginData) => {
   isLoading.value = true;
   loginError.value = {};
   try {
-    const response = await $fetch("/api/users/login", {
+    const response = await $fetch("/api/auth/login", {
       method: "POST",
       body: { email: loginData.email, password: loginData.password },
     });
@@ -64,6 +64,7 @@ const handleEmailLogin = async (loginData) => {
     store.setToken(response.token);
     store.setUser(response.user);
     closeModal();
+    window.location.reload();
   } catch (error) {
     console.error("Login failed:", error);
     loginError.value = {
@@ -78,7 +79,7 @@ const handleGoogleLogin = async (response) => {
   const { credential } = response;
   if (credential) {
     try {
-      const response = await $fetch("/api/users/google-login", {
+      const response = await $fetch("/api/auth/google-login", {
         method: "POST",
         body: { token: credential },
       });
@@ -86,6 +87,7 @@ const handleGoogleLogin = async (response) => {
       store.setToken(response.token);
       store.setUser(response.user);
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error("Google login failed:", error);
       loginError.value = {
@@ -110,7 +112,7 @@ const handleSignUp = async (signUpData) => {
     return;
   }
   try {
-    const response = await $fetch("/api/users/reg", {
+    const response = await $fetch("/api/users", {
       method: "POST",
       body: {
         email: signUpData.email,
@@ -125,6 +127,7 @@ const handleSignUp = async (signUpData) => {
       email: signUpData.email,
       password: signUpData.password,
     });
+    window.location.reload();
   } catch (error) {
     isLoading.value = false;
     console.error("Sign-up failed:", error);

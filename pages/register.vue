@@ -27,7 +27,7 @@ const message = ref("");
 
 const registerUser = async () => {
   try {
-    const response = await fetch("/api/users/createUser", {
+    const response = await fetch("/api/auth/createUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -19,18 +19,22 @@
           </div>
         </div>
         <div class="profile-right-column">
-          <h1>{{ contractor.company }}</h1>
+          <div class="company">
+            <h1>{{ contractor.company }}</h1>
+            <h6 v-if="isBusinessOwner">(You are the owner of this business)</h6>
+          </div>
           <p class="location">
             {{ contractor.address.city }}, {{ contractor.address.state }}
           </p>
           <div class="ratings-section">
             <h2>Ratings</h2>
             <div class="rating-row">
-              <p class="star-rating">{{ contractor.ratings }}</p>
-              <div
-                class="stars"
-                :style="{ '--rating': contractor.ratings }"
-              ></div>
+              <p class="star-rating">{{ roundedRating.toFixed(1) }}</p>
+              <div class="stars">
+                <span v-for="n in 5" :key="n" class="star">
+                  {{ n <= roundedRating ? "★" : "☆" }}
+                </span>
+              </div>
             </div>
           </div>
           <div class="actions">
@@ -67,13 +71,11 @@
               </p>
             </div>
           </div>
-          <div
-            class="tab-content"
-            v-if="!isBusinessOwner && activeTab === 'reviews'"
-          >
+          <div class="tab-content" v-if="activeTab === 'reviews'">
             <ReviewForm
               :contractor="contractor"
               :tagDescriptions="tagDescriptions"
+              :isBusinessOwner="isBusinessOwner"
             />
           </div>
         </div>
@@ -178,6 +180,10 @@ const closeLoginModal = () => {
   document.body.classList.remove("no-scroll");
 };
 
+const roundedRating = computed(() => {
+  return Math.round(contractor.value.ratings);
+});
+
 const isBusinessOwner = computed(() => {
   return store.user && store.user.contractor === contractor.value._id;
 });
@@ -220,6 +226,12 @@ const isBusinessOwner = computed(() => {
   padding-left: 40px;
 }
 
+.company {
+  display: flex;
+  gap: 2rem;
+  margin: 3rem 0 10px 0;
+}
+
 .profile-image img {
   width: 100%;
   height: auto;
@@ -253,6 +265,12 @@ h3 {
   margin-bottom: 1rem;
 }
 
+h6 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
 .gray-line {
   border-bottom: 1px solid black;
   height: 1px;
@@ -274,7 +292,6 @@ h3 {
 
 .profile-right-column h1 {
   font-size: 28px;
-  margin: 3rem 0 10px 0;
   color: white;
 }
 
@@ -298,32 +315,21 @@ h3 {
 .rating-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .rating-row .star-rating {
-  font-size: 26px;
+  font-size: 36px;
   color: white;
 }
 
 .stars {
   display: flex;
-  --rating: 0;
-  font-size: 50px;
-  position: relative;
-  unicode-bidi: bidi-override;
-  direction: rtl;
 }
 
-.stars::before {
-  content: "☆☆☆☆☆";
-  display: inline-block;
-  background: linear-gradient(90deg, #ff9900 var(--rating), #ddd var(--rating));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: absolute;
-  top: 0;
-  left: 0;
+.star {
+  color: #ff9900;
+  font-size: 60px;
 }
 
 .actions {
