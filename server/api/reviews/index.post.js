@@ -40,36 +40,46 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event);
-    const { contractor, rating, comment, tags, reviewer } = body;
+    const { contractor, rating, comment, tags, reviewer, reviewId, businessRep, reply } = body;
     console.log("Request Body:", body);
 
-    let existingReview = await Review.findOne({
-      contractor: contractor,
-      reviewer: reviewer
-    });
-
-    if (existingReview) {
-      console.log("Existing review found, adding update");
-      existingReview.updates.push({
-        rating: rating,
-        comment: comment
-      });
-      await existingReview.save();
+    if (reply) {
+      console.log("Adding business reply");
+      const review = await Review.findById(reviewId);
+      if (review) {
+        console.log("BusinessRep: ", businessRep);
+        review.businessReplies.push({ businessRep: businessRep, comment: reply });
+        await review.save();
+      }
     } else {
-      console.log("Creating new review");
-      const newReview = new Review({
+      let existingReview = await Review.findOne({
         contractor: contractor,
-        reviewer: reviewer,
-        rating,
-        comment,
-        tags,
+        reviewer: reviewer
       });
 
-      await newReview.save();
-    }
+      if (existingReview) {
+        console.log("Existing review found, adding update");
+        existingReview.updates.push({
+          rating: rating,
+          comment: comment
+        });
+        await existingReview.save();
+      } else {
+        console.log("Creating new review");
+        const newReview = new Review({
+          contractor: contractor,
+          reviewer: reviewer,
+          rating,
+          comment,
+          tags,
+        });
 
-    // Update the contractor's rating
-    await updateContractorRating(contractor);
+        await newReview.save();
+      }
+
+      // Update the contractor's rating
+      await updateContractorRating(contractor);
+    }
 
     await disconnectDB(); // Disconnect from DB after success
     return { message: 'Review added successfully' };

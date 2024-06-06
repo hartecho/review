@@ -68,57 +68,96 @@
           <strong>Tags:</strong>
           {{ review.tags.map((tag) => tagDescriptions[tag]).join(", ") }}
         </p>
-        <div v-if="review.updates && review.updates.length">
+
+        <!-- Display the latest update directly under the original review -->
+        <div v-if="review.updates.length && !showUpdates[review._id]">
+          <div class="update">
+            <div class="review-header">
+              <h4 class="reviewer-name">{{ review.reviewer.name }}</h4>
+              <div class="update-tag">Update</div>
+              <div class="rating">
+                <span v-for="n in 5" :key="n" class="star">
+                  {{
+                    n <= review.updates[review.updates.length - 1].rating
+                      ? "★"
+                      : "☆"
+                  }}
+                </span>
+              </div>
+            </div>
+            <p class="review-date">
+              {{
+                new Date(
+                  review.updates[review.updates.length - 1].date
+                ).toLocaleDateString()
+              }}
+            </p>
+            <p class="review-comment">
+              {{ review.updates[review.updates.length - 1].comment }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Show other replies (updates and business replies) if available -->
+        <div v-if="review.updates.length > 1 || review.businessReplies.length">
           <button
             @click="toggleUpdates(review._id)"
             class="show-updates-button"
           >
-            Show Replies ({{
+            {{ showUpdates[review._id] ? "Hide Replies" : "Show Replies" }} ({{
               review.updates.length + review.businessReplies.length
             }})
           </button>
-          <div v-if="showUpdates[review._id]">
-            <div
-              class="update"
-              v-for="update in review.updates"
-              :key="update._id"
-            >
-              <div class="review-header">
-                <h4 class="reviewer-name">{{ review.reviewer.name }}</h4>
-                <div class="rating">
-                  <span v-for="n in 5" :key="n" class="star">
-                    {{ n <= update.rating ? "★" : "☆" }}
-                  </span>
+          <transition name="slide-fade" mode="out-in">
+            <div v-if="showUpdates[review._id]">
+              <div
+                v-for="item in sortedUpdatesAndReplies(review)"
+                :key="item._id"
+                class="update"
+                :class="{ 'business-reply': item.isBusinessReply }"
+              >
+                <div class="review-header">
+                  <h4 class="reviewer-name">
+                    {{
+                      item.isBusinessReply
+                        ? getBusinessName(item.businessRep)
+                        : review.reviewer.name
+                    }}
+                  </h4>
+                  <div
+                    v-if="item.isBusinessReply && isPremium"
+                    class="verified-tag"
+                  >
+                    ✔
+                  </div>
+                  <div v-if="!item.isBusinessReply" class="rating">
+                    <span v-for="n in 5" :key="n" class="star">
+                      {{ n <= item.rating ? "★" : "☆" }}
+                    </span>
+                  </div>
                 </div>
+                <p class="review-date">
+                  {{ new Date(item.date).toLocaleDateString() }}
+                </p>
+                <p class="review-comment">{{ item.comment }}</p>
               </div>
-              <p class="review-date">
-                {{ new Date(update.date).toLocaleDateString() }}
-              </p>
-              <p class="review-comment">{{ update.comment }}</p>
             </div>
-            <div
-              class="business-reply"
-              v-for="reply in review.businessReplies"
-              :key="reply._id"
-            >
-              <div class="review-header">
-                <h4 class="reviewer-name">
-                  {{ reply.reviewer.name }} (Business)
-                </h4>
-              </div>
-              <p class="review-date">
-                {{ new Date(reply.date).toLocaleDateString() }}
-              </p>
-              <p class="review-comment">{{ reply.comment }}</p>
-            </div>
-          </div>
+          </transition>
         </div>
-        <div v-if="isBusinessOwner && !review.businessReplies.length">
+
+        <!-- Business reply section -->
+        <div v-if="isBusinessOwner" class="business-reply-section">
           <textarea
             v-model="newReply[review._id]"
             placeholder="Write a reply..."
           ></textarea>
-          <button @click="submitReply(review._id)">Submit Reply</button>
+          <p v-if="error" class="error-message">{{ error }}</p>
+          <SubcomponentsLoadingButton
+            :isLoading="loading"
+            text="Submit Reply"
+            @click="submitReply(review._id)"
+            class="submit-button"
+          />
         </div>
       </div>
     </div>
@@ -126,8 +165,6 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-
 const props = defineProps({
   contractor: {
     type: Object,
@@ -141,8 +178,13 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  isPremium: {
+    type: Boolean,
+    required: true,
+  },
 });
 
+const store = useStore();
 const reviews = ref([]);
 const filteredReviews = ref([]);
 const selectedRating = ref(null);
@@ -151,6 +193,8 @@ const ratingCounts = ref([0, 0, 0, 0, 0]);
 const availableTags = ref([]);
 const showUpdates = ref({});
 const newReply = ref({});
+const loading = ref(false);
+const error = ref("");
 
 // Fetch reviews
 async function fetchReviews() {
@@ -169,7 +213,10 @@ async function fetchReviews() {
 function updateRatingCounts() {
   ratingCounts.value = [0, 0, 0, 0, 0];
   reviews.value.forEach((review) => {
-    ratingCounts.value[review.rating - 1]++;
+    const latestRating = review.updates.length
+      ? review.updates[review.updates.length - 1].rating
+      : review.rating;
+    ratingCounts.value[latestRating - 1]++;
   });
 }
 
@@ -184,8 +231,11 @@ const ratingPercentages = computed(() => {
 
 function filterReviews() {
   filteredReviews.value = reviews.value.filter((review) => {
+    const latestRating = review.updates.length
+      ? review.updates[review.updates.length - 1].rating
+      : review.rating;
     const ratingMatch = selectedRating.value
-      ? review.rating === selectedRating.value
+      ? latestRating === selectedRating.value
       : true;
     const tagsMatch = selectedTags.value.length
       ? selectedTags.value.every((tag) => review.tags.includes(tag))
@@ -207,21 +257,47 @@ function toggleUpdates(reviewId) {
   showUpdates.value[reviewId] = !showUpdates.value[reviewId];
 }
 
+function sortedUpdatesAndReplies(review) {
+  const updates = review.updates.map((update) => ({
+    ...update,
+    isBusinessReply: false,
+  }));
+  const replies = review.businessReplies.map((reply) => ({
+    ...reply,
+    isBusinessReply: true,
+  }));
+  return [...updates, ...replies].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+}
+
+function getBusinessName(businessRep) {
+  return props.isPremium ? props.contractor.company : businessRep;
+}
+
 async function submitReply(reviewId) {
   if (newReply.value[reviewId].trim()) {
+    loading.value = true;
+    error.value = "";
+    console.log("user name: ", store.user.name);
     try {
       await $fetch("/api/reviews", {
         method: "POST",
         body: {
-          contractorId: props.contractor._id,
+          contractor: props.contractor._id,
           reviewId,
+          businessRep: store.user.name,
           reply: newReply.value[reviewId],
         },
       });
       newReply.value[reviewId] = "";
       fetchReviews();
+      location.reload(); // Reload page on successful submission
     } catch (error) {
       console.error("Failed to submit reply:", error);
+      error.value = "Failed to submit reply. Please try again.";
+    } finally {
+      loading.value = false;
     }
   }
 }
@@ -233,7 +309,6 @@ onMounted(() => {
   }
 });
 </script>
-
 
 <style scoped>
 .reviews-page {
@@ -365,6 +440,19 @@ onMounted(() => {
   color: #333;
 }
 
+.update-tag {
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.verified-tag {
+  margin-left: 5px;
+  font-size: 14px;
+  color: #007bff;
+}
+
 .rating {
   display: flex;
   align-items: center;
@@ -401,6 +489,10 @@ onMounted(() => {
   margin-left: 20px;
 }
 
+.update.business-reply {
+  padding-left: 20px; /* Indent business replies */
+}
+
 .show-updates-button {
   background: none;
   color: #007bff;
@@ -414,5 +506,43 @@ onMounted(() => {
 
 .show-updates-button:hover {
   text-decoration: underline;
+}
+
+.business-reply-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.business-reply-section textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.business-reply-section .submit-button {
+  align-self: flex-end;
+  width: auto; /* Adjust button width */
+}
+
+/* Transition for smooth dropdown */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-to /* .slide-fade-leave-active in <2.1.8 */ {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
 }
 </style>

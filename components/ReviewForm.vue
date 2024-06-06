@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isBusinessOwner && isLoggedIn">
-      <p>You are the business owner. You can reply to reviews below.</p>
+      <p>You represent this business. Reply to reviews below!</p>
     </div>
     <div v-else-if="isLoggedIn">
       <div v-if="existingReview" class="review">
@@ -354,7 +354,7 @@ button:hover {
 
 p {
   color: black;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 
 .stars-input {

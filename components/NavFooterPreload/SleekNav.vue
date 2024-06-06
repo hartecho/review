@@ -81,6 +81,7 @@ let lastScrollPosition = ref(0);
 
 const logout = () => {
   store.logout();
+  window.location.reload();
   console.log("Logged out");
 };
 

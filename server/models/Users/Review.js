@@ -18,6 +18,10 @@ const reviewUpdateSchema = new mongoose.Schema({
 });
 
 const businessReplySchema = new mongoose.Schema({
+  businessRep: {
+    type: String,
+    required: true,
+  },
   comment: {
     type: String,
     required: true,
