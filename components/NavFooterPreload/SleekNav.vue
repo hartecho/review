@@ -64,7 +64,7 @@
       </div>
     </div> -->
     <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
-      <LoginModal @close="closeLoginModal" />
+      <NavFooterPreloadLoginModal @close="closeLoginModal" />
     </div>
   </nav>
 </template>

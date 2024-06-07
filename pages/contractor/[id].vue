@@ -29,7 +29,7 @@
           <div class="ratings-section">
             <h2>Ratings</h2>
             <div class="rating-row">
-              <p class="star-rating">{{ roundedRating.toFixed(1) }}</p>
+              <p class="star-rating">{{ contractor.ratings.toFixed(1) }}</p>
               <div class="stars">
                 <span v-for="n in 5" :key="n" class="star">
                   {{ n <= roundedRating ? "★" : "☆" }}
@@ -76,6 +76,7 @@
               :contractor="contractor"
               :tagDescriptions="tagDescriptions"
               :isBusinessOwner="isBusinessOwner"
+              :isPro="isPro"
             />
           </div>
         </div>
@@ -83,15 +84,16 @@
     </section>
 
     <section class="reviews-section">
-      <Reviews
+      <ReviewReviewsSection
         :contractor="contractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
+        :isPro="isPro"
       />
     </section>
 
     <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
-      <LoginModal @close="closeLoginModal" />
+      <NavFooterPreloadLoginModal @close="closeLoginModal" />
     </div>
   </div>
 </template>
@@ -100,7 +102,7 @@
 const route = useRoute();
 const store = useStore();
 
-const { data: contractor } = await useFetch(
+const { data: contractor, pending: contractorPending } = await useFetch(
   `/api/contractors?_id=${route.params.id}`
 );
 
@@ -185,10 +187,18 @@ const roundedRating = computed(() => {
 });
 
 const isBusinessOwner = computed(() => {
-  return store.user && store.user.contractor === contractor.value._id;
+  if (!store.user || !contractor.value) {
+    return false;
+  }
+  const isOwner = store.user.contractor === contractor.value._id;
+  return isOwner;
+});
+
+const isPro = computed(() => {
+  // return contractor.value && contractor.value.isPro;
+  return true;
 });
 </script>
-
 
 <style scoped>
 .profile-page {
