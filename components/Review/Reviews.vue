@@ -18,7 +18,11 @@
     </p>
 
     <!-- Display the latest update directly under the original review -->
-    <div v-if="review.updates.length && !showReplies">
+    <div
+      ref="latestUpdateWrapper"
+      class="latest-update-wrapper"
+      v-if="review.updates[0]"
+    >
       <div class="update latest-update">
         <div class="review-header">
           <h4 class="reviewer-name">{{ review.reviewer.name }}</h4>
@@ -53,58 +57,60 @@
           review.updates.length + review.businessReplies.length
         }})
       </button>
-      <transition name="height">
-        <div v-if="showReplies" class="replies-container">
-          <div
-            v-for="item in sortedUpdatesAndReplies(review)"
-            :key="item._id"
-            class="update"
-            :class="{
-              'business-reply': item.isBusinessReply,
-              pro: item.isBusinessReply && isPro,
-              'latest-update':
+      <div
+        ref="repliesContainer"
+        :class="{ open: showReplies }"
+        class="replies-container"
+      >
+        <div
+          v-for="item in sortedUpdatesAndReplies(review)"
+          :key="item._id"
+          class="update"
+          :class="{
+            'business-reply': item.isBusinessReply,
+            pro: item.isBusinessReply && isPro,
+            'latest-update':
+              review.updates.length &&
+              item._id === review.updates[review.updates.length - 1]._id &&
+              !item.isBusinessReply,
+          }"
+        >
+          <div class="review-header">
+            <h4 class="reviewer-name">
+              {{
+                item.isBusinessReply
+                  ? getBusinessName(item.businessRep)
+                  : review.reviewer.name
+              }}
+              <img
+                v-if="item.isBusinessReply && isPro"
+                src="/GoldenCheck.webp"
+                alt="Verified Pro"
+                class="verified-tag"
+              />
+            </h4>
+            <div v-if="!item.isBusinessReply" class="rating">
+              <span v-for="n in 5" :key="n" class="star">
+                {{ n <= item.rating ? "★" : "☆" }}
+              </span>
+            </div>
+            <div
+              v-if="
                 review.updates.length &&
                 item._id === review.updates[review.updates.length - 1]._id &&
-                !item.isBusinessReply,
-            }"
-          >
-            <div class="review-header">
-              <h4 class="reviewer-name">
-                {{
-                  item.isBusinessReply
-                    ? getBusinessName(item.businessRep)
-                    : review.reviewer.name
-                }}
-                <img
-                  v-if="item.isBusinessReply && isPro"
-                  src="/GoldenCheck.webp"
-                  alt="Verified Pro"
-                  class="verified-tag"
-                />
-              </h4>
-              <div v-if="!item.isBusinessReply" class="rating">
-                <span v-for="n in 5" :key="n" class="star">
-                  {{ n <= item.rating ? "★" : "☆" }}
-                </span>
-              </div>
-              <div
-                v-if="
-                  review.updates.length &&
-                  item._id === review.updates[review.updates.length - 1]._id &&
-                  !item.isBusinessReply
-                "
-                class="update-tag"
-              >
-                Updated Review
-              </div>
+                !item.isBusinessReply
+              "
+              class="update-tag"
+            >
+              Updated Review
             </div>
-            <p class="review-date">
-              {{ new Date(item.date).toLocaleDateString() }}
-            </p>
-            <p class="review-comment">{{ item.comment }}</p>
           </div>
+          <p class="review-date">
+            {{ new Date(item.date).toLocaleDateString() }}
+          </p>
+          <p class="review-comment">{{ item.comment }}</p>
         </div>
-      </transition>
+      </div>
     </div>
 
     <!-- Business reply section -->
@@ -122,6 +128,8 @@
 </template>
 
 <script setup>
+import { ref, computed, nextTick } from "vue";
+
 const props = defineProps({
   review: {
     type: Object,
@@ -155,7 +163,37 @@ const newReply = ref("");
 const loading = ref(false);
 const error = ref("");
 
-function toggleReplies() {
+const latestUpdateWrapper = ref(null);
+const repliesContainer = ref(null);
+
+const hasUpdates = computed(() => review.updates.length > 0);
+const hasReplies = computed(
+  () => review.updates.length > 1 || review.businessReplies.length > 0
+);
+
+async function toggleReplies() {
+  const repliesEl = repliesContainer.value;
+  const latestUpdateEl = latestUpdateWrapper.value;
+
+  if (!latestUpdateEl) {
+    if (showReplies.value) {
+      repliesEl.style.maxHeight = "0";
+    } else {
+      repliesEl.style.maxHeight = "100rem";
+    }
+  } else {
+    if (showReplies.value) {
+      repliesEl.style.maxHeight = "0";
+      setTimeout(() => {
+        latestUpdateEl.style.maxHeight = "100rem";
+      }, 1000);
+    } else {
+      latestUpdateEl.style.maxHeight = "0";
+      setTimeout(() => {
+        repliesEl.style.maxHeight = "100rem";
+      }, 1000);
+    }
+  }
   showReplies.value = !showReplies.value;
 }
 
@@ -208,18 +246,18 @@ async function submitReply() {
 
 <style scoped>
 .review {
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; /* Add margin to separate reviews */
+  margin-bottom: 20px;
 }
 
 .review-header {
   display: flex;
-  flex-direction: column; /* Change to column direction */
-  align-items: flex-start; /* Align items to the start */
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 10px;
   position: relative;
 }
@@ -243,12 +281,6 @@ async function submitReply() {
   color: #007bff;
 }
 
-.update-tag-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
-}
-
 .verified-tag {
   margin-left: 10px;
   margin-bottom: 3px;
@@ -266,15 +298,10 @@ async function submitReply() {
   font-size: 20px;
 }
 
-.review-comment {
+.review-comment,
+.review-tags {
   font-size: 16px;
   color: #333;
-  margin-bottom: 10px;
-}
-
-.review-tags {
-  font-size: 14px;
-  color: #555;
   margin-bottom: 10px;
 }
 
@@ -289,35 +316,36 @@ async function submitReply() {
   border: none;
   padding: 10px 0;
   margin-top: 5px;
-  padding-left: 20px; /* Indent all updates and replies */
+  padding-left: 20px;
   position: relative;
-  margin-bottom: 20px; /* Increase space between replies */
+  margin-bottom: 20px;
+}
+
+.latest-update-wrapper {
+  transition: max-height 1s ease;
+  max-height: 100rem;
+  overflow: hidden;
 }
 
 .latest-update {
-  background-color: #f0f8ff; /* Light blue background for the latest update */
-  border-left: 4px solid #007bff; /* Blue left border for the latest update */
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
   padding: 10px;
-  margin-left: 0; /* Remove left margin for the latest update */
+  margin-left: 0;
   border-radius: 8px;
 }
 
-/* Gray color scheme for non-pro business replies */
 .update.business-reply {
-  border-left: 4px solid #a3a3a3; /* Gray left border for business replies */
-  padding-left: 20px; /* Indent business replies */
-  margin-bottom: 20px; /* Increase space between business replies */
-  background: #f5f5f5; /* Light gray background for business replies */
+  border-left: 4px solid #a3a3a3;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  background: #f5f5f5;
   border-radius: 8px;
 }
 
-/* Gold color scheme for pro business replies */
 .update.business-reply.pro {
-  border-left: 4px solid #ffd700; /* Gold left border for pro business replies */
-  padding-left: 20px; /* Indent business replies */
-  margin-bottom: 20px; /* Increase space between business replies */
-  background: #fff8dc; /* Light gold background for pro business replies */
-  border-radius: 8px;
+  border-left: 4px solid #ffd700;
+  background: #fff8dc;
 }
 
 .show-updates-button {
@@ -336,7 +364,14 @@ async function submitReply() {
 }
 
 .replies-container {
-  margin-top: 20px; /* Add margin to separate replies from the review */
+  margin-top: 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease;
+}
+
+.replies-container.open {
+  max-height: 1000px; /* Arbitrary large value to ensure full expansion */
 }
 
 .business-reply-section {
@@ -358,18 +393,7 @@ async function submitReply() {
 
 .business-reply-section .submit-button {
   align-self: flex-start;
-  width: auto; /* Adjust button width */
-}
-
-/* Transition for smooth dropdown */
-.height-enter-active,
-.height-leave-active {
-  transition: height 0.5s ease;
-}
-.height-enter,
-.height-leave-to {
-  height: 0;
-  overflow: hidden;
+  width: auto;
 }
 
 .error-message {
