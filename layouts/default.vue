@@ -4,7 +4,7 @@
       :navPaths="currentPaths"
       @toggleMobileNav="showMobileNav = !showMobileNav"
       companyName="SUBSOURCE"
-      logoPath="HARTECHOLogo.webp"
+      logoPath="SSLogo.png"
       navBarsButtonPath="NavBars.svg"
     />
 
@@ -20,10 +20,11 @@
     <footer>
       <NavFooterPreloadBlackBubbleFooter
         :navPaths="currentPaths"
-        companyName="HARTECHO"
-        companyDescription="Performance Marketing Agency"
+        companyName="SUBSOURCE"
+        companyDescription="Contractor Review Platform"
         phone="+1 (801) 793-5456"
-        email="sales@hartecho.com"
+        email="support@subsource.org"
+        slogan="Hi"
       />
     </footer>
   </div>

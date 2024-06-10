@@ -59,8 +59,8 @@ useSeoMeta({
     "Get in touch with us through our contact form or reach us directly via email or phone. We look forward to hearing from you.",
   ogDescription:
     "Get in touch with us through our contact form or reach us directly via email or phone. We look forward to hearing from you.",
-  ogImage: "/HARTECHOLogo.webp",
-  twitterCard: "/HARTECHOLogo.webp",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
 });
 
 const formData = ref({

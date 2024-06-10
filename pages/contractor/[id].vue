@@ -1,88 +1,21 @@
 <template>
   <div class="profile-page">
-    <section class="profile-header-section">
-      <div class="profile-header">
-        <div class="profile-left-column">
-          <div class="profile-image">
-            <img :src="resolvedImgPath()" alt="Contractor Picture" />
-          </div>
-          <div class="job-types-section">
-            <div class="subtitle">
-              <h2>Job Types</h2>
-              <div class="gray-line"></div>
-            </div>
-            <ul class="job-types">
-              <li v-for="tag in contractor.tags" :key="tag">
-                {{ tagDescriptions[tag] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="profile-right-column">
-          <div class="company">
-            <h1>{{ contractor.company }}</h1>
-            <h6 v-if="isBusinessOwner">(You are the owner of this business)</h6>
-          </div>
-          <p class="location">
-            {{ contractor.address.city }}, {{ contractor.address.state }}
-          </p>
-          <div class="ratings-section">
-            <h2>Ratings</h2>
-            <div class="rating-row">
-              <p class="star-rating">{{ contractor.ratings.toFixed(1) }}</p>
-              <div class="stars">
-                <span v-for="n in 5" :key="n" class="star">
-                  {{ n <= roundedRating ? "★" : "☆" }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="actions">
-            <button
-              class="contact-contractor-button"
-              @click="contactContractor"
-            >
-              Contact Contractor
-            </button>
-            <button class="report-button">Report an Issue</button>
-          </div>
-          <div class="tabs">
-            <button
-              @click="activeTab = 'about'"
-              :class="{ active: activeTab === 'about' }"
-            >
-              About
-            </button>
-            <button
-              @click="activeTab = 'reviews'"
-              :class="{ active: activeTab === 'reviews' }"
-            >
-              Leave a Review
-            </button>
-          </div>
-          <div class="tab-content" v-if="activeTab === 'about'">
-            <h3>Contact Information</h3>
-            <div class="contact-info">
-              <p><strong>Email:</strong> {{ contractor.email }}</p>
-              <p><strong>Phone:</strong> {{ contractor.phone }}</p>
-              <p>
-                <strong>Address:</strong> {{ contractor.address.city }},
-                {{ contractor.address.state }}
-              </p>
-            </div>
-          </div>
-          <div class="tab-content" v-if="activeTab === 'reviews'">
-            <ReviewForm
-              :contractor="contractor"
-              :tagDescriptions="tagDescriptions"
-              :isBusinessOwner="isBusinessOwner"
-              :isPro="isPro"
-            />
-          </div>
-        </div>
-      </div>
+    <section class="header-section">
+      <ProfileHeaderSection
+        :contractor="contractor"
+        :tagDescriptions="tagDescriptions"
+        :contactContractor="contactContractor"
+        :roundedRating="roundedRating"
+      />
     </section>
-
+    <section class="tabs-section">
+      <ProfileTabsSection
+        :contractor="contractor"
+        :tagDescriptions="tagDescriptions"
+        :isBusinessOwner="isBusinessOwner"
+        :isPro="isPro"
+      />
+    </section>
     <section class="reviews-section">
       <ReviewReviewsSection
         :contractor="contractor"
@@ -91,7 +24,6 @@
         :isPro="isPro"
       />
     </section>
-
     <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
       <NavFooterPreloadLoginModal @close="closeLoginModal" />
     </div>
@@ -195,7 +127,6 @@ const isBusinessOwner = computed(() => {
 });
 
 const isPro = computed(() => {
-  // return contractor.value && contractor.value.isPro;
   return true;
 });
 </script>
@@ -204,212 +135,23 @@ const isPro = computed(() => {
 .profile-page {
 }
 
-.profile-header-section {
-  background: url("/BG2.jpg") no-repeat center top;
+.header-section {
+  min-height: 25rem;
+  height: 25rem;
+  width: 100%;
+  background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
-  font-family: Arial, sans-serif;
-  color: white;
-  width: 100%;
-  padding: 2rem 2rem 5rem 2rem;
-  min-height: 55rem;
+  position: relative;
 }
 
-.profile-header-section,
-.review-form-section,
+.tabs-section {
+}
+
 .reviews-section {
-  margin-bottom: 40px;
-}
-
-.profile-header {
-  display: flex;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.profile-left-column {
-  width: 25%;
-  padding-right: 20px;
-}
-
-.profile-right-column {
-  width: 75%;
-  padding-left: 40px;
-}
-
-.company {
-  display: flex;
-  gap: 2rem;
-  margin: 3rem 0 10px 0;
-}
-
-.profile-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.job-types-section {
-  margin-bottom: 40px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 1rem;
-  border-radius: 10px;
-}
-
-.subtitle {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  color: black;
-}
-
-h2 {
-  margin-bottom: 1rem;
-  font-size: 18px;
-  font-weight: normal;
-  color: black;
-}
-
-h3 {
-  color: black;
-  margin-bottom: 1rem;
-}
-
-h6 {
-  color: white;
-  font-size: 1.5rem;
-  text-shadow: 1px 1px 2px black;
-  margin-bottom: 1rem;
-}
-
-.gray-line {
-  border-bottom: 1px solid black;
-  height: 1px;
-  flex-grow: 1;
-  margin-left: 10px;
-}
-
-.job-types {
-  list-style: none;
-  padding: 0;
-  font-weight: bold;
-}
-
-.job-types li {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: black;
-}
-
-.profile-right-column h1 {
-  font-size: 32px;
-  color: white;
-  text-shadow: 2px 2px 2px black;
-}
-
-.profile-right-column .location {
-  font-size: 20px;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-  margin-bottom: 30px;
-}
-
-.ratings-section {
-  margin-bottom: 40px;
-}
-
-.ratings-section h2 {
-  margin: 0 0 10px 0;
-  font-size: 20px;
-  font-weight: normal;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-}
-
-.rating-row {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.rating-row .star-rating {
-  font-size: 36px;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-}
-
-.stars {
-  display: flex;
-}
-
-.star {
-  color: #ff9900;
-  font-size: 60px;
-  text-shadow: 2px 2px 5px black;
-}
-
-.actions {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.contact-contractor-button,
-.report-button {
-  background-color: #007bff;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.contact-contractor-button:hover,
-.report-button:hover {
-  background-color: #0056b3;
-}
-
-.tabs {
-  display: flex;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
-}
-
-.tabs button {
-  background: none;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 20px;
-  margin-right: 10px;
-  color: white;
-  text-shadow: 2px 2px 1px black;
-  transition: color 0.3s, border-bottom 0.3s;
-}
-
-.tabs button:hover {
-  color: white;
-  text-shadow: 1px 1px 2px black;
-}
-
-.tabs button.active {
-  border-bottom: 2px solid white;
-  font-weight: bold;
-}
-
-.tab-content {
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.contact-info p {
-  margin: 0 0 10px 0;
-  font-size: 16px;
-  color: #333;
+  margin-top: 20px;
+  /* background: url("/IntroBG.jpg") no-repeat center top; */
+  /* background: black; */
+  background-size: cover;
 }
 
 .modal-wrapper {

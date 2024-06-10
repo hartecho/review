@@ -46,7 +46,6 @@
           </div>
         </div>
       </div>
-      <div class="advertisement"></div>
     </div>
 
     <!-- Main Section for Reviews -->
@@ -162,25 +161,37 @@ onMounted(() => {
 </script>
 
 <style scoped>
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 .reviews-page {
   display: flex;
-  gap: 5rem;
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 4rem;
+  gap: 5rem;
+  overflow: visible; /* Ensure no overflow hidden or auto */
 }
 
 .left-column {
   width: 30%;
+  background: #f9f9f9;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 9rem;
+  height: fit-content;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-start; /* Ensure it doesn't stretch in a flex container */
 }
 
 .filters {
   color: black;
-  height: auto;
-  background: #f9f9f9;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .star-rating-breakdown h2,
@@ -263,7 +274,8 @@ onMounted(() => {
 }
 
 .reviews-container {
-  flex: 1;
+  width: 70%;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;

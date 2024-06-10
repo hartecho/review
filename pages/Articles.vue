@@ -30,8 +30,8 @@ useSeoMeta({
     "Browse our blog for the latest news, tips, and insights on digital marketing.",
   ogDescription:
     "Browse our blog for the latest news, tips, and insights on digital marketing.",
-  ogImage: "/HARTECHOLogo.webp",
-  twitterCard: "/HARTECHOLogo.webp",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
 });
 
 const router = useRouter();
@@ -54,7 +54,7 @@ const resolvedImgPath = (path) => {
   if (path) {
     return "/" + path;
   }
-  return "/HARTECHOLogo.webp";
+  return "/SSLogo.png";
 };
 
 const goToBlog = (blogId) => {

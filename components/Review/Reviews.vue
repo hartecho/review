@@ -53,7 +53,7 @@
     <!-- Show other replies (updates and business replies) if available -->
     <div v-if="review.updates.length > 1 || review.businessReplies.length">
       <button @click="toggleReplies" class="show-updates-button">
-        {{ showReplies ? "Hide Replies" : "Show Replies" }} ({{
+        {{ showReplies ? "Hide Replies" : "Show All Replies" }} ({{
           review.updates.length + review.businessReplies.length
         }})
       </button>

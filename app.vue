@@ -36,7 +36,7 @@
   font-family: "Montserrat", sans-serif;
   /* border-top-left-radius: 15px; */
   /* border-bottom-left-radius: 15px; */
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 /* Login container styling (if used elsewhere) */

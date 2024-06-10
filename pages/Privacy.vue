@@ -59,8 +59,8 @@ useSeoMeta({
     "Read our Privacy Policy to understand how we collect, use, and protect your personal information.",
   ogDescription:
     "Read our Privacy Policy to understand how we collect, use, and protect your personal information.",
-  ogImage: "/HARTECHOLogo.webp",
-  twitterCard: "/HARTECHOLogo.webp",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
 });
 </script>
   

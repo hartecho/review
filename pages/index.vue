@@ -6,9 +6,9 @@
   <div class="home">
     <section id="search-section" class="search-section">
       <WebSectionsSearch />
-      <NuxtLink to="/contractor/editContractors" class="edit-button-link">
+      <!-- <NuxtLink to="/contractor/editContractors" class="edit-button-link">
         <button class="edit-button">Edit Contractors</button>
-      </NuxtLink>
+      </NuxtLink> -->
     </section>
 
     <section class="services-section boil-bot-white">
@@ -34,8 +34,8 @@ useSeoMeta({
     "Welcome to our performance marketing agency. We specialize in Google Ads, Facebook Ads, premium websites, SEO, branding, and tech support. Partner with us to resonate with your target audience and drive growth for your brand.",
   ogDescription:
     "Welcome to our performance marketing agency. We specialize in Google Ads, Facebook Ads, premium websites, SEO, branding, and tech support. Partner with us to resonate with your target audience and drive growth for your brand.",
-  ogImage: "/HARTECHOLogo.webp",
-  twitterCard: "/HARTECHOLogo.webp",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
 });
 
 onMounted(() => {

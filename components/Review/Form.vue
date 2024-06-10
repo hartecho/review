@@ -18,46 +18,57 @@
         />
       </div>
 
-      <h4 class="review-title">
+      <h4
+        :class="['review-title-dropdown', { 'is-button': existingReview }]"
+        @click="toggleReviewForm"
+      >
         {{ existingReview ? "Update Your Review" : "Leave a Review" }}
+        <span
+          v-if="existingReview"
+          class="arrow"
+          :class="{ open: showReviewForm }"
+          >▼</span
+        >
       </h4>
-      <div class="star-rating">
-        <p>Choose your star rating:</p>
-        <div class="stars-input">
-          <span
-            v-for="n in 5"
-            :key="n"
-            class="star"
-            :class="{ filled: n <= newReview.rating || n <= hoverRating }"
-            @mouseover="hoverRating = n"
-            @mouseleave="hoverRating = 0"
-            @click="setRating(n)"
-          >
-            ★
-          </span>
-        </div>
-      </div>
-      <div class="checkboxes">
-        <div class="checkbox-group">
-          <h4>Select Job Types</h4>
-          <div class="checkbox-row">
-            <label v-for="tag in contractor.tags" :key="tag">
-              <input type="checkbox" :value="tag" v-model="newReview.tags" />
-              {{ tagDescriptions[tag] }}
-            </label>
+      <div v-if="showReviewForm || !existingReview">
+        <div class="star-rating">
+          <p>Choose your star rating:</p>
+          <div class="stars-input">
+            <span
+              v-for="n in 5"
+              :key="n"
+              class="star"
+              :class="{ filled: n <= newReview.rating || n <= hoverRating }"
+              @mouseover="hoverRating = n"
+              @mouseleave="hoverRating = 0"
+              @click="setRating(n)"
+            >
+              ★
+            </span>
           </div>
         </div>
+        <div class="checkboxes">
+          <div class="checkbox-group">
+            <h4>Select Job Types</h4>
+            <div class="checkbox-row">
+              <label v-for="tag in contractor.tags" :key="tag">
+                <input type="checkbox" :value="tag" v-model="newReview.tags" />
+                {{ tagDescriptions[tag] }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <textarea
+          v-model="newReview.comment"
+          placeholder="Write your review..."
+        ></textarea>
+        <p v-if="error" class="error-message">{{ error }}</p>
+        <SubcomponentsLoadingButton
+          :text="existingReview ? 'Update Review' : 'Submit Review'"
+          :isLoading="loading"
+          @click="submitReview"
+        />
       </div>
-      <textarea
-        v-model="newReview.comment"
-        placeholder="Write your review..."
-      ></textarea>
-      <p v-if="error" class="error-message">{{ error }}</p>
-      <SubcomponentsLoadingButton
-        :text="existingReview ? 'Update Review' : 'Submit Review'"
-        :isLoading="loading"
-        @click="submitReview"
-      />
     </div>
     <div v-else>
       <p>You need to sign in to leave a review.</p>
@@ -69,6 +80,7 @@
     />
   </div>
 </template>
+
 
 <script setup>
 const props = defineProps({
@@ -98,6 +110,7 @@ const isLoggedIn = computed(() => !!store.token);
 const loading = ref(false);
 const showLoginModal = ref(false);
 const error = ref("");
+const showReviewForm = ref(true);
 
 async function fetchExistingReview() {
   if (isLoggedIn.value) {
@@ -112,6 +125,9 @@ async function fetchExistingReview() {
           comment: "",
           tags: response.tags,
         };
+        showReviewForm.value = false; // Hide the form initially if there's an existing review
+      } else {
+        showReviewForm.value = true; // Show the form if there's no existing review
       }
     } catch (error) {
       console.error("Failed to fetch existing review:", error);
@@ -121,6 +137,12 @@ async function fetchExistingReview() {
 
 function setRating(rating) {
   newReview.value.rating = rating;
+}
+
+function toggleReviewForm() {
+  if (existingReview.value) {
+    showReviewForm.value = !showReviewForm.value;
+  }
 }
 
 async function submitReview() {
@@ -185,7 +207,7 @@ h5 {
   display: flex;
   flex-wrap: wrap;
   margin-top: 0.5rem;
-  gap: 40px;
+  gap: 10px;
   margin-left: -10px;
 }
 
@@ -261,6 +283,43 @@ button:hover {
   font-weight: bold;
   margin: 10px 0 10px;
   color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-title-dropdown {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.review-title-dropdown.is-button {
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  width: 19rem;
+}
+
+.review-title-dropdown.is-button:hover {
+  background-color: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+  margin-left: 10px;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
 }
 
 .star-rating {

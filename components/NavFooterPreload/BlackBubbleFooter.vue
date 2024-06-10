@@ -20,7 +20,7 @@
           <p>Email: {{ email }}</p>
         </address>
         <h1 class="slogan">
-          {{ slogan }} Make your brand <i><u>RESONATE</u></i>
+          {{ slogan }}
         </h1>
       </div>
     </div>
@@ -132,6 +132,8 @@ a:link {
 
 .slogan {
   flex-grow: 1;
+  position: sticky;
+  bottom: 15rem;
 }
 
 .bottom-content {

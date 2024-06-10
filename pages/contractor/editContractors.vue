@@ -61,8 +61,8 @@
                 :value="tag.enum"
                 v-model="contractor.tags"
               />
+              {{ tag.enum }} ({{ tag.description }})
             </label>
-            <h3>{{ tag.enum }} ({{ tag.description }})</h3>
           </div>
         </div>
 
@@ -70,13 +70,14 @@
           <button @click="addContractor">Add Contractor</button>
           <button @click="updateContractor">Update Contractor</button>
           <button @click="deleteContractor">Delete Contractor</button>
+          <button @click="resetRatings">Reset All Ratings</button>
         </div>
       </div>
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { ref, onMounted } from "vue";
 
 const contractors = ref([]);
@@ -221,6 +222,19 @@ async function deleteContractor() {
   }
 }
 
+async function resetRatings() {
+  try {
+    await $fetch("/api/contractors/reset", {
+      method: "PUT",
+    });
+    alert("All contractor ratings have been reset to zero.");
+    getContractors();
+  } catch (error) {
+    alert("Error resetting ratings: " + error.message);
+    console.error("Error resetting ratings:", error);
+  }
+}
+
 function init() {
   getContractors();
   contractor.value = {
@@ -241,8 +255,8 @@ function init() {
   selectedContractor.value = "";
 }
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .wrapper {
   padding: 6rem 0;
   width: 90%;
@@ -320,4 +334,3 @@ button:hover {
   margin-right: 8px;
 }
 </style>
-  

@@ -230,18 +230,20 @@ function closeLoginModal() {
 
 .login-button {
   font-size: 18px;
+  /* font-weight: bold; */
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
-  background-color: #4caf50;
+  background-color: #ff8210;
   color: white;
+  text-shadow: 1px 1px 5px black;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
   cursor: pointer;
   outline: none;
 }
 
 .login-button:hover {
-  background-color: #45a049;
+  background-color: #faa94a;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
