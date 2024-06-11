@@ -167,8 +167,8 @@ function splitText(text) {
 .search-container {
   position: relative;
   width: 100%;
-  max-width: 600px;
-  padding-top: 10rem;
+  max-width: 700px;
+  padding: 10rem 2rem 0 2rem;
   margin: 0 auto;
   text-align: center;
   color: black;
@@ -176,7 +176,6 @@ function splitText(text) {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* background: blue; */
 }
 
 .search-title {
@@ -306,6 +305,11 @@ function splitText(text) {
   .search-input {
     max-width: 100%;
   }
+
+  .dropdown-list {
+    left: 2rem;
+    right: 2rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -318,12 +322,12 @@ function splitText(text) {
   }
 
   .dropdown-item {
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: flex-start;
   }
 
   .contractor-logo {
-    margin-bottom: 10px;
+    margin-top: 5px;
   }
 }
 </style>

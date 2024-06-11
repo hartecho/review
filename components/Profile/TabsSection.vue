@@ -47,7 +47,7 @@ const props = defineProps({
 const activeTab = ref("reviews");
 </script>
   
-  <style scoped>
+<style scoped>
 .tabs-section {
   text-align: left;
   max-width: 1400px;
@@ -60,6 +60,7 @@ const activeTab = ref("reviews");
   display: inline-flex;
   border-bottom: 2px solid #ddd;
   gap: 10px;
+  flex-wrap: wrap; /* Ensure buttons wrap on smaller screens */
 }
 
 .tabs button {
@@ -87,7 +88,6 @@ const activeTab = ref("reviews");
   padding: 20px;
   background: #fff;
   border-radius: 8px;
-  /* box-shadow: 0 0px 4px rgba(0, 0, 0, 0.2); */
   width: 100%;
 }
 
@@ -96,5 +96,46 @@ const activeTab = ref("reviews");
   font-size: 16px;
   color: #333;
 }
+
+@media (max-width: 768px) {
+  .tabs-section {
+    padding: 1.5rem 2rem;
+    margin-top: 30px;
+  }
+
+  .tabs button {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+
+  .tab-content {
+    padding: 16px;
+    margin: 16px 0;
+  }
+
+  .contact-info p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-section {
+    padding: 1rem 0;
+    margin-top: 20px;
+  }
+
+  .tabs button {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  .tab-content {
+    padding: 12px;
+    margin: 12px 0;
+  }
+
+  .contact-info p {
+    font-size: 12px;
+  }
+}
 </style>
-  

@@ -98,7 +98,7 @@ function highlightMatch(text) {
 }
 </script>
   
-  <style scoped>
+<style scoped>
 .results-container {
   display: flex;
   flex-direction: column;
@@ -226,5 +226,36 @@ function highlightMatch(text) {
 .star.filled {
   color: #ffd700;
 }
+
+@media (max-width: 480px) {
+  .results-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .contractor-logo {
+    margin-bottom: 10px;
+  }
+
+  /* .star-rating {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 10px;
+  } */
+
+  .contractor-info h3,
+  .contractor-info p {
+    font-size: 14px;
+  }
+
+  .jobs-list li {
+    font-size: 12px;
+  }
+
+  .star {
+    font-size: 18px;
+  }
+}
 </style>
-  

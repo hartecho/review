@@ -121,6 +121,10 @@ const filteredContractors = computed(() => {
 }
 
 @media (max-width: 480px) {
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
   .page-header h1 {
     font-size: 1.5em;
   }

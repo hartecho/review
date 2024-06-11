@@ -254,4 +254,19 @@ h2 {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Standard syntax */
 }
+
+@media (max-width: 480px) {
+  .form-wrapper {
+    flex-direction: column;
+  }
+
+  .modal {
+    height: 45rem;
+  }
+}
+
+*,
+body {
+  text-shadow: 1px 1px 1px black;
+}
 </style>

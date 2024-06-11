@@ -62,31 +62,65 @@ const resolvedImgPath = () => {
   align-items: flex-end;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 4rem;
+  padding: 2rem 4rem 1rem 4rem;
   height: 100%;
+}
+
+@media (max-width: 768px) {
+  .profile-header-section {
+    flex-direction: row;
+    padding: 2rem 1rem;
+    margin: 0;
+  }
 }
 
 .profile-header {
   display: flex;
   justify-content: left;
+  align-items: flex-end; /* Align content at the bottom */
+  flex-wrap: wrap;
 }
 
 .profile-info {
   text-align: left;
   display: flex;
+  flex-direction: row;
   width: 100%;
   gap: 3rem;
   text-shadow: 2px 2px 1px black;
 }
 
+@media (max-width: 768px) {
+  .profile-info {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
 .profile-image {
+  width: 15rem;
+  height: 15rem;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .profile-image img {
-  width: 15rem;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .profile-image {
+    width: 10rem;
+    height: 10rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-image {
+    width: 7rem;
+    height: 7rem;
+  }
 }
 
 .profile-details {
@@ -94,8 +128,14 @@ const resolvedImgPath = () => {
 }
 
 .profile-details h1 {
-  font-size: 48px;
+  font-size: 36px;
   margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .profile-details h1 {
+    font-size: 48px;
+  }
 }
 
 .ratings-section {
@@ -106,11 +146,23 @@ const resolvedImgPath = () => {
 }
 
 .star-rating {
-  font-size: 36px;
+  font-size: 24px;
+}
+
+@media (min-width: 768px) {
+  .star-rating {
+    font-size: 36px;
+  }
 }
 
 .no-reviews {
-  font-size: 24px;
+  font-size: 18px;
+}
+
+@media (min-width: 768px) {
+  .no-reviews {
+    font-size: 24px;
+  }
 }
 
 .stars {
@@ -119,14 +171,20 @@ const resolvedImgPath = () => {
 
 .star {
   color: #ff9900;
-  font-size: 36px;
+  font-size: 24px;
+}
+
+@media (min-width: 768px) {
+  .star {
+    font-size: 36px;
+  }
 }
 
 .job-types {
   list-style: none;
   padding: 0;
   margin: 10px 0;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -136,10 +194,23 @@ const resolvedImgPath = () => {
   display: inline;
 }
 
+@media (min-width: 768px) {
+  .job-types {
+    font-size: 18px;
+  }
+}
+
 .actions {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+  .actions {
+    gap: 20px;
+  }
 }
 
 .contact-contractor-button,
@@ -151,7 +222,14 @@ const resolvedImgPath = () => {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .contact-contractor-button,
+  .report-button {
+    font-size: 16px;
+  }
 }
 
 .contact-contractor-button:hover,

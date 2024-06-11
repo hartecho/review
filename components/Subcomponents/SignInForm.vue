@@ -33,7 +33,7 @@ const onEmailSignIn = () => {
 };
 </script>
   
-  <style scoped>
+<style scoped>
 .form-container {
   width: 48%;
   position: relative;
@@ -49,11 +49,6 @@ h2 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 
 .button {
@@ -98,5 +93,15 @@ h2 {
   height: 20px;
   margin-right: 8px;
 }
+
+@media (max-width: 480px) {
+  .form-container {
+    width: 100%;
+  }
+  .form-content {
+    min-height: 0;
+    height: auto;
+    padding: 2rem 0;
+  }
+}
 </style>
-  

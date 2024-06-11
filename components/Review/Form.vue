@@ -355,4 +355,55 @@ p {
   color: red;
   font-size: 14px;
 }
+
+@media (max-width: 768px) {
+  .review-title-dropdown.is-button {
+    width: auto;
+  }
+
+  .review-title-dropdown {
+    font-size: 20px;
+  }
+
+  .arrow {
+    font-size: 18px;
+  }
+
+  .stars-input .star {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkbox-row {
+    gap: 5px;
+    margin-left: 0;
+  }
+
+  .checkbox-row label {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .review-title-dropdown.is-button {
+    width: auto;
+    padding: 8px 16px;
+  }
+
+  .review-title-dropdown {
+    font-size: 18px;
+  }
+
+  .arrow {
+    font-size: 16px;
+  }
+
+  .stars-input .star {
+    font-size: 20px;
+  }
+
+  .error-message {
+    font-size: 12px;
+  }
+}
 </style>

@@ -133,25 +133,66 @@ const isPro = computed(() => {
 
 <style scoped>
 .profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header-section {
-  min-height: 25rem;
-  height: 25rem;
   width: 100%;
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
   position: relative;
+  padding: 8rem 4rem 0 4rem;
+}
+
+@media (max-width: 768px) {
+  .header-section {
+    padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-section {
+    padding: 0.5rem 1rem;
+  }
 }
 
 .tabs-section {
+  width: 100%;
+  padding: 1rem 4rem;
+}
+
+@media (max-width: 768px) {
+  .tabs-section {
+    padding: 1rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-section {
+    padding: 0.5rem;
+  }
 }
 
 .reviews-section {
+  width: 100%;
   margin-top: 20px;
-  /* background: url("/IntroBG.jpg") no-repeat center top; */
-  /* background: black; */
-  background-size: cover;
+  padding: 1rem 4rem;
+}
+
+@media (max-width: 768px) {
+  .reviews-section {
+    margin-top: 15px;
+    padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reviews-section {
+    margin-top: 10px;
+    padding: 0.5rem 1rem;
+  }
 }
 
 .modal-wrapper {
@@ -174,3 +215,4 @@ const isPro = computed(() => {
   opacity: 1;
 }
 </style>
+

@@ -174,7 +174,6 @@ html {
   margin: 0 auto;
   padding: 2rem 4rem;
   gap: 5rem;
-  overflow: visible; /* Ensure no overflow hidden or auto */
 }
 
 .left-column {
@@ -186,7 +185,7 @@ html {
   height: fit-content;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  align-self: flex-start; /* Ensure it doesn't stretch in a flex container */
+  align-self: flex-start;
 }
 
 .filters {
@@ -270,14 +269,101 @@ html {
 
 .star {
   color: #ff9900;
-  font-size: 30px; /* Increased font size for larger stars */
+  font-size: 30px;
 }
 
 .reviews-container {
   width: 70%;
-  padding: 0 20px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .reviews-page {
+    flex-direction: column;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .left-column {
+    width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  .reviews-container {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .reviews-page {
+    padding: 1rem;
+  }
+
+  .left-column {
+    padding: 1rem;
+  }
+
+  .filters {
+    padding: 10px;
+  }
+
+  .average-rating {
+    font-size: 20px;
+  }
+
+  .average-rating-score {
+    font-size: 20px;
+  }
+
+  .rating-bar {
+    font-size: 14px;
+  }
+
+  .tag-filters .tag {
+    padding: 5px;
+  }
+
+  .star {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reviews-page {
+    padding: 0.5rem 0;
+    gap: 1rem;
+  }
+
+  .left-column {
+    padding: 0.5rem;
+  }
+
+  .filters {
+    padding: 5px;
+  }
+
+  .average-rating {
+    font-size: 16px;
+  }
+
+  .average-rating-score {
+    font-size: 16px;
+  }
+
+  .rating-bar {
+    font-size: 12px;
+  }
+
+  .tag-filters .tag {
+    padding: 3px;
+  }
+
+  .star {
+    font-size: 20px;
+  }
 }
 </style>

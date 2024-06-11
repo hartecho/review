@@ -29,6 +29,9 @@
           </button>
           <button v-else class="login-button" @click="logout">Logout</button>
         </div>
+        <button class="mobile-menu-button" @click="toggleMobileNav">
+          <img :src="resolvedNavBarsPath()" alt="Menu" />
+        </button>
       </div>
     </div>
     <!-- Bottom Section -->
@@ -44,30 +47,42 @@
         </div>
       </div>
     </div>
-    <!-- Mobile Section -->
-    <!-- <div class="mobile-bars">
-      <div class="brand">
-        <NuxtLink to="/" class="nav-logo-box">
-          <img
-            :src="resolvedLogoPath()"
-            loading="eager"
-            alt="Company Logo"
-            class="nav-logo"
-          />
-        </NuxtLink>
-        <div class="nav-name">
-          <h1>{{ companyName }}</h1>
+    <!-- Mobile Navigation Overlay -->
+    <div
+      :class="['mobile-nav-overlay', { 'is-visible': showMobileNav }]"
+      @click.self="toggleMobileNav"
+    >
+      <div class="mobile-nav-content">
+        <button class="close-button" @click="toggleMobileNav">×</button>
+        <div class="links">
+          <div class="link" v-for="(link, index) in navPaths" :key="index">
+            <NuxtLink :to="getRoute(link)" @click="toggleMobileNav">{{
+              link.charAt(0).toUpperCase() + link.slice(1)
+            }}</NuxtLink>
+          </div>
+        </div>
+        <div class="login-info-mobile">
+          <span v-if="isLoggedIn" class="logged-in-message"
+            >Logged in as {{ userName }}</span
+          >
+          <button
+            v-if="!isLoggedIn"
+            @click="openLoginModal"
+            class="login-button"
+          >
+            Sign In / Sign Up
+          </button>
+          <button v-else class="login-button" @click="logout">Logout</button>
         </div>
       </div>
-      <div class="nav-img-wrapper" @click="$emit('toggleMobileNav')">
-        <img :src="resolvedNavBarsPath()" loading="eager" alt="nav-bars" />
-      </div>
-    </div> -->
+    </div>
     <div :class="['modal-wrapper', { 'is-visible': showLoginModal }]">
       <NavFooterPreloadLoginModal @close="closeLoginModal" />
     </div>
   </nav>
 </template>
+
+
 
 <script setup>
 const store = useStore();
@@ -76,6 +91,7 @@ const userName = computed(() =>
   store.user && store.user.name ? store.user.name : ""
 );
 const showLoginModal = ref(false);
+const showMobileNav = ref(false);
 let navbar = ref(null);
 let lastScrollPosition = ref(0);
 
@@ -115,9 +131,9 @@ function resolvedNavBarsPath() {
 }
 
 function getRoute(link) {
-  if (link == "home") return "/";
-  else if (link == "search Contractors") return "/searchContract";
-  else if (link == "search Subcontractors") return "/searchSub";
+  if (link === "home") return "/";
+  else if (link === "search Contractors") return "/searchContract";
+  else if (link === "search Subcontractors") return "/searchSub";
   else return `/${link}`;
 }
 
@@ -143,7 +159,14 @@ function closeLoginModal() {
   showLoginModal.value = false;
   document.body.classList.remove("no-scroll");
 }
+
+function toggleMobileNav() {
+  showMobileNav.value = !showMobileNav.value;
+  document.body.classList.toggle("no-scroll", showMobileNav.value);
+}
 </script>
+
+
 
 <style scoped>
 .nav-bar {
@@ -230,7 +253,6 @@ function closeLoginModal() {
 
 .login-button {
   font-size: 18px;
-  /* font-weight: bold; */
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
@@ -264,15 +286,80 @@ function closeLoginModal() {
 
 a:hover,
 .link:hover {
-  color: white;
+  color: #ff8210; /* Change hover color */
 }
 
 a.router-link-exact-active {
-  color: white;
+  color: #ff8210; /* Change active color */
 }
 
-.mobile-bars {
+.mobile-menu-button {
   display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mobile-menu-button img {
+  width: 30px;
+  height: 30px;
+}
+
+.mobile-nav-overlay {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9); /* Black background for the overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.mobile-nav-overlay.is-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.mobile-nav-content {
+  width: 80%;
+  max-width: 400px;
+  background: #fff;
+  padding: 2rem; /* Increased padding for better spacing */
+  border-radius: 8px;
+  text-align: center;
+  color: #000; /* Text color for better visibility */
+  position: relative;
+}
+
+.mobile-nav-content .close-button {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.mobile-nav-content .links {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.mobile-nav-content .link {
+  margin: 1rem 0;
+  font-size: 1.5rem; /* Larger font size for better readability */
+}
+
+.login-info-mobile {
+  margin-top: 2rem;
 }
 
 .modal-wrapper {
@@ -283,7 +370,7 @@ a.router-link-exact-active {
   left: 0;
   width: 100%;
   height: 100%;
-  /* background: rgba(0, 0, 0, 0.8); */
+  background: rgba(0, 0, 0, 0.8); /* Background for the login modal */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -300,7 +387,8 @@ a.router-link-exact-active {
   .nav-bar {
     height: auto;
   }
-  .nav-buttons {
+  .nav-buttons,
+  .login-info {
     display: none;
   }
 
@@ -308,23 +396,75 @@ a.router-link-exact-active {
     height: 100%;
   }
 
-  .mobile-bars {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 1rem;
+  .mobile-menu-button {
+    display: block;
+  }
+
+  .top-nav-content {
+    justify-content: space-between;
+  }
+
+  .bottom-nav,
+  .bottom-nav-content {
+    display: none;
+  }
+
+  .nav-logo-box {
+    width: 40px;
+    height: 35px;
+  }
+
+  .nav-name h1 {
+    font-size: 20px;
+    margin-left: 0.5rem;
+  }
+
+  .logged-in-message {
+    font-size: 14px;
+  }
+
+  .login-button {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  .link {
+    font-size: 12px;
+  }
+
+  .link span {
+    margin: 0 0.25rem;
   }
 }
 
-/* @media (max-width: 480px) {
-  .link {
-    font-size: 1.5rem;
+@media (max-width: 480px) {
+  .nav-logo-box {
+    width: 30px;
+    height: 25px;
   }
 
-  h1 {
-    font-size: 4vw;
-    font-weight: bold;
+  .nav-name h1 {
+    font-size: 16px;
+    margin-left: 0.25rem;
   }
-} */
+
+  .logged-in-message {
+    font-size: 12px;
+  }
+
+  .login-button {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  .link {
+    font-size: 10px;
+  }
+
+  .link span {
+    margin: 0 0.1rem;
+  }
+}
 </style>
 
 <style>

@@ -18,6 +18,7 @@
           :selectedTags="selectedTags"
           :tagDescriptions="tagDescriptions"
           @toggleDropdown="toggleDropdown"
+          @closeDropdown="closeDropdown"
           @update:selectedTags="selectedTags = $event"
         />
         <SearchRatingFilter
@@ -137,6 +138,10 @@ const filteredContractors = computed(() => {
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
 }
+
+function closeDropdown() {
+  showDropdown.value = false;
+}
 </script>
 
 <style scoped>
@@ -194,6 +199,10 @@ function toggleDropdown() {
 }
 
 @media (max-width: 480px) {
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
   .page-header h1 {
     font-size: 1.5em;
   }

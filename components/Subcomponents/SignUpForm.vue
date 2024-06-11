@@ -93,10 +93,11 @@ const isFormValid = computed(() => {
 });
 </script>
   
-  <style scoped>
+<style scoped>
 .form-container {
   width: 48%;
   position: relative;
+  margin: 0 auto; /* Center the form container */
 }
 
 h2 {
@@ -151,5 +152,10 @@ h2 {
 .fade-leave-to {
   opacity: 0;
 }
+
+@media (max-width: 480px) {
+  .form-container {
+    width: 100%;
+  }
+}
 </style>
-  

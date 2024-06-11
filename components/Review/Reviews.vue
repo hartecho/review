@@ -279,6 +279,7 @@ async function submitReply() {
   font-size: 14px;
   font-weight: bold;
   color: #007bff;
+  white-space: nowrap;
 }
 
 .verified-tag {
@@ -399,5 +400,117 @@ async function submitReply() {
 .error-message {
   color: red;
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .review {
+    padding: 15px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reviewer-name {
+    font-size: 16px;
+  }
+
+  .rating {
+    font-size: 18px;
+  }
+
+  .review-comment,
+  .review-tags {
+    font-size: 14px;
+  }
+
+  .review-date {
+    font-size: 10px;
+  }
+
+  .latest-update {
+    padding: 8px;
+  }
+
+  .update.business-reply {
+    padding-left: 15px;
+  }
+
+  .show-updates-button {
+    font-size: 14px;
+  }
+
+  .business-reply-section textarea {
+    height: 80px;
+    font-size: 14px;
+  }
+
+  .error-message {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .review {
+    padding: 10px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 2rem; /* Added padding to make space for the update tag */
+  }
+
+  .reviewer-name {
+    font-size: 14px;
+  }
+
+  .rating {
+    font-size: 16px;
+  }
+
+  .review-comment,
+  .review-tags {
+    font-size: 12px;
+  }
+
+  .review-date {
+    font-size: 8px;
+  }
+
+  .latest-update {
+    padding: 6px;
+    padding-top: 0rem; /* Added padding to make space for the update tag */
+  }
+
+  .update.business-reply {
+    padding-left: 10px;
+    padding-top: 1rem; /* Added padding to make space for the update tag */
+  }
+
+  .show-updates-button {
+    font-size: 12px;
+  }
+
+  .business-reply-section textarea {
+    height: 60px;
+    font-size: 12px;
+  }
+
+  .error-message {
+    font-size: 10px;
+  }
+
+  .update {
+    padding-top: 0;
+  }
+
+  /* .update-tag {
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+  } */
 }
 </style>

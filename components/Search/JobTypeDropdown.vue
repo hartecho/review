@@ -4,6 +4,7 @@
       Select Job Types
     </button>
     <div v-if="showDropdown" class="dropdown-menu">
+      <button class="close-button" @click="closeDropdown">×</button>
       <div
         v-for="(description, tag) in sortedTagDescriptions"
         :key="tag"
@@ -21,8 +22,8 @@
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps({
@@ -31,7 +32,11 @@ const props = defineProps({
   tagDescriptions: Object,
 });
 
-const emit = defineEmits(["toggleDropdown", "update:selectedTags"]);
+const emit = defineEmits([
+  "toggleDropdown",
+  "closeDropdown",
+  "update:selectedTags",
+]);
 
 const sortedTagDescriptions = computed(() => {
   return Object.keys(props.tagDescriptions)
@@ -55,12 +60,16 @@ const dropdown = ref(null);
 
 const handleClickOutside = (event) => {
   if (dropdown.value && !dropdown.value.contains(event.target)) {
-    emit("toggleDropdown");
+    emit("closeDropdown");
   }
 };
 
 const toggleDropdown = () => {
   emit("toggleDropdown");
+};
+
+const closeDropdown = () => {
+  emit("closeDropdown");
 };
 
 onMounted(() => {
@@ -71,8 +80,8 @@ onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .dropdown {
   position: relative;
   width: 100%;
@@ -109,7 +118,7 @@ onBeforeUnmount(() => {
   border-radius: 10px;
   max-height: 300px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 5;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -125,5 +134,15 @@ onBeforeUnmount(() => {
   margin: 5px;
   color: white;
 }
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
 </style>
-  
