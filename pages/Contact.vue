@@ -1,53 +1,53 @@
 <template lang="html">
   <div class="content">
-  <div class="body-wrapper">
-    <div class="contact-elementTop">
-      <div class="top-left">
-        <h1>Contact</h1>
-        <p class="intro-message">Reach out through the form, and we'll be back to you shortly.</p>
-        <p></p>
-        <div class="info">
-          <h2>Send us an email</h2>
-          <h3>sales@hartecho.com</h3>
+    <div class="hero-section">
+      <h1>Contact Us</h1>
+      <p class="intro-message">We'd love to hear from you! Reach out through the form, and we'll get back to you shortly.</p>
+    </div>
+    <div class="body-wrapper">
+      <div class="contact-info-card">
+        <div class="info-block">
+          <h3>Email Us</h3>
+          <p><a href="mailto:sales@hartecho.com">sales@hartecho.com</a></p>
         </div>
-        <p></p>
-        <div class="info">
-          <h2>Give us a call</h2>
-          <h3>+1 (801)-793-5456</h3>
+        <div class="info-block">
+          <h3>Call Us</h3>
+          <p><a href="tel:+18017935456">+1 (801)-793-5456</a></p>
         </div>
       </div>
-      <div class="top-right" v-if="showForm">
-        <form @submit.prevent="submit">
-          <div class="incomplete-message" v-if="incomplete">
-            <h4>*Please complete all fields before submitting.</h4>
-          </div>
-          <div class="incomplete-message" v-if="invalidEmail">
-            <h4>*Please enter a valid email address.</h4>
-          </div>
-          <input type="text" name="Name" placeholder="Name" v-model="formData.name">
-          <p></p>
-          <input type="text" name="Email" placeholder="Email" v-model="formData.email">
-          <p></p>
-          <textarea name="Message" rows="8" cols="80" placeholder="Message" v-model="formData.message"></textarea>
-          <p></p>
-          <SubcomponentsLoadingButton :isLoading="isLoading" @click="submitForm()" />
-        </form>
-      </div>
-
-      <div class="success" v-if="showSuccess">
-        <div class="message-wrap">
+      <div class="contact-form-card">
+        <div class="contact-form" v-if="showForm">
+          <form @submit.prevent="submit">
+            <div class="message" v-if="incomplete">
+              <h4>*Please complete all fields before submitting.</h4>
+            </div>
+            <div class="message" v-if="invalidEmail">
+              <h4>*Please enter a valid email address.</h4>
+            </div>
+            <div class="floating-label-group">
+              <input type="text" name="Name" placeholder="Name" v-model="formData.name" />
+              <label class="floating-label">Name</label>
+            </div>
+            <div class="floating-label-group">
+              <input type="text" name="Email" placeholder="Email" v-model="formData.email" />
+              <label class="floating-label">Email</label>
+            </div>
+            <div class="floating-label-group">
+              <textarea name="Message" rows="8" cols="80" placeholder="Message" v-model="formData.message"></textarea>
+              <label class="floating-label">Message</label>
+            </div>
+            <SubcomponentsLoadingButton :isLoading="isLoading" @click="submitForm()" />
+          </form>
+        </div>
+        <div class="message-box success" v-if="showSuccess">
           <h2>Submission success! Thank you!</h2>
         </div>
-      </div>
-
-      <div class="error" v-if="showError">
-        <div class="message-wrap">
+        <div class="message-box error" v-if="showError">
           <h2>Sorry, there was an error submitting the form!</h2>
           <h3>Please try again or send us an email...</h3>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -77,9 +77,9 @@ const isLoading = ref(false);
 
 const submitForm = async () => {
   if (
-    formData.value.name == "" ||
-    formData.value.email == "" ||
-    formData.value.message == ""
+    formData.value.name === "" ||
+    formData.value.email === "" ||
+    formData.value.message === ""
   ) {
     invalidEmail.value = false;
     incomplete.value = true;
@@ -90,7 +90,6 @@ const submitForm = async () => {
     incomplete.value = false;
     invalidEmail.value = true;
   } else {
-    // console.log(JSON.stringify(formData.value));
     isLoading.value = true;
     try {
       const response = await fetch(
@@ -107,12 +106,10 @@ const submitForm = async () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
-        console.log("Success");
         showForm.value = false;
         showSuccess.value = true;
       }
     } catch (error) {
-      console.log("was error");
       showForm.value = false;
       showError.value = true;
     } finally {
@@ -127,217 +124,202 @@ const submit = () => {
 </script>
 
 <style lang="css" scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
 .content {
-  background: url("/IntroBG.jpg") no-repeat center top;
+  font-family: "Roboto", sans-serif;
+  /* padding: 2rem 0; */
+}
+
+.hero-section {
+  background: url("/IntroBG.jpg") no-repeat center center;
   background-size: cover;
+  color: white;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero-section h1,
+.hero-section .intro-message {
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-section .intro-message {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
 }
 
 .body-wrapper {
-  max-width: 1200px;
-  margin: 0rem auto;
-  max-height: 60rem;
-  height: auto;
-  width: 100%;
-  position: relative;
-  z-index: 3;
-  padding: 2rem 0;
-}
-
-.contact-elementTop {
-  height: 100%;
-  width: 100%;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  grid-template-columns: 45% 55%;
-  grid-gap: 3rem;
-  padding: 3rem;
-}
-
-.top-left {
-  height: 100%;
-  padding: 10px;
-}
-
-h1 {
-  text-align: left;
-  color: #717171;
-  font-family: Bebas Neue, cursive;
-  font-weight: 700;
-  font-size: 8rem;
-  padding: 0 2rem;
-  margin: 0;
-}
-
-.intro-message {
-  font-size: 1.3rem;
-}
-
-p {
-  margin-top: 2rem;
-  padding: 0 2rem;
-}
-
-.info {
-  background-color: white;
-  color: black;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-h2 {
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin: 0 0 0.5rem 0;
-}
-
-h3 {
-  font-size: 1.3rem;
-  font-weight: normal;
-  margin: 0;
-}
-
-.top-right {
-  height: 100%;
-}
-
-form {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto auto auto auto auto auto auto;
-  background-color: white;
-  padding: 5rem 3rem;
-  border-radius: 20px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.incomplete-message {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  padding: 2rem;
-  color: red;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-around;
+  padding: 4rem;
+  margin-top: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 5rem;
 }
 
-input,
-textarea {
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1px solid black;
-  padding: 2px;
-  width: 100%;
-  font-family: manrope;
-  /* font-weight: bolder; */
+.contact-form-card {
+  flex: 2;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.contact-info-card {
+  flex: 1;
+}
+
+.contact-info-card h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.info-block {
+  text-align: left;
+  margin-bottom: 2rem;
+  padding: 1rem 2rem;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.info-block h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.info-block p {
+  font-size: 1.2rem;
+  color: #007bff;
+  margin: 0;
+}
+
+.info-block a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.info-block a:hover {
+  text-decoration: underline;
+}
+
+.contact-form-card h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form .floating-label-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  border-radius: 4px;
   font-size: 1rem;
+  width: 100%;
 }
 
-input:focus,
-textarea:focus {
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #007bff;
   outline: none;
 }
 
-.success {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.floating-label {
+  position: absolute;
+  pointer-events: none;
+  left: 0.75rem;
+  top: 0.75rem;
+  transition: 0.2s ease all;
+  opacity: 0.6;
 }
 
-.message-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background-color: #b1b1b1;
+.contact-form input:focus ~ .floating-label,
+.contact-form textarea:focus ~ .floating-label,
+.contact-form input:not(:placeholder-shown) ~ .floating-label,
+.contact-form textarea:not(:placeholder-shown) ~ .floating-label {
+  top: -1rem;
+  left: 0.75rem;
+  font-size: 0.85rem;
+  opacity: 1;
+}
+
+.message {
+  color: red;
+  text-align: center;
+}
+
+.message-box {
+  text-align: center;
   padding: 2rem;
-  width: 100%;
-  border-radius: 20px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.success {
+  background: #d4edda;
+  color: #155724;
 }
 
 .error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #f8d7da;
+  color: #721c24;
 }
 
 @media (max-width: 768px) {
-  /*  ------------  MOBILE  ------------   */
   .body-wrapper {
-    min-height: 60rem;
-    height: auto;
+    flex-direction: column;
+    padding: 1rem;
   }
 
-  .contact-elementTop {
-    grid-template-columns: 100%;
-    padding: 2rem;
+  .hero-section h1 {
+    font-size: 2rem;
   }
 
-  h1 {
-    font-size: 8rem;
+  .hero-section .intro-message {
+    font-size: 1rem;
   }
 
-  .intro-message {
-    font-size: 1.3rem;
+  .contact-info-card,
+  .contact-form-card {
+    margin: 0 0 1rem 0;
   }
 
-  p {
-    margin-top: 1rem;
-  }
-
-  h2 {
+  .contact-info-card h2,
+  .contact-form-card h2 {
     font-size: 1.5rem;
   }
 
-  h3 {
-    font-size: 1.3rem;
+  .info-block h3,
+  .info-block p {
+    font-size: 1rem;
   }
 
-  .top-right {
-    height: 30rem;
-    padding: 10px;
-  }
-
-  form {
-    height: 100%;
-    overflow-y: scroll hidden;
-    overflow-x: scroll hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  /*  ------------  MOBILE  ------------   */
-  .body-wrapper {
-    min-height: 50rem;
-  }
-
-  .contact-elementTop {
-    padding: 1rem;
-  }
-
-  .info {
-    padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 5.5rem;
-    padding: 1rem;
-  }
-
-  p {
-    padding: 0 1rem;
-  }
-
-  form {
-    padding: 2rem 1rem;
+  .contact-form input,
+  .contact-form textarea {
+    font-size: 0.9rem;
   }
 }
 </style>
+

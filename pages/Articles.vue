@@ -1,6 +1,10 @@
 <template>
   <div class="blogs-wrapper">
-    <section class="blogs-intro boil-bot-white"></section>
+    <section class="blogs-intro">
+      <div class="blog-title">
+        <h1>Articles</h1>
+      </div>
+    </section>
     <section class="blog-list">
       <div class="blog-entry" v-for="blog in blogs" :key="blog._id">
         <div class="blog-entry__thumbnail" @click="goToBlog(blog._id)">
@@ -14,11 +18,11 @@
           >
         </div>
       </div>
-      <!-- <NuxtLink to="/blog/editBlogs" class="edit-button-link">
+      <NuxtLink to="/blog/editBlogs" class="edit-button-link">
         <button class="edit-button">Edit Blogs</button>
-      </NuxtLink> -->
+      </NuxtLink>
     </section>
-    <section class="divider wave-bot-green"></section>
+    <section class=""></section>
   </div>
 </template>
   
@@ -66,9 +70,24 @@ const goToBlog = (blogId) => {
   
   <style scoped>
 .blogs-intro {
-  height: 55rem;
-  /* background: url("/ContentPageBG.webp") no-repeat; */
+  height: 25rem;
+  background: url("/IntroBG.jpg") no-repeat;
   background-size: cover;
+  display: flex;
+  justify-content: center; /* Centering the .blog-title horizontally */
+  align-items: center;
+}
+
+.blog-title {
+  max-width: 1200px;
+  width: 100%;
+  padding: 2rem 2rem;
+  text-align: left; /* Ensure the content inside .blog-title is left-aligned */
+}
+
+.blog-title h1 {
+  font-size: 3rem;
+  text-shadow: 1px 1px 2px black;
 }
 
 .blog-list {
@@ -160,8 +179,8 @@ const goToBlog = (blogId) => {
   /*  ------------  MOBILE  ------------   */
 
   .blogs-intro {
-    height: 45rem;
-    background: url("/MobileBG.webp") no-repeat;
+    height: 25rem;
+    background: url("/IntroBG.jpg") repeat;
     background-size: 100% auto;
   }
 
@@ -174,7 +193,7 @@ const goToBlog = (blogId) => {
     height: auto;
     margin: 1rem;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .blog-entry__thumbnail {
@@ -196,7 +215,7 @@ const goToBlog = (blogId) => {
 
 @media (max-width: 480px) {
   .blogs-intro {
-    height: 35rem;
+    height: 15rem;
   }
 
   .blog-post {

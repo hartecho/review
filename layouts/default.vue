@@ -47,7 +47,7 @@ const paths1 = [
 ];
 const paths2 = [
   "home",
-  "profile",
+  // "profile",
   "search Contractors",
   "search Subcontractors",
   "articles",
