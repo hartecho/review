@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { tagDescriptions } from "~/tagDescriptions.js";
+import { tagDescriptions } from "~/utils/tagDescriptions.js";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 

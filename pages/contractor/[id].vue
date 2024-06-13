@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { tagDescriptions } from "~/tagDescriptions.js";
+import { tagDescriptions } from "~/utils/tagDescriptions.js";
 const route = useRoute();
 const store = useStore();
 
