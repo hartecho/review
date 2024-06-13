@@ -8,12 +8,6 @@
       navBarsButtonPath="NavBars.svg"
     />
 
-    <NavFooterPreloadBlackBGMobileNav
-      :navPaths="currentPaths"
-      @toggleMobileNav="showMobileNav = !showMobileNav"
-      exImg="X.svg"
-      v-bind:class="{ 'nav-slide-out': !showMobileNav }"
-    />
     <div>
       <slot />
     </div>

@@ -6,8 +6,8 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch('https://api.usps.com/oauth2/v3/token', {
       method: 'POST',
       body: {
-        client_id: config.CLIENT_ID,
-        client_secret: config.CLIENT_SECRET,
+        client_id: config.public.CLIENT_ID,
+        client_secret: config.public.CLIENT_SECRET,
         scope: "addresses subscriptions payments pickup tracking labels locations prices",
         grant_type: 'client_credentials',
       },

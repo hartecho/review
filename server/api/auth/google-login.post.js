@@ -6,7 +6,7 @@ import User from '~/server/models/Users/User.js'; // Ensure the User model path 
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
-    const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
+    const client = new OAuth2Client(config.public.GOOGLE_CLIENT_ID);
 
     await connectUserDB(); // Ensure the database connection is established
 
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: config.GOOGLE_CLIENT_ID,
+            audience: config.public.GOOGLE_CLIENT_ID,
         });
         const payload = ticket.getPayload();
 
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
         const jwtToken = jwt.sign(
             { userId: user._id, email: user.email, name: user.name, picture: user.profilePicture },
-            config.JWT_SECRET,
+            config.public.JWT_SECRET,
             { expiresIn: '1h' }
         );
 

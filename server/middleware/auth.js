@@ -5,7 +5,7 @@ export default defineEventHandler((event) => {
   const config = useRuntimeConfig();
   const authHeader = getHeader(event, 'authorization');
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-  console.log("Token in middleware: ", token);
+  // console.log("Token in middleware: ", token);
   
   // if (event.req.url === '/api/auth/login' || event.req.url === '/' || event.req.url.startsWith('/public')) {
   //   return;
@@ -21,7 +21,7 @@ export default defineEventHandler((event) => {
     throw createError({ statusCode: 401, statusMessage: 'Authentication token not found' });
   }
 
-  const jwtSecret = config.JWT_SECRET;
+  const jwtSecret = config.public.JWT_SECRET;
   
   // Decode token for debugging
   const decodedToken = jwt.decode(token);

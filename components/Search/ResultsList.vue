@@ -65,8 +65,6 @@ const props = defineProps({
   tagDescriptions: Object,
 });
 
-console.log("Filtered Contractors: ", props.filteredContractors);
-
 const router = useRouter();
 
 function goToContractorPage(contractorId) {
