@@ -31,83 +31,25 @@
 </template>
 
 <script setup>
+import { tagDescriptions } from "~/tagDescriptions.js";
 const route = useRoute();
 const store = useStore();
+
+const { data: contractor, pending: contractorPending } = await useFetch(
+  `/api/contractors?_id=${route.params.id}`
+);
 
 useSeoMeta({
   title: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
   ogTitle: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
   description: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
   ogDescription: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogImage: resolvedImgPath(),
-  twitterCard: resolvedImgPath(),
+  ogImage: `/${contractor.value.picture}`,
+  twitterCard: `/${contractor.value.picture}`,
 });
-
-const { data: contractor, pending: contractorPending } = await useFetch(
-  `/api/contractors?_id=${route.params.id}`
-);
-
-const tagDescriptions = {
-  GEN: "General Contractor",
-  FLR: "Flooring",
-  CTP: "Countertops",
-  CAB: "Cabinets",
-  CON: "Concrete and Masonry",
-  STL: "Steel and Metal Fabrication",
-  FRM: "Framing",
-  ROF: "Roofing",
-  SID: "Siding",
-  WND: "Windows and Doors",
-  LND: "Landscaping and Hardscaping",
-  DRY: "Drywall and Plaster",
-  PNT: "Painting and Finishing",
-  INS: "Insulation",
-  CLG: "Ceiling Systems",
-  HVAC: "HVAC",
-  PLM: "Plumbing",
-  ELEC: "Electrical",
-  EXC: "Excavation",
-  DEM: "Demolition",
-  GRD: "Grading and Paving",
-  FPS: "Fire Protection and Sprinkler Systems",
-  SEC: "Security Systems",
-  AV: "Audio-Visual Installations",
-  ELEV: "Elevator and Escalator Installation",
-  SOL: "Solar Energy and Green Building Solutions",
-  UTIL: "Utility Contractors",
-  FIN: "Finishing Contractors",
-  CAR: "Carpentry and Woodwork",
-  TLE: "Tile and Stone Installation",
-  GLS: "Glass and Glazing",
-  SPC: "Specialty Coatings and Sealants",
-  REN: "Renovation and Restoration",
-  HIS: "Historic Restoration",
-  REM: "Remodeling",
-  WTR: "Waterproofing and Mold Remediation",
-  ENV: "Environmental Contractors",
-  ASB: "Asbestos Abatement",
-  LEAD: "Lead Paint Removal",
-  ENVC: "Environmental Cleanup and Remediation",
-  DB: "Design and Build Contractors",
-  ARC: "Architectural Services",
-  ENG: "Engineering Services",
-  LOG: "Logistics and Material Handling Contractors",
-  WARE: "Warehouse Setup",
-  IEQ: "Industrial Equipment Installation",
-  SPEQ: "Specialty Equipment Contractors",
-  CKE: "Commercial Kitchen Equipment",
-  LMEQ: "Laboratory and Medical Equipment",
-  FAC: "Facade and Cladding Contractors",
-  CUR: "Curtain Wall Systems",
-  OTH: "Other",
-};
 
 const showLoginModal = ref(false);
 const activeTab = ref("reviews");
-
-const resolvedImgPath = () => {
-  return `/${contractor.value.picture}`;
-};
 
 const contactContractor = () => {
   alert(`Contacting ${contractor.value.company}`);
