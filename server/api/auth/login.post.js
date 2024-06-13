@@ -6,6 +6,7 @@ import { disconnectDB } from '~/server/utils/dbDisconnect';
 import User from '~/server/models/Users/User.js'; // Make sure your User model path is correct
 
 export default defineEventHandler(async (event) => {
+    const config = useRuntimeConfig();
     await connectUserDB(); // Ensure the database connection is established
 
     try {
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
         // Creating a JWT for the user
         const token = jwt.sign(
             { userId: user._id, email: user.email },
-            process.env.JWT_SECRET,
+            config.JWT_SECRET,
             { expiresIn: '1h' }
         );
 

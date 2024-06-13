@@ -1,11 +1,12 @@
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
   const body = await readBody(event);
   try {
     const response = await $fetch('https://developer-cat.usps.com/oauth2/v3/token', {
       method: 'POST',
       body: {
-        client_id: process.env.TEST_CLIENT_ID,
-        client_secret: process.env.TEST_CLIENT_SECRET,
+        client_id: config.TEST_CLIENT_ID,
+        client_secret: config.TEST_CLIENT_SECRET,
         scope: "addresses subscriptions payments pickup tracking labels locations prices",
         grant_type: 'client_credentials',
       },

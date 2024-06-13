@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+const config = useRuntimeConfig();
 
-const MONGODB_URI = process.env.DB_URI; // Ensure your DB URI is correctly set in your environment
+const MONGODB_URI = config.DB_URI; // Ensure your DB URI is correctly set in your environment
 
 // This is for when I'm storing user info in a separate database.
 export const connectUserDB = async () => {
@@ -9,7 +10,7 @@ export const connectUserDB = async () => {
     return;
   }
   
-  return mongoose.connect(`mongodb+srv://thomas:8ylQuAYP3fZCtQ2b@cluster0.vfkpn24.mongodb.net/ContractorReview`
+  return mongoose.connect(MONGODB_URI
   ,{
     // useNewUrlParser: true,
     // useUnifiedTopology: true,

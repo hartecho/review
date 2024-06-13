@@ -24,6 +24,7 @@
 
 <script setup>
 import { onMounted, onUnmounted } from "vue";
+const config = useRuntimeConfig();
 
 await preloadComponents("WebSectionsIntroWithVid");
 
@@ -41,9 +42,9 @@ useSeoMeta({
 onMounted(() => {
   const searchSection = document.getElementById("search-section");
 
-  console.log("process.env.JWT: ", process.env.JWT_SECRET);
-  console.log("process.env.CLIENT: ", process.env.GOOGLE_CLIENT_ID);
-  console.log("process.env.SEC: ", process.env.GOOGLE_CLIENT_SECRET);
+  console.log("config.public.JWT: ", config.public.JWT_SECRET);
+  console.log("config.public.CLIENT: ", config.public.GOOGLE_CLIENT_ID);
+  console.log("config.public.SEC: ", config.public.GOOGLE_CLIENT_SECRET);
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;

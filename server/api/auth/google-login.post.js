@@ -4,9 +4,10 @@ import { connectUserDB } from '~/server/utils/dbUserConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import User from '~/server/models/Users/User.js'; // Ensure the User model path is correct
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 export default defineEventHandler(async (event) => {
+    const config = useRuntimeConfig();
+    const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
+
     await connectUserDB(); // Ensure the database connection is established
 
     try {
@@ -22,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,
+            audience: config.GOOGLE_CLIENT_ID,
         });
         const payload = ticket.getPayload();
 
@@ -55,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
         const jwtToken = jwt.sign(
             { userId: user._id, email: user.email, name: user.name, picture: user.profilePicture },
-            process.env.JWT_SECRET,
+            config.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
