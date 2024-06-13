@@ -23,6 +23,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {    
     // Public keys that are exposed to the client
+    JWT_SECRET: process.env.JWT_SECRET,
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+      DB_URI: process.env.DB_URI,
+      
     public: {
       JWT_SECRET: process.env.JWT_SECRET,
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

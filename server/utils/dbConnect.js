@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const config = useRuntimeConfig();
 
-const MONGODB_URI = config.public.DB_URI; // Ensure your DB URI is correctly set in your environment
+const MONGODB_URI = config.DB_URI; // Ensure your DB URI is correctly set in your environment
 
 export const connectDB = async () => {
   if (mongoose.connection.readyState === 1) {

@@ -21,7 +21,7 @@ export default defineEventHandler((event) => {
     throw createError({ statusCode: 401, statusMessage: 'Authentication token not found' });
   }
 
-  const jwtSecret = config.public.JWT_SECRET;
+  const jwtSecret = config.JWT_SECRET;
   
   // Decode token for debugging
   const decodedToken = jwt.decode(token);
