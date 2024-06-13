@@ -17,17 +17,23 @@
           </div>
         </div>
         <div class="login-info">
-          <span v-if="isLoggedIn" class="logged-in-message"
+          <span v-if="hydrated && isLoggedIn" class="logged-in-message"
             >Logged in as {{ userName }}</span
           >
           <button
-            v-if="!isLoggedIn"
+            v-if="hydrated && !isLoggedIn"
             @click="openLoginModal"
             class="login-button"
           >
             Sign In / Sign Up
           </button>
-          <button v-else class="login-button" @click="logout">Logout</button>
+          <button
+            v-if="hydrated && isLoggedIn"
+            class="login-button"
+            @click="logout"
+          >
+            Logout
+          </button>
         </div>
         <button class="mobile-menu-button" @click="toggleMobileNav">
           <img :src="resolvedNavBarsPath()" alt="Menu" />
@@ -62,17 +68,23 @@
           </div>
         </div>
         <div class="login-info-mobile">
-          <span v-if="isLoggedIn" class="logged-in-message"
+          <span v-if="hydrated && isLoggedIn" class="logged-in-message"
             >Logged in as {{ userName }}</span
           >
           <button
-            v-if="!isLoggedIn"
+            v-if="hydrated && !isLoggedIn"
             @click="openLoginModal"
             class="login-button"
           >
             Sign In / Sign Up
           </button>
-          <button v-else class="login-button" @click="logout">Logout</button>
+          <button
+            v-if="hydrated && isLoggedIn"
+            class="login-button"
+            @click="logout"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
@@ -82,8 +94,6 @@
   </nav>
 </template>
 
-
-
 <script setup>
 const store = useStore();
 const isLoggedIn = computed(() => !!store.token);
@@ -92,8 +102,18 @@ const userName = computed(() =>
 );
 const showLoginModal = ref(false);
 const showMobileNav = ref(false);
+const hydrated = ref(false);
 let navbar = ref(null);
 let lastScrollPosition = ref(0);
+
+onMounted(() => {
+  hydrated.value = true; // Mark as hydrated when the component is mounted
+  window.addEventListener("scroll", handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 
 const logout = () => {
   store.logout();
@@ -112,14 +132,6 @@ const props = defineProps({
   companyName: String,
   logoPath: String,
   navBarsButtonPath: String,
-});
-
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handleScroll);
 });
 
 function resolvedLogoPath() {
@@ -165,8 +177,6 @@ function toggleMobileNav() {
   document.body.classList.toggle("no-scroll", showMobileNav.value);
 }
 </script>
-
-
 
 <style scoped>
 .nav-bar {
