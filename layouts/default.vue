@@ -24,7 +24,7 @@
         companyDescription="Contractor Review Platform"
         phone="+1 (801) 793-5456"
         email="support@subsource.org"
-        slogan="Hi"
+        slogan="Where Expertise Meets Accountability"
       />
     </footer>
   </div>

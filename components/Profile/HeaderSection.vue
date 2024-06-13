@@ -25,12 +25,12 @@
             </li>
           </ul>
           <div class="actions">
-            <button
+            <!-- <button
               class="contact-contractor-button"
               @click="contactContractor"
             >
               Contact Contractor
-            </button>
+            </button> -->
             <button class="report-button">Report an Issue</button>
           </div>
         </div>
@@ -88,6 +88,7 @@ const resolvedImgPath = () => {
   width: 100%;
   gap: 3rem;
   text-shadow: 2px 2px 1px black;
+  z-index: 2;
 }
 
 @media (max-width: 768px) {

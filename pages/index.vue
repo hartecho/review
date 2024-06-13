@@ -28,18 +28,22 @@ import { onMounted, onUnmounted } from "vue";
 await preloadComponents("WebSectionsIntroWithVid");
 
 useSeoMeta({
-  title: "Performance Marketing Agency || HARTECHO",
-  ogTitle: "Performance Marketing Agency || HARTECHO",
+  title: "Subsource: Trusted Commercial Contractor Reviews & Ratings",
+  ogTitle: "Subsource: Trusted Commercial Contractor Reviews & Ratings",
   description:
-    "Welcome to our performance marketing agency. We specialize in Google Ads, Facebook Ads, premium websites, SEO, branding, and tech support. Partner with us to resonate with your target audience and drive growth for your brand.",
+    "Discover reliable commercial contractors with Subsource. Read trusted reviews and ratings to find the best contractors for your business needs.",
   ogDescription:
-    "Welcome to our performance marketing agency. We specialize in Google Ads, Facebook Ads, premium websites, SEO, branding, and tech support. Partner with us to resonate with your target audience and drive growth for your brand.",
+    "Discover reliable commercial contractors with Subsource. Read trusted reviews and ratings to find the best contractors for your business needs.",
   ogImage: "/SSLogo.png",
   twitterCard: "/SSLogo.png",
 });
 
 onMounted(() => {
   const searchSection = document.getElementById("search-section");
+
+  console.log("process.env.JWT: ", process.env.JWT_SECRET);
+  console.log("process.env.CLIENT: ", process.env.GOOGLE_CLIENT_ID);
+  console.log("process.env.SEC: ", process.env.GOOGLE_CLIENT_SECRET);
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;

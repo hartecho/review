@@ -43,6 +43,19 @@ const selectedTags = ref([]);
 const selectedRating = ref(0);
 const showDropdown = ref(false);
 
+useSeoMeta({
+  title:
+    "Find Subcontractors | Subsource – Search by Job Type, Name, City, or Rating",
+  ogTitle:
+    "Find Subcontractors | Subsource – Search by Job Type, Name, City, or Rating",
+  description:
+    "Search for top-rated subcontractors by job type, name, city, or state. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+  ogDescription:
+    "Search for top-rated subcontractors by job type, name, city, or state. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
+});
+
 const { data: contractors } = await useFetch("/api/contractors");
 
 const tagDescriptions = {

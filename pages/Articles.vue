@@ -28,12 +28,12 @@
   
   <script setup>
 useSeoMeta({
-  title: "Blog - Performance Marketing Agency || HARTECHO",
-  ogTitle: "Blog - Performance Marketing Agency || HARTECHO",
+  title: "Articles | Subsource – Insights on Commercial Contracting",
+  ogTitle: "Articles | Subsource – Insights on Commercial Contracting",
   description:
-    "Browse our blog for the latest news, tips, and insights on digital marketing.",
+    "Browse our articles for the latest news, tips, and insights on commercial contracting. Stay informed with Subsource.",
   ogDescription:
-    "Browse our blog for the latest news, tips, and insights on digital marketing.",
+    "Browse our articles for the latest news, tips, and insights on commercial contracting. Stay informed with Subsource.",
   ogImage: "/SSLogo.png",
   twitterCard: "/SSLogo.png",
 });

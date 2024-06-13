@@ -34,6 +34,15 @@
 const route = useRoute();
 const store = useStore();
 
+useSeoMeta({
+  title: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
+  ogTitle: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
+  description: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
+  ogDescription: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
+  ogImage: resolvedImgPath(),
+  twitterCard: resolvedImgPath(),
+});
+
 const { data: contractor, pending: contractorPending } = await useFetch(
   `/api/contractors?_id=${route.params.id}`
 );
@@ -144,6 +153,23 @@ const isPro = computed(() => {
   background-size: cover;
   position: relative;
   padding: 8rem 4rem 0 4rem;
+}
+
+.header-section::before {
+  content: "";
+  position: absolute;
+  top: 10rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0)
+  );
+  z-index: 0;
 }
 
 @media (max-width: 768px) {

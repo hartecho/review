@@ -16,7 +16,7 @@
       <div class="right">
         <h1>Contact</h1>
         <address class="footer-heading contact-info">
-          <p>Phone: {{ phone }}</p>
+          <!-- <p>Phone: {{ phone }}</p> -->
           <p>Email: {{ email }}</p>
         </address>
         <h1 class="slogan">
@@ -134,6 +134,7 @@ a:link {
   flex-grow: 1;
   position: sticky;
   bottom: 15rem;
+  text-decoration: underline;
 }
 
 .bottom-content {

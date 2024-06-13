@@ -1,19 +1,21 @@
 <template lang="html">
   <div class="content">
     <div class="hero-section">
-      <h1>Contact Us</h1>
-      <p class="intro-message">We'd love to hear from you! Reach out through the form, and we'll get back to you shortly.</p>
+      <div class="hero-text">
+        <h1>Contact Us</h1>
+        <p class="intro-message">We'd love to hear from you! Reach out through the form, and we'll get back to you shortly.</p>
+      </div>
     </div>
     <div class="body-wrapper">
       <div class="contact-info-card">
         <div class="info-block">
           <h3>Email Us</h3>
-          <p><a href="mailto:sales@hartecho.com">sales@hartecho.com</a></p>
+          <p><a href="mailto:support@subsource.org">support@subsource.org</a></p>
         </div>
-        <div class="info-block">
+        <!-- <div class="info-block">
           <h3>Call Us</h3>
           <p><a href="tel:+18017935456">+1 (801)-793-5456</a></p>
-        </div>
+        </div> -->
       </div>
       <div class="contact-form-card">
         <div class="contact-form" v-if="showForm">
@@ -53,12 +55,14 @@
 
 <script setup>
 useSeoMeta({
-  title: "Contact Us || HARTECHO",
-  ogTitle: "Contact Us || HARTECHO",
+  title:
+    "Contact Us | Subsource – Reach Out for questions regarding Reviews or Promotional Services",
+  ogTitle:
+    "Contact Us | Subsource – Reach Out for questions regarding Reviews or Promotional Services",
   description:
-    "Get in touch with us through our contact form or reach us directly via email or phone. We look forward to hearing from you.",
+    "We'd love to hear from you! Contact Subsource through our form or email us at support@subsource.org for any inquiries regarding commercial contractor reviews.",
   ogDescription:
-    "Get in touch with us through our contact form or reach us directly via email or phone. We look forward to hearing from you.",
+    "We'd love to hear from you! Contact Subsource through our form or email us at support@subsource.org for any inquiries regarding commercial contractor reviews.",
   ogImage: "/SSLogo.png",
   twitterCard: "/SSLogo.png",
 });
@@ -137,11 +141,34 @@ const submit = () => {
   color: white;
   text-align: center;
   padding: 4rem 2rem;
+  position: relative;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 5rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0)
+  );
+  z-index: 1;
 }
 
 .hero-section h1,
 .hero-section .intro-message {
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+.hero-text {
+  z-index: 2;
 }
 
 .hero-section h1 {
@@ -168,7 +195,7 @@ const submit = () => {
   flex: 2;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   padding: 2rem;
 }
 
@@ -188,7 +215,7 @@ const submit = () => {
   margin-bottom: 2rem;
   padding: 1rem 2rem;
   background: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
   border-radius: 10px;
 }
 

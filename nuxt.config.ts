@@ -5,7 +5,14 @@ export default defineNuxtConfig({
     pageTransition: {
       name: 'fade', // Use 'fade' as the transition name or choose your own
       mode: 'out-in' // Ensure the new page fades in only after the old page fades out
-    }
+    },
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/SSLogo.png' },
+        // For other formats
+        { rel: 'icon', type: 'image/png', href: '/SSLogo.png' },
+      ],
+    },
   },
   css: ['~/css/Transitions/Fade.css'],
   modules: [

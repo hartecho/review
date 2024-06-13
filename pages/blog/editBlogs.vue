@@ -23,7 +23,13 @@
           <button @click="removeReference(index)">Remove Reference</button>
         </div>
         <button @click="addReference">Add Reference</button>
-        
+
+        <input type="text" v-model="newTag" placeholder="Add Tag" @keydown.enter.prevent="addTag" />
+        <div v-for="(tag, index) in blog.tags" :key="index" class="tag">
+          {{ tag }}
+          <button @click="removeTag(index)">Remove Tag</button>
+        </div>
+
         <div class="final-buttons">
           <button @click="addBlog">Add Blog</button>
           <button @click="updateBlog">Update Blog</button>
@@ -35,6 +41,7 @@
         <div v-for="(section, index) in blog.sections" :key="index">
           <input type="text" v-model="section.title" placeholder="Title" />
           <textarea v-model="section.content" placeholder="Content"></textarea>
+          <input type="text" v-model="section.photo" placeholder="Photo URL" />
           <div v-if="section.list && section.list.length">
             <div v-for="(item, itemIndex) in section.list" :key="itemIndex">
               <input type="text" v-model="item.title" placeholder="List Item Title"/>
@@ -53,8 +60,11 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+
 let blogs = ref([]);
 let selectedBlog = ref("");
+let newTag = ref("");
 let blog = ref({
   mainTitle: "",
   header: "",
@@ -64,12 +74,15 @@ let blog = ref({
       title: "",
       content: "",
       list: [],
+      photo: "", // Add photo field
     },
   ],
   image: "",
   thumbnail: "",
   references: [""],
   preview: "",
+  tags: [],
+  updated: [],
 });
 
 function init() {
@@ -84,12 +97,15 @@ function init() {
         title: "",
         content: "",
         list: [],
+        photo: "", // Add photo field
       },
     ],
     image: "",
     thumbnail: "",
     references: [""],
     preview: "",
+    tags: [],
+    updated: [],
   };
 }
 
@@ -110,6 +126,7 @@ function addSection() {
     title: "",
     content: "",
     list: [],
+    photo: "", // Add photo field
   });
 }
 
@@ -146,6 +163,17 @@ function removeReference(index) {
   blog.value.references.splice(index, 1);
 }
 
+function addTag() {
+  if (newTag.value && !blog.value.tags.includes(newTag.value)) {
+    blog.value.tags.push(newTag.value);
+    newTag.value = "";
+  }
+}
+
+function removeTag(index) {
+  blog.value.tags.splice(index, 1);
+}
+
 async function getBlogs() {
   try {
     const response = await $fetch("/api/blogs");
@@ -173,6 +201,10 @@ async function addBlog() {
 
 async function updateBlog() {
   try {
+    blog.value.updated.push({
+      date: new Date(),
+      text: "Blog updated",
+    });
     await $fetch(`/api/blogs/${blog.value._id}`, {
       method: "PUT",
       body: blog.value,
@@ -255,5 +287,13 @@ button {
 
 .final-buttons {
   margin-top: 2rem;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #e0e0e0;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 5px;
 }
 </style>

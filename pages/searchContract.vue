@@ -33,6 +33,19 @@
 const searchQuery = ref("");
 const selectedRating = ref(0);
 
+useSeoMeta({
+  title:
+    "Find General Contractors | Subsource – Search by Name, City, or Rating",
+  ogTitle:
+    "Find General Contractors | Subsource – Search by Name, City, or Rating",
+  description:
+    "Search for top-rated general contractors by name, city, or state. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
+  ogDescription:
+    "Search for top-rated general contractors by name, city, or state. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
+  ogImage: "/SSLogo.png",
+  twitterCard: "/SSLogo.png",
+});
+
 const { data: contractors } = await useFetch("/api/contractors");
 
 const tagDescriptions = {

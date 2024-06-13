@@ -14,6 +14,9 @@
       <p class="header">{{ post.header }}</p>
       <p>{{ post.intro }}</p>
       <div v-for="(section, index) in post.sections" :key="'section-' + index">
+        <div v-if="section.photo" class="section-img-wrapper">
+          <NuxtImg :src="section.photo" alt="Section Photo" />
+        </div>
         <h2>{{ section.title }}</h2>
         <p>{{ section.content }}</p>
         <ul v-if="section.list && section.list.length">
@@ -67,6 +70,19 @@ useSeoMeta({
   height: 100%;
   object-fit: cover;
 }
+
+.section-img-wrapper {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1em;
+}
+
+.section-img-wrapper img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
 .blog-post {
   max-width: 1000px;
   margin: 0 auto;
