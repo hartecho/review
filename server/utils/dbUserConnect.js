@@ -6,9 +6,6 @@ const MONGODB_URI = config.DB_URI; // Ensure your DB URI is correctly set in you
 // This is for when I'm storing user info in a separate database.
 export const connectUserDB = async () => {
   console.log("config.DB_URI: ", config.DB_URI);
-  console.log("config.public.DB_URI: ", config.public.DB_URI);
-  console.log("config.private.DB_URI: ", config.private.DB_URI);
-  console.log("process.env: ", process.env);
 
   if (mongoose.connection.readyState === 1) {
     console.log('Database already connected');

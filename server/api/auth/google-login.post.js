@@ -7,6 +7,8 @@ import User from '~/server/models/Users/User.js'; // Ensure the User model path 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
     const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
+    console.log("config.GOOGLE_CLIENT_ID, " + config.GOOGLE_CLIENT_ID);
+    console.log("config.JWT_SECRET, " + config.JWT_SECRET);
 
     await connectUserDB(); // Ensure the database connection is established
 
