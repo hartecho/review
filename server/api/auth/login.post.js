@@ -1,13 +1,13 @@
 // Importing necessary utilities and models
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { connectUserDB } from '~/server/utils/dbUserConnect';
+import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import User from '~/server/models/Users/User.js'; // Make sure your User model path is correct
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
-    await connectUserDB(); // Ensure the database connection is established
+    await connectDB(); // Ensure the database connection is established
 
     try {
         // Reading the request body

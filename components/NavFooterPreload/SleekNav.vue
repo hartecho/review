@@ -193,7 +193,7 @@ function toggleMobileNav() {
 }
 
 .nav-bar-hidden {
-  top: -75px; /* Adjust this value based on the height of your navbar */
+  top: -80px; /* Adjust this value based on the height of your navbar */
 }
 
 .top-nav {

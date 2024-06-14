@@ -1,9 +1,9 @@
-import { connectUserDB } from '~/server/utils/dbUserConnect';
+import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import User from '~/server/models/Users/User.js'; // Ensure your User model path is correct
 
 export default defineEventHandler(async (event) => {
-    await connectUserDB(); // Connect to the database
+    await connectDB(); // Connect to the database
 
     try {
         const body = await readBody(event);

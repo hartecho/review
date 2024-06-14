@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import { connectUserDB } from '~/server/utils/dbUserConnect';
+import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import User from '~/server/models/Users/User.js'; // Ensure the User model path is correct
 
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     console.log("config.GOOGLE_CLIENT_ID, " + config.GOOGLE_CLIENT_ID);
     console.log("config.JWT_SECRET, " + config.JWT_SECRET);
 
-    await connectUserDB(); // Ensure the database connection is established
+    await connectDB(); // Ensure the database connection is established
 
     try {
         const body = await readBody(event);

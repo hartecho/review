@@ -170,7 +170,7 @@ footer {
 </style>
 
 <style>
-@import "./css/Dividers/WaveDividerBlue.css";
+/* @import "./css/Dividers/WaveDividerBlue.css";
 @import "./css/Dividers/WaveDividerWhite.css";
 @import "./css/Dividers/GeoTopWhite.css";
 @import "./css/Dividers/GeoBotWhite.css";
@@ -181,7 +181,7 @@ footer {
 @import "./css/ButtonStyles/BubbleButton.css";
 @import "./css/ButtonStyles/QuoteButton.css";
 @import "./css/ButtonStyles/ContactBannerButton.css";
-@import "./css/Transitions/Fade.css";
+@import "./css/Transitions/Fade.css"; */
 
 *,
 body {

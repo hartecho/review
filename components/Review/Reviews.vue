@@ -1,5 +1,6 @@
 <template>
-  <div class="review">
+  <div v-if="isLoading" class="loading-spinner">Loading reviews...</div>
+  <div v-else class="review">
     <div class="review-header">
       <h4 class="reviewer-name">{{ review.reviewer.name }}</h4>
       <div class="rating">
@@ -16,8 +17,6 @@
       <strong>Tags:</strong>
       {{ review.tags.map((tag) => tagDescriptions[tag]).join(", ") }}
     </p>
-
-    <!-- Display the latest update directly under the original review -->
     <div
       ref="latestUpdateWrapper"
       class="latest-update-wrapper"
@@ -49,8 +48,6 @@
         <div class="update-tag">Updated Review</div>
       </div>
     </div>
-
-    <!-- Show other replies (updates and business replies) if available -->
     <div v-if="review.updates.length > 1 || review.businessReplies.length">
       <button @click="toggleReplies" class="show-updates-button">
         {{ showReplies ? "Hide Replies" : "Show All Replies" }} ({{
@@ -112,8 +109,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Business reply section -->
     <div v-if="isBusinessOwner" class="business-reply-section">
       <textarea v-model="newReply" placeholder="Write a reply..."></textarea>
       <p v-if="error" class="error-message">{{ error }}</p>
@@ -128,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 const props = defineProps({
   review: {
@@ -162,6 +157,7 @@ const showReplies = ref(false);
 const newReply = ref("");
 const loading = ref(false);
 const error = ref("");
+const isLoading = ref(true); // Loading state
 
 const latestUpdateWrapper = ref(null);
 const repliesContainer = ref(null);
@@ -231,7 +227,7 @@ async function submitReply() {
       });
       newReply.value = "";
       // Fetch updated reviews to refresh the component state
-      props.fetchReviews();
+      await props.fetchReviews();
     } catch (error) {
       console.error("Failed to submit reply:", error);
       error.value = "Failed to submit reply. Please try again.";
@@ -242,6 +238,12 @@ async function submitReply() {
     error.value = "Please enter a reply before submitting.";
   }
 }
+
+// Fetch reviews on component mount and set loading to false
+onMounted(async () => {
+  await props.fetchReviews();
+  isLoading.value = false;
+});
 </script>
 
 <style scoped>
@@ -513,4 +515,14 @@ async function submitReply() {
     font-size: 14px;
   } */
 }
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+  color: #007bff;
+}
 </style>
+
