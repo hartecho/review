@@ -30,6 +30,7 @@
         :contractor="contractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
+        :existingReview="existingReview"
         :isPro="isPro"
       />
     </div>
@@ -42,6 +43,7 @@ const props = defineProps({
   tagDescriptions: Object,
   isBusinessOwner: Boolean,
   isPro: Boolean,
+  existingReview: Object,
 });
 
 const activeTab = ref("reviews");

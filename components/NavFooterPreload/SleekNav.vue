@@ -117,8 +117,7 @@ onBeforeUnmount(() => {
 
 const logout = () => {
   store.logout();
-  window.location.reload();
-  console.log("Logged out");
+  // window.location.reload();
 };
 
 const props = defineProps({

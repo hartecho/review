@@ -58,7 +58,6 @@
         :isBusinessOwner="isBusinessOwner"
         :isPro="isPro"
         :contractor="contractor"
-        :fetchReviews="fetchReviews"
       />
     </div>
   </div>
@@ -66,6 +65,9 @@
 
 <script setup>
 const props = defineProps({
+  reviews: {
+    type: Array,
+  },
   contractor: {
     type: Object,
     required: true,
@@ -84,7 +86,6 @@ const props = defineProps({
   },
 });
 
-const reviews = ref([]);
 const filteredReviews = ref([]);
 const selectedRating = ref(null);
 const selectedTags = ref([]);
@@ -95,23 +96,9 @@ const newReply = ref({});
 const loading = ref(false);
 const error = ref("");
 
-// Fetch reviews
-async function fetchReviews() {
-  try {
-    const response = await $fetch(
-      `/api/reviews?contractor=${props.contractor._id}`
-    );
-    reviews.value = response;
-    updateRatingCounts();
-    filterReviews();
-  } catch (error) {
-    console.error("Failed to fetch reviews:", error);
-  }
-}
-
 function updateRatingCounts() {
   ratingCounts.value = [0, 0, 0, 0, 0];
-  reviews.value.forEach((review) => {
+  props.reviews.forEach((review) => {
     const latestRating = review.updates.length
       ? review.updates[review.updates.length - 1].rating
       : review.rating;
@@ -124,12 +111,13 @@ const contractorRating = computed(() => {
 });
 
 const ratingPercentages = computed(() => {
-  const total = reviews.value.length;
+  const total = props.reviews.length;
   return ratingCounts.value.map((count) => ((count / total) * 100).toFixed(2));
 });
 
 function filterReviews() {
-  filteredReviews.value = reviews.value.filter((review) => {
+  updateRatingCounts();
+  filteredReviews.value = props.reviews.filter((review) => {
     const latestRating = review.updates.length
       ? review.updates[review.updates.length - 1].rating
       : review.rating;
@@ -153,7 +141,7 @@ function filterByTags() {
 }
 
 onMounted(() => {
-  fetchReviews();
+  filterReviews();
   if (props.contractor) {
     availableTags.value = props.contractor.tags;
   }

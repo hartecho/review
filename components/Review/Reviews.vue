@@ -123,8 +123,6 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-
 const props = defineProps({
   review: {
     type: Object,
@@ -146,10 +144,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  fetchReviews: {
-    type: Function,
-    required: true,
-  },
 });
 
 const store = useStore();
@@ -157,7 +151,7 @@ const showReplies = ref(false);
 const newReply = ref("");
 const loading = ref(false);
 const error = ref("");
-const isLoading = ref(true); // Loading state
+const isLoading = ref(false);
 
 const latestUpdateWrapper = ref(null);
 const repliesContainer = ref(null);
@@ -226,8 +220,7 @@ async function submitReply() {
         },
       });
       newReply.value = "";
-      // Fetch updated reviews to refresh the component state
-      await props.fetchReviews();
+      // window.location.reload();
     } catch (error) {
       console.error("Failed to submit reply:", error);
       error.value = "Failed to submit reply. Please try again.";
@@ -238,13 +231,8 @@ async function submitReply() {
     error.value = "Please enter a reply before submitting.";
   }
 }
-
-// Fetch reviews on component mount and set loading to false
-onMounted(async () => {
-  await props.fetchReviews();
-  isLoading.value = false;
-});
 </script>
+
 
 <style scoped>
 .review {

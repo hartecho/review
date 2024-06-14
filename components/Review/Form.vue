@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isLoggedIn !== null">
     <div v-if="isBusinessOwner && isLoggedIn">
       <p>You represent this business. Reply to reviews below!</p>
     </div>
@@ -14,7 +14,6 @@
           :isBusinessOwner="isBusinessOwner"
           :isPro="isPro"
           :contractor="contractor"
-          :fetchReviews="fetchExistingReview"
         />
       </div>
 
@@ -84,6 +83,10 @@
 
 <script setup>
 const props = defineProps({
+  existingReview: {
+    type: Object,
+    required: false,
+  },
   contractor: {
     type: Object,
     required: true,
@@ -104,43 +107,19 @@ const props = defineProps({
 
 const newReview = ref({ rating: null, comment: "", tags: [] });
 const hoverRating = ref(0);
-const existingReview = ref(null);
 const store = useStore();
 const isLoggedIn = computed(() => !!store.token);
 const loading = ref(false);
 const showLoginModal = ref(false);
 const error = ref("");
-const showReviewForm = ref(true);
-
-async function fetchExistingReview() {
-  if (isLoggedIn.value) {
-    try {
-      const response = await $fetch(
-        `/api/reviews?contractor=${props.contractor._id}&user=${store.user._id}`
-      );
-      existingReview.value = response || null;
-      if (response) {
-        newReview.value = {
-          rating: response.rating,
-          comment: "",
-          tags: response.tags,
-        };
-        showReviewForm.value = false; // Hide the form initially if there's an existing review
-      } else {
-        showReviewForm.value = true; // Show the form if there's no existing review
-      }
-    } catch (error) {
-      console.error("Failed to fetch existing review:", error);
-    }
-  }
-}
+const showReviewForm = ref(!props.existingReview);
 
 function setRating(rating) {
   newReview.value.rating = rating;
 }
 
 function toggleReviewForm() {
-  if (existingReview.value) {
+  if (props.existingReview) {
     showReviewForm.value = !showReviewForm.value;
   }
 }
@@ -160,8 +139,7 @@ async function submitReview() {
           tags: newReview.value.tags,
         },
       });
-      newReview.value = { rating: 1, comment: "", tags: [] };
-      fetchExistingReview();
+      newReview.value = { rating: null, comment: "", tags: [] };
       location.reload();
     } catch (error) {
       console.error("Failed to submit review:", error);
@@ -182,8 +160,31 @@ function closeLoginModal() {
   showLoginModal.value = false;
 }
 
-onMounted(fetchExistingReview);
+watch(
+  () => props.existingReview,
+  (newReviewData) => {
+    if (newReviewData) {
+      newReview.value = {
+        rating: newReviewData.rating,
+        comment: newReviewData.comment,
+        tags: newReviewData.tags,
+      };
+      showReviewForm.value = false; // Hide the form initially if there's an existing review
+    } else {
+      showReviewForm.value = true; // Show the form if there's no existing review
+    }
+  },
+  { immediate: true }
+);
+
+watch(isLoggedIn, (loggedIn) => {
+  if (!loggedIn) {
+    showLoginModal.value = false;
+  }
+});
 </script>
+
+
 
 <style scoped>
 .checkboxes {

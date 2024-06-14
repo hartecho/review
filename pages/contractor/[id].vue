@@ -13,6 +13,7 @@
         :contractor="contractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
+        :existingReview="existingReview"
         :isPro="isPro"
       />
     </section>
@@ -21,6 +22,7 @@
         :contractor="contractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
+        :reviews="reviews"
         :isPro="isPro"
       />
     </section>
@@ -32,27 +34,50 @@
 
 <script setup>
 import { tagDescriptions } from "~/utils/tagDescriptions.js";
+
 const route = useRoute();
 const store = useStore();
+const existingReview = ref(null);
+const isLoggedIn = computed(() => !!store.token);
 
 const { data: contractor, pending: contractorPending } = await useFetch(
   `/api/contractors?_id=${route.params.id}`
 );
 
+const { data: reviews } = await useFetch(
+  `/api/reviews?contractor=${contractor.value._id}`
+);
+
+const siftReviews = (reviews) => {
+  // console.log("reviews: ", reviews);
+  if (isLoggedIn.value) {
+    const userReview = reviews.find(
+      (review) => review.reviewer._id === store.user._id
+    );
+    existingReview.value = userReview || null;
+  }
+};
+
+onMounted(() => {
+  if (reviews.value) {
+    siftReviews(reviews.value);
+  }
+});
+
 useSeoMeta({
-  title: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
-  ogTitle: `${contractor.value.company} Reviews | Subsource – Trusted Contractor Insights`,
-  description: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogDescription: `Read detailed reviews and ratings for ${contractor.value.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogImage: `/${contractor.value.picture}`,
-  twitterCard: `/${contractor.value.picture}`,
+  title: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
+  ogTitle: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
+  description: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
+  ogDescription: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
+  ogImage: `/${contractor.value?.picture}`,
+  twitterCard: `/${contractor.value?.picture}`,
 });
 
 const showLoginModal = ref(false);
 const activeTab = ref("reviews");
 
 const contactContractor = () => {
-  alert(`Contacting ${contractor.value.company}`);
+  alert(`Contacting ${contractor.value?.company}`);
 };
 
 const openLoginModal = () => {
@@ -66,7 +91,7 @@ const closeLoginModal = () => {
 };
 
 const roundedRating = computed(() => {
-  return Math.round(contractor.value.ratings);
+  return Math.round(contractor.value?.ratings || 0);
 });
 
 const isBusinessOwner = computed(() => {
@@ -81,6 +106,7 @@ const isPro = computed(() => {
   return true;
 });
 </script>
+
 
 <style scoped>
 .profile-page {

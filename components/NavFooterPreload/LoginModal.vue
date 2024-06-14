@@ -64,7 +64,7 @@ const handleEmailLogin = async (loginData) => {
     store.setToken(response.token);
     store.setUser(response.user);
     closeModal();
-    window.location.reload();
+    // window.location.reload();
   } catch (error) {
     console.error("Login failed:", error);
     loginError.value = {
@@ -83,11 +83,10 @@ const handleGoogleLogin = async (response) => {
         method: "POST",
         body: { token: credential },
       });
-      console.log("JWT Token from Google sign in:", response.token);
       store.setToken(response.token);
       store.setUser(response.user);
       closeModal();
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Google login failed:", error);
       loginError.value = {
@@ -127,7 +126,7 @@ const handleSignUp = async (signUpData) => {
       email: signUpData.email,
       password: signUpData.password,
     });
-    window.location.reload();
+    // window.location.reload();
   } catch (error) {
     isLoading.value = false;
     console.error("Sign-up failed:", error);

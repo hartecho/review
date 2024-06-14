@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
     const { contractor, rating, comment, tags, reviewer, reviewId, businessRep, reply } = body;
-    console.log("Request Body:", body);
+    // console.log("Request Body:", body);
 
     if (reply) {
       console.log("Adding business reply");

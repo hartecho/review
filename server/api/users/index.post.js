@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event);
-        console.log("Request Body:", body);  // Log request body for debugging
+        // console.log("Request Body:", body);  // Log request body for debugging
         const { email, password, name } = body;
 
         // Check if user already exists
