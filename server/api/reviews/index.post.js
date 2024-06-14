@@ -1,5 +1,6 @@
 import Review from '~/server/models/Users/Review.js';
 import Contractor from '~/server/models/Users/Contractor.js';
+import User from '~/server/models/Users/User.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import mongoose from 'mongoose';
