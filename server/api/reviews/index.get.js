@@ -28,6 +28,6 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     console.error(error);
     await disconnectDB();
-    throw createError({ statusCode: 500, message: 'Server Error' });
+    throw createError({ statusCode: 500, message: error });
   }
 });
