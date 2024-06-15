@@ -226,13 +226,21 @@ function splitText(text) {
 
 .contractor-info {
   flex: 1;
+  text-align: left;
+  margin-left: 0rem;
 }
 
 .contractor-info h3,
-.contractor-info p {
-  margin: 0;
+.contractor-info p,
+.contractor-info ul {
+  margin: 0 auto;
   font-size: 16px;
   color: #fff;
+  /* max-width: 250px; */
+  /* max-width: 50%; */
+}
+
+.contractor-info h3 {
 }
 
 .operating-states-list,
@@ -242,7 +250,7 @@ function splitText(text) {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .operating-states-list li,
@@ -251,6 +259,8 @@ function splitText(text) {
   margin: 0 5px;
   padding: 0;
   color: #fff;
+  max-width: 150px;
+  text-align: left;
 }
 
 .highlight {

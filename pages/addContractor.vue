@@ -12,6 +12,7 @@
             :items="availableStates"
             :selected-items="contractor.operatingStates"
             @update:selectedItems="updateOperatingStates"
+            label="Select Operating States"
           />
         </div>
 
@@ -21,6 +22,7 @@
             :items="availableTags"
             :selected-items="contractor.tags"
             @update:selectedItems="updateTags"
+            label="Select Job Types"
           />
         </div>
 
@@ -34,7 +36,7 @@
   </div>
 </template>
   
-  <script setup>
+<script setup>
 const router = useRouter();
 
 const contractor = ref({
@@ -195,7 +197,7 @@ function resetForm() {
 }
 </script>
   
-  <style scoped>
+<style scoped>
 .wrapper {
   padding: 4rem 0;
   width: 90%;
@@ -203,7 +205,7 @@ function resetForm() {
   min-height: 55rem;
   height: auto;
   font-family: "Roboto", sans-serif;
-  background-color: #f5f5f5;
+  /* background-color: #f5f5f5; */
 }
 
 h1 {
@@ -335,5 +337,66 @@ button:disabled {
   text-align: center;
   margin-top: 2rem;
 }
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left {
+    width: 80%;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  input[type="text"] {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .select-selected {
+    padding: 0.8rem;
+  }
+
+  .select-items div {
+    padding: 0.8rem;
+  }
+
+  button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .left {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  input[type="text"] {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .select-selected {
+    padding: 0.6rem;
+  }
+
+  .select-items div {
+    padding: 0.6rem;
+  }
+
+  button {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+}
 </style>
-  

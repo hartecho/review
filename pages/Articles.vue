@@ -18,9 +18,9 @@
           >
         </div>
       </div>
-      <NuxtLink to="/blog/editBlogs" class="edit-button-link">
+      <!-- <NuxtLink to="/blog/editBlogs" class="edit-button-link">
         <button class="edit-button">Edit Blogs</button>
-      </NuxtLink>
+      </NuxtLink> -->
     </section>
     <section class=""></section>
   </div>

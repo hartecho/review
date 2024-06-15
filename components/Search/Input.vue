@@ -3,7 +3,7 @@
     type="text"
     :value="searchQuery"
     @input="$emit('update:searchQuery', $event.target.value)"
-    placeholder="Search subcontractors..."
+    placeholder="Search contractors by name, operating states, or job types..."
     class="search-input"
   />
 </template>

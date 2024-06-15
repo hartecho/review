@@ -3,8 +3,8 @@
     <div class="page-header">
       <h1>Find General Contractors</h1>
       <p>
-        Search for general contractors by name, city, or state, and filter by
-        star rating.
+        Search for general contractors by name, operating states, or star
+        rating.
       </p>
     </div>
     <div class="filter-page">
@@ -35,13 +35,13 @@ const selectedRating = ref("0");
 
 useSeoMeta({
   title:
-    "Find General Contractors | Subsource – Search by Name, City, or Rating",
+    "Find General Contractors | Subsource – Search by Name, Operating States, or Rating",
   ogTitle:
-    "Find General Contractors | Subsource – Search by Name, City, or Rating",
+    "Find General Contractors | Subsource – Search by Name, Operating States, or Rating",
   description:
-    "Search for top-rated general contractors by name, city, or state. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated general contractors by name or operating states. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
-    "Search for top-rated general contractors by name, city, or state. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated general contractors by name or operating states. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
   ogImage: "/SSLogo.png",
   twitterCard: "/SSLogo.png",
 });
@@ -64,8 +64,9 @@ const filteredContractors = computed(() => {
       (contractor) =>
         (contractor.company &&
           contractor.company.toLowerCase().includes(query)) ||
-        contractor.address.city.toLowerCase().includes(query) ||
-        contractor.address.state.toLowerCase().includes(query)
+        contractor.operatingStates.some((state) =>
+          state.toLowerCase().includes(query)
+        )
     );
   }
 

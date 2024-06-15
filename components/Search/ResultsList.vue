@@ -19,6 +19,7 @@
             </span>
           </h3>
           <p>
+            Operating States:
             <span
               v-for="(part, index) in splitText(
                 contractor.operatingStates.join(', ')

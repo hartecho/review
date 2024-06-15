@@ -3,8 +3,8 @@
     <div class="page-header">
       <h1>Find Subcontractors</h1>
       <p>
-        Search for subcontractors by name, city, or state, and filter by job
-        type and star rating.
+        Search for subcontractors by name, operating states, or job type, and
+        filter by star rating.
       </p>
     </div>
     <div class="filter-page">
@@ -45,13 +45,13 @@ const showDropdown = ref(false);
 
 useSeoMeta({
   title:
-    "Find Subcontractors | Subsource – Search by Job Type, Name, City, or Rating",
+    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   ogTitle:
-    "Find Subcontractors | Subsource – Search by Job Type, Name, City, or Rating",
+    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   description:
-    "Search for top-rated subcontractors by job type, name, city, or state. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
-    "Search for top-rated subcontractors by job type, name, city, or state. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
   ogImage: "/SSLogo.png",
   twitterCard: "/SSLogo.png",
 });
@@ -123,10 +123,9 @@ const filteredContractors = computed(() => {
       (contractor) =>
         (contractor.company &&
           contractor.company.toLowerCase().includes(query)) ||
-        (contractor.address.city &&
-          contractor.address.city.toLowerCase().includes(query)) ||
-        (contractor.address.state &&
-          contractor.address.state.toLowerCase().includes(query)) ||
+        contractor.operatingStates.some((state) =>
+          state.toLowerCase().includes(query)
+        ) ||
         contractor.tags.some((tag) =>
           tagDescriptions[tag].toLowerCase().includes(query)
         )

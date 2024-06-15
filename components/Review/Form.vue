@@ -48,7 +48,7 @@
         </div>
         <div class="checkboxes">
           <div class="checkbox-group">
-            <h4>Select Job Types</h4>
+            <h4>Select job types your review describes</h4>
             <div class="checkbox-row">
               <label v-for="tag in contractor.tags" :key="tag">
                 <input type="checkbox" :value="tag" v-model="newReview.tags" />
@@ -166,7 +166,7 @@ watch(
     if (newReviewData) {
       newReview.value = {
         rating: newReviewData.rating,
-        comment: newReviewData.comment,
+        comment: "",
         tags: newReviewData.tags,
       };
       showReviewForm.value = false; // Hide the form initially if there's an existing review
@@ -332,7 +332,7 @@ button:hover {
 
 p {
   color: black;
-  margin: 1rem 0;
+  margin-top: 1rem;
 }
 
 .stars-input {
