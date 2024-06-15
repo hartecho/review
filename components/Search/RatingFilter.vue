@@ -4,26 +4,25 @@
     <select
       id="rating"
       :value="selectedRating"
-      @change="$emit('update:selectedRating', Number($event.target.value))"
+      @change="$emit('update:selectedRating', $event.target.value)"
       class="rating-select"
     >
       <option value="0">All Ratings</option>
-      <option value="1">1 Star</option>
-      <option value="2">2 Stars</option>
+      <option value="4_and_above">4 Stars and Above</option>
       <option value="3">3 Stars</option>
-      <option value="4">4 Stars</option>
-      <option value="5">5 Stars</option>
+      <option value="2">2 Stars</option>
+      <option value="1">1 Star</option>
     </select>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 const props = defineProps({
-  selectedRating: Number,
+  selectedRating: String,
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .rating-filter {
   margin-top: 10px;
 }
@@ -34,4 +33,3 @@ const props = defineProps({
   border-radius: 25px;
 }
 </style>
-  

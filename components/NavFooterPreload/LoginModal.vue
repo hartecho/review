@@ -60,7 +60,7 @@ const handleEmailLogin = async (loginData) => {
       method: "POST",
       body: { email: loginData.email, password: loginData.password },
     });
-    console.log("JWT Token from email sign in:", response.token);
+    // console.log("JWT Token from email sign in:", response.token);
     store.setToken(response.token);
     store.setUser(response.user);
     closeModal();

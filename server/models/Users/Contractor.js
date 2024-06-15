@@ -3,18 +3,30 @@ import mongoose from 'mongoose';
 const contractorSchema = new mongoose.Schema({
   company: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   picture: {
     type: String,
-    required: true
+    required: false,
+    default: 'SSLogo.png'
+  },
+  operatingStates: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: function(arr) {
+        return arr.every(state => /^[A-Z]{2}$/.test(state)); // Ensure each state is a 2-letter abbreviation
+      },
+      message: props => `${props.value} is not a valid state abbreviation!`
+    }
   },
   address: {
-    streetAddress: { type: String, required: true },
+    streetAddress: { type: String },
     secondaryAddress: String,
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    ZIPCode: { type: String, required: true },
+    city: { type: String },
+    state: { type: String },
+    ZIPCode: { type: String },
     ZIPPlus4: String,
     urbanization: String,
     firstName: String,
@@ -26,11 +38,11 @@ const contractorSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: true
+    required: false
   },
   email: {
     type: String,
-    required: true
+    required: false
   },
   website: {
     type: String

@@ -49,22 +49,19 @@
           />
         </div>
 
-        <div class="tags">
-          <div
-            v-for="tag in availableTags"
-            :key="tag.enum"
-            class="tag-checkbox"
-          >
-            <label>
-              <input
-                type="checkbox"
-                :value="tag.enum"
-                v-model="contractor.tags"
-              />
-              {{ tag.enum }} ({{ tag.description }})
-            </label>
-          </div>
-        </div>
+        <ProfileDropdown
+          label="Select Operating States"
+          :items="availableStates"
+          :selectedItems="contractor.operatingStates"
+          @update:selectedItems="updateOperatingStates"
+        />
+
+        <ProfileDropdown
+          label="Select Job Types"
+          :items="availableTags"
+          :selectedItems="contractor.tags"
+          @update:selectedItems="updateTags"
+        />
 
         <div class="final-buttons">
           <button @click="addContractor">Add Contractor</button>
@@ -72,14 +69,30 @@
           <button @click="deleteContractor">Delete Contractor</button>
           <button @click="resetRatings">Reset All Ratings</button>
         </div>
+
+        <div class="delete-all-section">
+          <label for="delete-confirmation"
+            >Type "Delete All Contractors" to confirm:</label
+          >
+          <input
+            type="text"
+            id="delete-confirmation"
+            v-model="deleteConfirmation"
+            placeholder="Delete All Contractors"
+          />
+          <button
+            @click="deleteAllContractors"
+            :disabled="deleteConfirmation !== 'Delete All Contractors'"
+          >
+            Delete All Contractors
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-
 const contractors = ref([]);
 const selectedContractor = ref("");
 const contractor = ref({
@@ -95,8 +108,64 @@ const contractor = ref({
     state: "",
     ZIPCode: "",
   },
+  operatingStates: [],
   tags: [],
 });
+
+const deleteConfirmation = ref("");
+
+const availableStates = [
+  { abbreviation: "AL", name: "Alabama" },
+  { abbreviation: "AK", name: "Alaska" },
+  { abbreviation: "AZ", name: "Arizona" },
+  { abbreviation: "AR", name: "Arkansas" },
+  { abbreviation: "CA", name: "California" },
+  { abbreviation: "CO", name: "Colorado" },
+  { abbreviation: "CT", name: "Connecticut" },
+  { abbreviation: "DE", name: "Delaware" },
+  { abbreviation: "FL", name: "Florida" },
+  { abbreviation: "GA", name: "Georgia" },
+  { abbreviation: "HI", name: "Hawaii" },
+  { abbreviation: "ID", name: "Idaho" },
+  { abbreviation: "IL", name: "Illinois" },
+  { abbreviation: "IN", name: "Indiana" },
+  { abbreviation: "IA", name: "Iowa" },
+  { abbreviation: "KS", name: "Kansas" },
+  { abbreviation: "KY", name: "Kentucky" },
+  { abbreviation: "LA", name: "Louisiana" },
+  { abbreviation: "ME", name: "Maine" },
+  { abbreviation: "MD", name: "Maryland" },
+  { abbreviation: "MA", name: "Massachusetts" },
+  { abbreviation: "MI", name: "Michigan" },
+  { abbreviation: "MN", name: "Minnesota" },
+  { abbreviation: "MS", name: "Mississippi" },
+  { abbreviation: "MO", name: "Missouri" },
+  { abbreviation: "MT", name: "Montana" },
+  { abbreviation: "NE", name: "Nebraska" },
+  { abbreviation: "NV", name: "Nevada" },
+  { abbreviation: "NH", name: "New Hampshire" },
+  { abbreviation: "NJ", name: "New Jersey" },
+  { abbreviation: "NM", name: "New Mexico" },
+  { abbreviation: "NY", name: "New York" },
+  { abbreviation: "NC", name: "North Carolina" },
+  { abbreviation: "ND", name: "North Dakota" },
+  { abbreviation: "OH", name: "Ohio" },
+  { abbreviation: "OK", name: "Oklahoma" },
+  { abbreviation: "OR", name: "Oregon" },
+  { abbreviation: "PA", name: "Pennsylvania" },
+  { abbreviation: "RI", name: "Rhode Island" },
+  { abbreviation: "SC", name: "South Carolina" },
+  { abbreviation: "SD", name: "South Dakota" },
+  { abbreviation: "TN", name: "Tennessee" },
+  { abbreviation: "TX", name: "Texas" },
+  { abbreviation: "UT", name: "Utah" },
+  { abbreviation: "VT", name: "Vermont" },
+  { abbreviation: "VA", name: "Virginia" },
+  { abbreviation: "WA", name: "Washington" },
+  { abbreviation: "WV", name: "West Virginia" },
+  { abbreviation: "WI", name: "Wisconsin" },
+  { abbreviation: "WY", name: "Wyoming" },
+];
 
 const availableTags = [
   { enum: "GEN", description: "General Contractor" },
@@ -178,7 +247,7 @@ async function getContractors() {
 
 async function addContractor() {
   try {
-    await $fetch("/api/contractors", {
+    const savedContractor = await $fetch("/api/contractors", {
       method: "POST",
       body: contractor.value,
     });
@@ -222,6 +291,24 @@ async function deleteContractor() {
   }
 }
 
+async function deleteAllContractors() {
+  if (deleteConfirmation.value !== "Delete All Contractors") {
+    alert("Please type 'Delete All Contractors' to confirm");
+    return;
+  }
+
+  try {
+    await $fetch("/api/contractors/all", {
+      method: "DELETE",
+    });
+    alert("All contractors deleted successfully");
+    getContractors();
+  } catch (error) {
+    alert("Error deleting all contractors: " + error.message);
+    console.error("Error deleting all contractors:", error);
+  }
+}
+
 async function resetRatings() {
   try {
     await $fetch("/api/contractors/reset", {
@@ -250,9 +337,18 @@ function init() {
       state: "",
       ZIPCode: "",
     },
+    operatingStates: [],
     tags: [],
   };
   selectedContractor.value = "";
+}
+
+function updateOperatingStates(states) {
+  contractor.value.operatingStates = states;
+}
+
+function updateTags(tags) {
+  contractor.value.tags = tags;
 }
 </script>
 
@@ -263,74 +359,171 @@ function init() {
   margin: 0 auto;
   min-height: 55rem;
   height: auto;
+  font-family: "Roboto", sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 700;
 }
 
 .content {
   display: flex;
+  justify-content: center;
   gap: 2rem;
 }
 
 .left {
-  width: 50%;
+  width: 60%;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-input,
+input[type="text"],
+input[type="email"],
 textarea,
 select {
   display: block;
   width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 16px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
 }
 
-textarea {
-  height: 10rem;
+input[type="text"]:focus,
+input[type="email"]:focus {
+  border-color: #4caf50;
+  outline: none;
 }
 
-label,
-h3 {
-  color: black;
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
 }
 
 button {
-  background-color: #4caf50; /* Green */
+  background-color: #ff8210; /* Color of the logout button */
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 1rem 2rem;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
+  font-size: 1rem;
+  margin: 1rem 0.5rem 0 0;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #e65a00;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .final-buttons {
+  text-align: center;
   margin-top: 2rem;
 }
 
 .address,
-.tags {
-  margin-bottom: 1rem;
+.tags,
+.operating-states {
+  margin-bottom: 2rem;
 }
 
-.tags {
+.tags,
+.operating-states {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 10px;
 }
 
-.tag-checkbox {
+.tag-checkbox,
+.state-checkbox {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
 }
 
+.state-checkbox:hover,
+.tag-checkbox:hover {
+  background: #e0e0e0;
+}
+
+.state-checkbox.checked,
+.tag-checkbox.checked {
+  background: #ff8210; /* Color of the logout button */
+  border-color: #ff8210;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.state-checkbox input,
 .tag-checkbox input {
-  margin-right: 8px;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.state-checkbox label,
+.tag-checkbox label {
+  color: black;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.state-checkbox.checked label,
+.tag-checkbox.checked label {
+  color: white;
+  /* font-weight: bold; */
+}
+
+.delete-all-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.delete-all-section input[type="text"] {
+  width: 60%;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.delete-all-section input[type="text"]:focus {
+  border-color: #ff8210;
+  outline: none;
 }
 </style>

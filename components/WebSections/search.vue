@@ -7,7 +7,7 @@
       @focus="showList = true"
       @blur="hideList"
       @input="filterList"
-      placeholder="Search contractors by name, city, or state..."
+      placeholder="Search contractors by name, operating states, or job types..."
       class="search-input"
     />
     <transition name="dropdown">
@@ -36,7 +36,17 @@
                 {{ part.text }}
               </span>
             </h3>
-            {{ contractor.address.city }}, {{ contractor.address.state }}
+            <ul class="operating-states-list">
+              <li v-for="state in contractor.operatingStates" :key="state">
+                <span
+                  v-for="(part, index) in splitText(state)"
+                  :key="index"
+                  :class="{ highlight: part.match }"
+                >
+                  {{ part.text }}
+                </span>
+              </li>
+            </ul>
             <ul class="jobs-list">
               <li v-for="job in contractor.tags" :key="job">
                 <span
@@ -73,10 +83,9 @@ const filteredContractors = computed(() => {
     (contractor) =>
       (contractor.company &&
         contractor.company.toLowerCase().includes(query)) ||
-      (contractor.address.city &&
-        contractor.address.city.toLowerCase().includes(query)) ||
-      (contractor.address.state &&
-        contractor.address.state.toLowerCase().includes(query)) ||
+      contractor.operatingStates.some((state) =>
+        state.toLowerCase().includes(query)
+      ) ||
       contractor.tags.some((tag) =>
         tagDescriptions[tag].toLowerCase().includes(query)
       )
@@ -197,7 +206,7 @@ function splitText(text) {
 .dropdown-item {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
   font-size: 14px;
@@ -226,16 +235,22 @@ function splitText(text) {
   color: #fff;
 }
 
+.operating-states-list,
 .jobs-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
+.operating-states-list li,
 .jobs-list li {
   font-size: 14px;
-  display: inline;
-  margin-right: 5px;
+  margin: 0 5px;
+  padding: 0;
+  color: #fff;
 }
 
 .highlight {
@@ -268,7 +283,6 @@ function splitText(text) {
   }
 
   .dropdown-item {
-    /* flex-direction: column; */
     align-items: flex-start;
   }
 

@@ -5,16 +5,11 @@ import { disconnectDB } from '~/server/utils/dbDisconnect';
 export default defineEventHandler(async (event) => {
   await connectDB(); // Ensure DB connection
   try {
-    const body = await readBody(event);
-    body._id = null;
-    const contractor = new Contractor(body);
-    await contractor.save();
-    const savedContractor = await Contractor.findOne({company: contractor.company});
+    const result = await Contractor.deleteMany({});
     await disconnectDB();
-    console.log("savedContractor: ", savedContractor);
-    return savedContractor;
+    return { message: 'All contractors deleted successfully', result };
   } catch (error) {
-    console.error('Error in POST /api/contractors:', error);
+    console.error('Error in DELETE /api/contractors/deleteAll:', error);
     throw createError({ statusCode: 500, message: 'Server Error' });
   }
 });

@@ -1,0 +1,339 @@
+<template>
+  <div class="wrapper">
+    <h1>Add Contractor</h1>
+
+    <div class="content">
+      <div class="left">
+        <input type="text" v-model="contractor.company" placeholder="Company" />
+
+        <div class="operating-states">
+          <label>Operating States:</label>
+          <ProfileDropdown
+            :items="availableStates"
+            :selected-items="contractor.operatingStates"
+            @update:selectedItems="updateOperatingStates"
+          />
+        </div>
+
+        <div class="tags">
+          <label>Job Types:</label>
+          <ProfileDropdown
+            :items="availableTags"
+            :selected-items="contractor.tags"
+            @update:selectedItems="updateTags"
+          />
+        </div>
+
+        <div class="final-buttons">
+          <button @click="addContractor" :disabled="!isFormValid">
+            Add Contractor
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+  
+  <script setup>
+const router = useRouter();
+
+const contractor = ref({
+  company: "",
+  operatingStates: [],
+  tags: [],
+});
+
+const availableStates = [
+  { name: "Alabama", abbreviation: "AL" },
+  { name: "Alaska", abbreviation: "AK" },
+  { name: "Arizona", abbreviation: "AZ" },
+  { name: "Arkansas", abbreviation: "AR" },
+  { name: "California", abbreviation: "CA" },
+  { name: "Colorado", abbreviation: "CO" },
+  { name: "Connecticut", abbreviation: "CT" },
+  { name: "Delaware", abbreviation: "DE" },
+  { name: "Florida", abbreviation: "FL" },
+  { name: "Georgia", abbreviation: "GA" },
+  { name: "Hawaii", abbreviation: "HI" },
+  { name: "Idaho", abbreviation: "ID" },
+  { name: "Illinois", abbreviation: "IL" },
+  { name: "Indiana", abbreviation: "IN" },
+  { name: "Iowa", abbreviation: "IA" },
+  { name: "Kansas", abbreviation: "KS" },
+  { name: "Kentucky", abbreviation: "KY" },
+  { name: "Louisiana", abbreviation: "LA" },
+  { name: "Maine", abbreviation: "ME" },
+  { name: "Maryland", abbreviation: "MD" },
+  { name: "Massachusetts", abbreviation: "MA" },
+  { name: "Michigan", abbreviation: "MI" },
+  { name: "Minnesota", abbreviation: "MN" },
+  { name: "Mississippi", abbreviation: "MS" },
+  { name: "Missouri", abbreviation: "MO" },
+  { name: "Montana", abbreviation: "MT" },
+  { name: "Nebraska", abbreviation: "NE" },
+  { name: "Nevada", abbreviation: "NV" },
+  { name: "New Hampshire", abbreviation: "NH" },
+  { name: "New Jersey", abbreviation: "NJ" },
+  { name: "New Mexico", abbreviation: "NM" },
+  { name: "New York", abbreviation: "NY" },
+  { name: "North Carolina", abbreviation: "NC" },
+  { name: "North Dakota", abbreviation: "ND" },
+  { name: "Ohio", abbreviation: "OH" },
+  { name: "Oklahoma", abbreviation: "OK" },
+  { name: "Oregon", abbreviation: "OR" },
+  { name: "Pennsylvania", abbreviation: "PA" },
+  { name: "Rhode Island", abbreviation: "RI" },
+  { name: "South Carolina", abbreviation: "SC" },
+  { name: "South Dakota", abbreviation: "SD" },
+  { name: "Tennessee", abbreviation: "TN" },
+  { name: "Texas", abbreviation: "TX" },
+  { name: "Utah", abbreviation: "UT" },
+  { name: "Vermont", abbreviation: "VT" },
+  { name: "Virginia", abbreviation: "VA" },
+  { name: "Washington", abbreviation: "WA" },
+  { name: "West Virginia", abbreviation: "WV" },
+  { name: "Wisconsin", abbreviation: "WI" },
+  { name: "Wyoming", abbreviation: "WY" },
+];
+
+const availableTags = [
+  { enum: "GEN", description: "General Contractor" },
+  { enum: "FLR", description: "Flooring" },
+  { enum: "CTP", description: "Countertops" },
+  { enum: "CAB", description: "Cabinets" },
+  { enum: "CON", description: "Concrete and Masonry" },
+  { enum: "STL", description: "Steel and Metal Fabrication" },
+  { enum: "FRM", description: "Framing" },
+  { enum: "ROF", description: "Roofing" },
+  { enum: "SID", description: "Siding" },
+  { enum: "WND", description: "Windows and Doors" },
+  { enum: "LND", description: "Landscaping and Hardscaping" },
+  { enum: "DRY", description: "Drywall and Plaster" },
+  { enum: "PNT", description: "Painting and Finishing" },
+  { enum: "INS", description: "Insulation" },
+  { enum: "CLG", description: "Ceiling Systems" },
+  { enum: "HVAC", description: "HVAC" },
+  { enum: "PLM", description: "Plumbing" },
+  { enum: "ELEC", description: "Electrical" },
+  { enum: "EXC", description: "Excavation" },
+  { enum: "DEM", description: "Demolition" },
+  { enum: "GRD", description: "Grading and Paving" },
+  { enum: "FPS", description: "Fire Protection and Sprinkler Systems" },
+  { enum: "SEC", description: "Security Systems" },
+  { enum: "AV", description: "Audio-Visual Installations" },
+  { enum: "ELEV", description: "Elevator and Escalator Installation" },
+  { enum: "SOL", description: "Solar Energy and Green Building Solutions" },
+  { enum: "UTIL", description: "Utility Contractors" },
+  { enum: "FIN", description: "Finishing Contractors" },
+  { enum: "CAR", description: "Carpentry and Woodwork" },
+  { enum: "TLE", description: "Tile and Stone Installation" },
+  { enum: "GLS", description: "Glass and Glazing" },
+  { enum: "SPC", description: "Specialty Coatings and Sealants" },
+  { enum: "REN", description: "Renovation and Restoration" },
+  { enum: "HIS", description: "Historic Restoration" },
+  { enum: "REM", description: "Remodeling" },
+  { enum: "WTR", description: "Waterproofing and Mold Remediation" },
+  { enum: "ENV", description: "Environmental Contractors" },
+  { enum: "ASB", description: "Asbestos Abatement" },
+  { enum: "LEAD", description: "Lead Paint Removal" },
+  { enum: "ENVC", description: "Environmental Cleanup and Remediation" },
+  { enum: "DB", description: "Design and Build Contractors" },
+  { enum: "ARC", description: "Architectural Services" },
+  { enum: "ENG", description: "Engineering Services" },
+  { enum: "LOG", description: "Logistics and Material Handling Contractors" },
+  { enum: "WARE", description: "Warehouse Setup" },
+  { enum: "IEQ", description: "Industrial Equipment Installation" },
+  { enum: "SPEQ", description: "Specialty Equipment Contractors" },
+  { enum: "CKE", description: "Commercial Kitchen Equipment" },
+  { enum: "LMEQ", description: "Laboratory and Medical Equipment" },
+  { enum: "FAC", description: "Facade and Cladding Contractors" },
+  { enum: "EXC", description: "Exterior Cladding Systems" },
+  { enum: "CUR", description: "Curtain Wall Systems" },
+  { enum: "OTH", description: "Other" },
+];
+
+const isFormValid = computed(() => {
+  return (
+    contractor.value.company &&
+    contractor.value.operatingStates.length > 0 &&
+    contractor.value.tags.length > 0
+  );
+});
+
+const updateOperatingStates = (states) => {
+  contractor.value.operatingStates = states;
+};
+
+const updateTags = (tags) => {
+  contractor.value.tags = tags;
+};
+
+async function addContractor() {
+  if (isFormValid.value) {
+    try {
+      const response = await $fetch("/api/contractors", {
+        method: "POST",
+        body: contractor.value,
+      });
+      console.log("response: " + JSON.stringify(response));
+      router.push(`/contractor/${response._id}`);
+    } catch (error) {
+      alert("Error adding contractor: " + error.message);
+      console.error("Error adding contractor:", error);
+    }
+  } else {
+    alert("Please fill out all required fields.");
+  }
+}
+
+function resetForm() {
+  contractor.value = {
+    company: "",
+    operatingStates: [],
+    tags: [],
+  };
+}
+</script>
+  
+  <style scoped>
+.wrapper {
+  padding: 4rem 0;
+  width: 90%;
+  margin: 0 auto;
+  min-height: 55rem;
+  height: auto;
+  font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.left {
+  width: 60%;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+  outline: none;
+}
+
+.custom-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-selected {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s;
+}
+
+.select-selected:hover {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+.select-items {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 99;
+  max-height: 200px;
+  overflow-y: auto;
+  transition: all 0.3s;
+}
+
+.select-items div {
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.select-items div:hover {
+  background-color: #e0e0e0;
+}
+
+.select-items input {
+  margin-right: 10px;
+}
+
+.select-hide {
+  display: none;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+button {
+  background-color: #ff8210;
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  margin: 1rem 0.5rem 0 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background-color: #e65a00;
+  box-shadow: 0 4px 8px rgba(230, 90, 0, 0.2);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.final-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
+</style>
+  

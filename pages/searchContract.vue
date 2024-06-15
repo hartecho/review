@@ -31,7 +31,7 @@
 
 <script setup>
 const searchQuery = ref("");
-const selectedRating = ref(0);
+const selectedRating = ref("0");
 
 useSeoMeta({
   title:
@@ -69,10 +69,23 @@ const filteredContractors = computed(() => {
     );
   }
 
-  if (selectedRating.value > 0) {
-    filtered = filtered.filter(
-      (contractor) => contractor.rating >= selectedRating.value
-    );
+  if (selectedRating.value && selectedRating.value != "0") {
+    const rating = selectedRating.value;
+    // console.log("Rating: ", rating);
+    if (rating === "4_and_above") {
+      filtered = filtered.filter(
+        (contractor) => contractor.ratings !== null && contractor.ratings >= 4
+      );
+    } else {
+      const minRating = parseInt(rating, 10);
+      const maxRating = minRating + 0.999; // Allow ratings up to just below the next whole number
+      filtered = filtered.filter(
+        (contractor) =>
+          contractor.ratings !== null &&
+          contractor.ratings >= minRating &&
+          contractor.ratings < maxRating
+      );
+    }
   }
 
   return filtered;

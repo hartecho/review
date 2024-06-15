@@ -21,7 +21,7 @@
           <p>
             <span
               v-for="(part, index) in splitText(
-                `${contractor.address.city}, ${contractor.address.state}`
+                contractor.operatingStates.join(', ')
               )"
               :key="index"
               :class="{ highlight: part.match }"
@@ -52,11 +52,14 @@
         </div>
       </li>
     </ul>
-    <p v-else>No subcontractors found.</p>
+    <div v-else class="no-results">
+      <p>No contractors found.</p>
+      <button @click="goToAddContractorPage">Add Contractor</button>
+    </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -69,6 +72,10 @@ const router = useRouter();
 
 function goToContractorPage(contractorId) {
   router.push(`/contractor/${contractorId}`);
+}
+
+function goToAddContractorPage() {
+  router.push(`/addContractor`);
 }
 
 function splitText(text) {
@@ -95,7 +102,7 @@ function highlightMatch(text) {
   return text.replace(regex, '<span class="highlight">$1</span>');
 }
 </script>
-  
+
 <style scoped>
 .results-container {
   display: flex;
@@ -225,6 +232,28 @@ function highlightMatch(text) {
   color: #ffd700;
 }
 
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+}
+
+.no-results button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.no-results button:hover {
+  background: #0056b3;
+}
+
 @media (max-width: 480px) {
   .results-item {
     flex-direction: column;
@@ -235,13 +264,6 @@ function highlightMatch(text) {
   .contractor-logo {
     margin-bottom: 10px;
   }
-
-  /* .star-rating {
-    position: relative;
-    top: auto;
-    right: auto;
-    margin-top: 10px;
-  } */
 
   .contractor-info h3,
   .contractor-info p {

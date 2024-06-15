@@ -429,11 +429,11 @@ a.router-link-exact-active {
   }
 
   .logged-in-message {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .login-button {
-    font-size: 16px;
+    /* font-size: 16px; */
     padding: 6px 12px;
   }
 
@@ -479,7 +479,7 @@ a.router-link-exact-active {
 <style>
 .no-scroll {
   overflow: hidden;
-  padding-right: 1rem;
+  /* padding-right: 1rem; */
 }
 
 .modal-enter-active,

@@ -97,38 +97,46 @@ const loading = ref(false);
 const error = ref("");
 
 function updateRatingCounts() {
-  ratingCounts.value = [0, 0, 0, 0, 0];
-  props.reviews.forEach((review) => {
-    const latestRating = review.updates.length
-      ? review.updates[review.updates.length - 1].rating
-      : review.rating;
-    ratingCounts.value[latestRating - 1]++;
-  });
+  if (props.reviews) {
+    ratingCounts.value = [0, 0, 0, 0, 0];
+    props.reviews.forEach((review) => {
+      const latestRating =
+        review.updates && review.updates.length
+          ? review.updates[review.updates.length - 1].rating
+          : review.rating;
+      ratingCounts.value[latestRating - 1]++;
+    });
+  }
 }
 
 const contractorRating = computed(() => {
-  return props.contractor.ratings;
+  return props.contractor ? props.contractor.ratings : 0;
 });
 
 const ratingPercentages = computed(() => {
-  const total = props.reviews.length;
-  return ratingCounts.value.map((count) => ((count / total) * 100).toFixed(2));
+  const total = props.reviews ? props.reviews.length : 0;
+  return total
+    ? ratingCounts.value.map((count) => ((count / total) * 100).toFixed(2))
+    : [0, 0, 0, 0, 0];
 });
 
 function filterReviews() {
   updateRatingCounts();
-  filteredReviews.value = props.reviews.filter((review) => {
-    const latestRating = review.updates.length
-      ? review.updates[review.updates.length - 1].rating
-      : review.rating;
-    const ratingMatch = selectedRating.value
-      ? latestRating === selectedRating.value
-      : true;
-    const tagsMatch = selectedTags.value.length
-      ? selectedTags.value.every((tag) => review.tags.includes(tag))
-      : true;
-    return ratingMatch && tagsMatch;
-  });
+  if (props.reviews) {
+    filteredReviews.value = props.reviews.filter((review) => {
+      const latestRating =
+        review.updates && review.updates.length
+          ? review.updates[review.updates.length - 1].rating
+          : review.rating;
+      const ratingMatch = selectedRating.value
+        ? latestRating === selectedRating.value
+        : true;
+      const tagsMatch = selectedTags.value.length
+        ? selectedTags.value.every((tag) => review.tags.includes(tag))
+        : true;
+      return ratingMatch && tagsMatch;
+    });
+  }
 }
 
 function filterByRating(rating) {
@@ -143,10 +151,11 @@ function filterByTags() {
 onMounted(() => {
   filterReviews();
   if (props.contractor) {
-    availableTags.value = props.contractor.tags;
+    availableTags.value = props.contractor.tags || [];
   }
 });
 </script>
+
 
 <style scoped>
 body,
