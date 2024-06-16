@@ -220,7 +220,7 @@ async function submitReply() {
         },
       });
       newReply.value = "";
-      // window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error("Failed to submit reply:", error);
       error.value = "Failed to submit reply. Please try again.";

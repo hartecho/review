@@ -63,6 +63,10 @@ const contractorSchema = new mongoose.Schema({
     ],
     required: true
   }],
+  isClaimed: {
+    type: Boolean,
+    default: false
+  },
   isPro: {
     type: Boolean,
     default: false

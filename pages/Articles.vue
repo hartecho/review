@@ -18,9 +18,9 @@
           >
         </div>
       </div>
-      <!-- <NuxtLink to="/blog/editBlogs" class="edit-button-link">
+      <NuxtLink to="/blog/editBlogs" class="edit-button-link">
         <button class="edit-button">Edit Blogs</button>
-      </NuxtLink> -->
+      </NuxtLink>
     </section>
     <section class=""></section>
   </div>
@@ -70,7 +70,7 @@ const goToBlog = (blogId) => {
   
   <style scoped>
 .blogs-intro {
-  height: 25rem;
+  height: 15rem;
   background: url("/IntroBG.jpg") no-repeat;
   background-size: cover;
   display: flex;

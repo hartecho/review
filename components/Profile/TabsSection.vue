@@ -17,9 +17,19 @@
     <div class="tab-content" v-if="activeTab === 'about'">
       <h3>Contact Information</h3>
       <div class="contact-info">
-        <p><strong>Email:</strong> {{ contractor.email }}</p>
-        <p><strong>Phone:</strong> {{ contractor.phone }}</p>
-        <p>
+        <p v-if="contractor.email">
+          <strong>Email:</strong> {{ contractor.email }}
+        </p>
+        <p v-if="contractor.phone">
+          <strong>Phone:</strong> {{ contractor.phone }}
+        </p>
+        <p
+          v-if="
+            contractor.address &&
+            contractor.address.city &&
+            contractor.address.state
+          "
+        >
           <strong>Address:</strong> {{ contractor.address.city }},
           {{ contractor.address.state }}
         </p>

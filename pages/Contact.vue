@@ -10,7 +10,7 @@
       <div class="contact-info-card">
         <div class="info-block">
           <h3>Email Us</h3>
-          <p><a href="mailto:support@subsource.org">support@subsource.org</a></p>
+          <p>support@subsource.org</p>
         </div>
         <!-- <div class="info-block">
           <h3>Call Us</h3>
@@ -142,6 +142,7 @@ const submit = () => {
   text-align: center;
   padding: 4rem 2rem;
   position: relative;
+  height: 15rem;
 }
 
 .hero-section::before {
@@ -151,20 +152,23 @@ const submit = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.7),
     rgba(0, 0, 0, 0.3),
     rgba(0, 0, 0, 0.1),
     rgba(0, 0, 0, 0)
-  );
+  ); */
   z-index: 1;
 }
 
 .hero-section h1,
 .hero-section .intro-message {
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+  max-width: 1200px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
   z-index: 2;
+  text-align: left;
 }
 
 .hero-text {
@@ -227,7 +231,7 @@ const submit = () => {
 
 .info-block p {
   font-size: 1.2rem;
-  color: #007bff;
+  color: black;
   margin: 0;
 }
 

@@ -34,13 +34,20 @@
         </div>
         <div class="tag-filters">
           <h3>Filter by Job Types</h3>
-          <div class="tag" v-for="tag in availableTags" :key="tag">
+          <div
+            v-for="tag in availableTags"
+            :key="tag"
+            class="tag"
+            :class="{ selected: selectedTags.includes(tag) }"
+            @click="toggleTag(tag)"
+          >
             <input
               type="checkbox"
               :id="tag"
               :value="tag"
               v-model="selectedTags"
               @change="filterByTags"
+              class="hidden-checkbox"
             />
             <label :for="tag">{{ tagDescriptions[tag] }}</label>
           </div>
@@ -148,6 +155,16 @@ function filterByTags() {
   filterReviews();
 }
 
+function toggleTag(tag) {
+  const index = selectedTags.value.indexOf(tag);
+  if (index > -1) {
+    selectedTags.value.splice(index, 1);
+  } else {
+    selectedTags.value.push(tag);
+  }
+  filterByTags();
+}
+
 onMounted(() => {
   filterReviews();
   if (props.contractor) {
@@ -155,7 +172,6 @@ onMounted(() => {
   }
 });
 </script>
-
 
 <style scoped>
 body,
@@ -244,19 +260,24 @@ html {
   align-items: center;
   margin-top: 10px;
   padding: 5px 10px;
-  background: #f0f0f0;
-  border-radius: 5px;
   cursor: pointer;
   text-align: center;
   transition: background 0.3s;
+  border-radius: 10px;
+  background: white;
 }
 
 .tag-filters .tag:hover {
   background: #e0e0e0;
 }
 
-.tag-filters input[type="checkbox"] {
-  margin-right: 10px;
+.tag-filters .tag.selected {
+  background: #ff8210;
+  color: white;
+}
+
+.tag-filters .hidden-checkbox {
+  display: none;
 }
 
 .stars {

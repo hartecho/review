@@ -103,6 +103,7 @@ const isBusinessOwner = computed(() => {
 });
 
 const isPro = computed(() => {
+  // ISPRO
   return true;
 });
 </script>

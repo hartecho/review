@@ -31,6 +31,9 @@
             >
               Contact Contractor
             </button> -->
+            <button v-if="!contractor.isClaimed" class="report-button">
+              Claim This Business
+            </button>
             <button class="report-button">Report an Issue</button>
           </div>
         </div>
