@@ -13,6 +13,9 @@ export default defineEventHandler(async (event) => {
     const userId = query.user;
 
     console.log("userId: " + userId);
+    const randomUser = await User.findOne({});
+    console.log("Random user: " + randomUser);
+
 
     let reviews;
     if (contractorId && userId) {
