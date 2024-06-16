@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import User from "./User.js"
+import Contractor from "./Contractor.js"
 
 const reviewUpdateSchema = new mongoose.Schema({
   rating: {
@@ -44,6 +46,7 @@ const reviewSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
     },
     rating: {
       type: Number,

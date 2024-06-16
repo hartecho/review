@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   contractor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Contractor',
+    ref: 'Contractor._id',
     required: false // Only available if the user is a business
   },
   created_at: {
