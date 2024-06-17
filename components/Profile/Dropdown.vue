@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  padding: 10px;
+  padding: 10px 25px 10px 10px;
 }
 
 .hidden-checkbox {
@@ -159,6 +159,7 @@ onBeforeUnmount(() => {
 .dropdown-item.selected {
   background: #ff8210;
   border-color: #ff8210;
+  box-shadow: inset 0 0 5px black;
 }
 
 .close-button {
@@ -169,6 +170,10 @@ onBeforeUnmount(() => {
   border: none;
   font-size: 20px;
   color: white;
+  cursor: pointer;
+}
+
+label {
   cursor: pointer;
 }
 </style>

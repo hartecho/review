@@ -7,7 +7,7 @@
         <input type="text" v-model="contractor.company" placeholder="Company" />
 
         <div class="operating-states">
-          <label>Operating States:</label>
+          <label>Select states this contractor operates in:</label>
           <ProfileDropdown
             :items="availableStates"
             :selected-items="contractor.operatingStates"
@@ -17,9 +17,9 @@
         </div>
 
         <div class="tags">
-          <label>Job Types:</label>
+          <label>Select the services provided by this contractor:</label>
           <ProfileDropdown
-            :items="availableTags"
+            :items="tagDescriptionsArray"
             :selected-items="contractor.tags"
             @update:selectedItems="updateTags"
             label="Select Job Types"
@@ -27,9 +27,11 @@
         </div>
 
         <div class="final-buttons">
-          <button @click="addContractor" :disabled="!isFormValid">
-            Add Contractor
-          </button>
+          <SubcomponentsLoadingButton
+            :isLoading="isLoading"
+            text="Add Contractor"
+            @click="addContractor"
+          />
         </div>
       </div>
     </div>
@@ -37,7 +39,16 @@
 </template>
   
 <script setup>
+import { tagDescriptions } from "~/utils/tagDescriptions.js";
 const router = useRouter();
+const isLoading = ref(false);
+
+const tagDescriptionsArray = Object.entries(tagDescriptions).map(
+  ([key, value]) => ({
+    enum: key,
+    description: value,
+  })
+);
 
 const contractor = ref({
   company: "",
@@ -98,62 +109,6 @@ const availableStates = [
   { name: "Wyoming", abbreviation: "WY" },
 ];
 
-const availableTags = [
-  { enum: "GEN", description: "General Contractor" },
-  { enum: "FLR", description: "Flooring" },
-  { enum: "CTP", description: "Countertops" },
-  { enum: "CAB", description: "Cabinets" },
-  { enum: "CON", description: "Concrete and Masonry" },
-  { enum: "STL", description: "Steel and Metal Fabrication" },
-  { enum: "FRM", description: "Framing" },
-  { enum: "ROF", description: "Roofing" },
-  { enum: "SID", description: "Siding" },
-  { enum: "WND", description: "Windows and Doors" },
-  { enum: "LND", description: "Landscaping and Hardscaping" },
-  { enum: "DRY", description: "Drywall and Plaster" },
-  { enum: "PNT", description: "Painting and Finishing" },
-  { enum: "INS", description: "Insulation" },
-  { enum: "CLG", description: "Ceiling Systems" },
-  { enum: "HVAC", description: "HVAC" },
-  { enum: "PLM", description: "Plumbing" },
-  { enum: "ELEC", description: "Electrical" },
-  { enum: "EXC", description: "Excavation" },
-  { enum: "DEM", description: "Demolition" },
-  { enum: "GRD", description: "Grading and Paving" },
-  { enum: "FPS", description: "Fire Protection and Sprinkler Systems" },
-  { enum: "SEC", description: "Security Systems" },
-  { enum: "AV", description: "Audio-Visual Installations" },
-  { enum: "ELEV", description: "Elevator and Escalator Installation" },
-  { enum: "SOL", description: "Solar Energy and Green Building Solutions" },
-  { enum: "UTIL", description: "Utility Contractors" },
-  { enum: "FIN", description: "Finishing Contractors" },
-  { enum: "CAR", description: "Carpentry and Woodwork" },
-  { enum: "TLE", description: "Tile and Stone Installation" },
-  { enum: "GLS", description: "Glass and Glazing" },
-  { enum: "SPC", description: "Specialty Coatings and Sealants" },
-  { enum: "REN", description: "Renovation and Restoration" },
-  { enum: "HIS", description: "Historic Restoration" },
-  { enum: "REM", description: "Remodeling" },
-  { enum: "WTR", description: "Waterproofing and Mold Remediation" },
-  { enum: "ENV", description: "Environmental Contractors" },
-  { enum: "ASB", description: "Asbestos Abatement" },
-  { enum: "LEAD", description: "Lead Paint Removal" },
-  { enum: "ENVC", description: "Environmental Cleanup and Remediation" },
-  { enum: "DB", description: "Design and Build Contractors" },
-  { enum: "ARC", description: "Architectural Services" },
-  { enum: "ENG", description: "Engineering Services" },
-  { enum: "LOG", description: "Logistics and Material Handling Contractors" },
-  { enum: "WARE", description: "Warehouse Setup" },
-  { enum: "IEQ", description: "Industrial Equipment Installation" },
-  { enum: "SPEQ", description: "Specialty Equipment Contractors" },
-  { enum: "CKE", description: "Commercial Kitchen Equipment" },
-  { enum: "LMEQ", description: "Laboratory and Medical Equipment" },
-  { enum: "FAC", description: "Facade and Cladding Contractors" },
-  { enum: "EXC", description: "Exterior Cladding Systems" },
-  { enum: "CUR", description: "Curtain Wall Systems" },
-  { enum: "OTH", description: "Other" },
-];
-
 const isFormValid = computed(() => {
   return (
     contractor.value.company &&
@@ -171,19 +126,22 @@ const updateTags = (tags) => {
 };
 
 async function addContractor() {
+  isLoading.value = true;
   if (isFormValid.value) {
     try {
       const response = await $fetch("/api/contractors", {
         method: "POST",
         body: contractor.value,
       });
-      console.log("response: " + JSON.stringify(response));
+      // console.log("response: " + JSON.stringify(response));
       router.push(`/contractor/${response._id}`);
     } catch (error) {
+      isLoading.value = false;
       alert("Error adding contractor: " + error.message);
       console.error("Error adding contractor:", error);
     }
   } else {
+    isLoading.value = false;
     alert("Please fill out all required fields.");
   }
 }
@@ -308,7 +266,7 @@ label {
   color: #333;
 }
 
-button {
+.add-contractor-button {
   background-color: #ff8210;
   border: none;
   color: white;

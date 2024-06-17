@@ -322,6 +322,7 @@ const submit = () => {
   .body-wrapper {
     flex-direction: column;
     padding: 1rem;
+    gap: 0;
   }
 
   .hero-section h1 {

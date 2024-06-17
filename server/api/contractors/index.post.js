@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
     await contractor.save();
     const savedContractor = await Contractor.findOne({company: contractor.company});
     await disconnectDB();
-    console.log("savedContractor: ", savedContractor);
     return savedContractor;
   } catch (error) {
     console.error('Error in POST /api/contractors:', error);

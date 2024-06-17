@@ -71,7 +71,7 @@ const goToBlog = (blogId) => {
   <style scoped>
 .blogs-intro {
   height: 15rem;
-  background: url("/IntroBG.jpg") no-repeat;
+  background: url("/IntroBG.jpg") no-repeat center center;
   background-size: cover;
   display: flex;
   justify-content: center; /* Centering the .blog-title horizontally */
@@ -81,7 +81,7 @@ const goToBlog = (blogId) => {
 .blog-title {
   max-width: 1200px;
   width: 100%;
-  padding: 2rem 2rem;
+  padding: 2rem 0rem;
   text-align: left; /* Ensure the content inside .blog-title is left-aligned */
 }
 
@@ -177,13 +177,6 @@ const goToBlog = (blogId) => {
 
 @media (max-width: 768px) {
   /*  ------------  MOBILE  ------------   */
-
-  .blogs-intro {
-    height: 25rem;
-    background: url("/IntroBG.jpg") repeat;
-    background-size: 100% auto;
-  }
-
   .blog-list {
     padding: 3rem 0;
   }

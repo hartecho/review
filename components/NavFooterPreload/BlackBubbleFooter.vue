@@ -175,7 +175,8 @@ a.router-link-exact-active {
     gap: 3rem;
   }
 }
-/* @media (max-width: 480px) {
+
+@media (max-width: 480px) {
   .footer-wrapper {
     padding: 0 1rem;
   }
@@ -199,5 +200,5 @@ a.router-link-exact-active {
   .contact-info p {
     font-size: 0.8rem;
   }
-} */
+}
 </style>

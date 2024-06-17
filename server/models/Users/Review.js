@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import User from "./User.js"
-import Contractor from "./Contractor.js"
 
 const reviewUpdateSchema = new mongoose.Schema({
   rating: {
