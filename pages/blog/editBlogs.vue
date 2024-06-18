@@ -1,59 +1,234 @@
 <template>
   <div class="wrapper">
     <h1>Add/Update Blog</h1>
-    <!-- prettier-ignore -->
     <div class="content">
       <div class="left">
-        <select v-model="selectedBlog" @change="loadBlog">
+        <select v-model="selectedBlog" @change="loadBlog" class="select-input">
           <option disabled value="">Please select one</option>
           <option v-for="blog in blogs" :key="blog._id" :value="blog._id">
             {{ blog.mainTitle }}
           </option>
         </select>
 
-        <input type="text" v-model="blog.mainTitle" placeholder="Main Title" />
-        <input type="text" v-model="blog.header" placeholder="Header" />
-        <textarea v-model="blog.intro" placeholder="Intro"></textarea>
-        <input type="text" v-model="blog.image" placeholder="Image Path" />
-        <input type="text" v-model="blog.thumbnail" placeholder="Thumbnail Path" />
-        <textarea v-model="blog.preview" placeholder="Preview"></textarea>
+        <input
+          type="text"
+          v-model="blog.mainTitle"
+          placeholder="Main Title"
+          class="input"
+        />
+        <input
+          type="text"
+          v-model="blog.header"
+          placeholder="Header"
+          class="input"
+        />
+        <textarea
+          v-model="blog.intro"
+          placeholder="Intro"
+          class="textarea"
+        ></textarea>
+        <input
+          type="text"
+          v-model="blog.image"
+          placeholder="Image Path"
+          class="input"
+        />
+        <input
+          type="text"
+          v-model="blog.thumbnail"
+          placeholder="Thumbnail Path"
+          class="input"
+        />
+        <textarea
+          v-model="blog.preview"
+          placeholder="Preview"
+          class="textarea"
+        ></textarea>
 
-        <div v-for="(reference, index) in blog.references" :key="index">
-          <input type="text" v-model="blog.references[index]" placeholder="Reference" />
-          <button @click="removeReference(index)">Remove Reference</button>
+        <div
+          v-for="(reference, index) in blog.references"
+          :key="index"
+          class="reference"
+        >
+          <input
+            type="text"
+            v-model="blog.references[index]"
+            placeholder="Reference"
+            class="input"
+          />
+          <button
+            @click="removeReference(index)"
+            class="icon-button remove-button"
+          >
+            ✖ Remove Reference
+          </button>
         </div>
-        <button @click="addReference">Add Reference</button>
+        <button @click="addReference" class="icon-button add-button">
+          ➕ Add Reference
+        </button>
 
-        <input type="text" v-model="newTag" placeholder="Add Tag" @keydown.enter.prevent="addTag" />
+        <input
+          type="text"
+          v-model="newTag"
+          placeholder="Add Tag"
+          @keydown.enter.prevent="addTag"
+          class="input"
+        />
         <div v-for="(tag, index) in blog.tags" :key="index" class="tag">
           {{ tag }}
-          <button @click="removeTag(index)">Remove Tag</button>
+          <button @click="removeTag(index)" class="icon-button remove-button">
+            ✖ Remove Tag
+          </button>
         </div>
 
         <div class="final-buttons">
-          <button @click="addBlog">Add Blog</button>
-          <button @click="updateBlog">Update Blog</button>
-          <button @click="deleteBlog">Delete Blog</button>
+          <button @click="addBlog" class="icon-button add-button">
+            ➕ Add Blog
+          </button>
+          <button @click="updateBlog" class="icon-button add-button">
+            💾 Update Blog
+          </button>
+          <button @click="deleteBlog" class="icon-button remove-button">
+            ✖ Delete Blog
+          </button>
+        </div>
+
+        <div class="json-input">
+          <h2>Paste JSON to Add New Blog</h2>
+          <textarea
+            v-model="jsonInput"
+            placeholder="Paste JSON here"
+            class="textarea json-textarea"
+          ></textarea>
+          <button @click="addBlogFromJSON" class="icon-button add-button">
+            ➕ Add Blog from JSON
+          </button>
         </div>
       </div>
 
       <div class="right">
-        <div v-for="(section, index) in blog.sections" :key="index">
-          <input type="text" v-model="section.title" placeholder="Title" />
-          <textarea v-model="section.content" placeholder="Content"></textarea>
-          <input type="text" v-model="section.photo" placeholder="Photo URL" />
-          <div v-if="section.list && section.list.length">
-            <div v-for="(item, itemIndex) in section.list" :key="itemIndex">
-              <input type="text" v-model="item.title" placeholder="List Item Title"/>
-              <textarea v-model="item.content" placeholder="List Item Content"></textarea>
-              <button @click="removeListItem(index, itemIndex)">Remove List Item</button>
-            </div>
-            <button @click="addListItem(index)">Add List Item</button>
+        <h2>Blog Preview</h2>
+        <div class="blog-post">
+          <div class="img-wrapper" v-if="blog.image">
+            <NuxtImg :src="blog.image" alt="Blog Image" />
           </div>
-          <button @click="addList(index)">Add List</button>
-          <button @click="removeSection(index)">Remove Section</button>
+          <p class="header">{{ blog.header }}</p>
+          <p>{{ blog.intro }}</p>
+          <div
+            v-for="(section, index) in blog.sections"
+            :key="'section-' + index"
+            class="section"
+          >
+            <div v-if="section.photo" class="section-img-wrapper">
+              <NuxtImg
+                v-if="section.photo"
+                :src="section.photo"
+                alt="Section Photo"
+              />
+              <button
+                @click="removeSectionPhoto(index)"
+                class="icon-button remove-button"
+              >
+                ✖ Remove Photo
+              </button>
+            </div>
+            <h2>
+              <input
+                type="text"
+                v-model="section.title"
+                placeholder="Section Title"
+                class="input section-title"
+              />
+            </h2>
+            <textarea
+              v-model="section.content"
+              placeholder="Section Content"
+              class="textarea"
+            ></textarea>
+            <div v-if="!section.photo">
+              <input
+                type="text"
+                v-model="section.photo"
+                placeholder="Photo URL"
+                class="input"
+              />
+              <button
+                @click="addSectionPhoto(index)"
+                class="icon-button add-button"
+              >
+                ➕ Add Photo
+              </button>
+            </div>
+
+            <div
+              v-for="(list, listIndex) in section.lists"
+              :key="'list-' + listIndex"
+              class="list-section"
+            >
+              <h3>
+                <input
+                  type="text"
+                  v-model="list.header"
+                  placeholder="List Header"
+                  class="input list-header"
+                />
+              </h3>
+              <ul>
+                <li
+                  v-for="(item, itemIndex) in list.items"
+                  :key="'item-' + itemIndex"
+                >
+                  <strong
+                    ><input
+                      type="text"
+                      v-model="item.title"
+                      placeholder="Item Title"
+                      class="input item-title"
+                  /></strong>
+                  <textarea
+                    v-model="item.description"
+                    placeholder="Item Description"
+                    class="textarea item-description"
+                  ></textarea>
+                  <button
+                    @click="removeListItem(index, listIndex, itemIndex)"
+                    class="icon-button remove-button"
+                  >
+                    ✖ Remove List Item
+                  </button>
+                </li>
+              </ul>
+              <button
+                @click="addListItem(index, listIndex)"
+                class="icon-button add-button"
+              >
+                ➕ Add List Item
+              </button>
+              <button
+                @click="removeList(index, listIndex)"
+                class="icon-button remove-button"
+              >
+                ✖ Remove List
+              </button>
+            </div>
+            <button @click="addList(index)" class="icon-button add-button">
+              ➕ Add List
+            </button>
+            <button
+              @click="removeSection(index)"
+              class="icon-button remove-button"
+            >
+              ✖ Remove Section
+            </button>
+          </div>
+          <button @click="addSection" class="icon-button add-button">
+            ➕ Add Section
+          </button>
+          <h2 v-if="blog.references[0]">References</h2>
+          <div v-for="(reference, index) in blog.references" :key="index">
+            <p class="references">{{ reference }}</p>
+          </div>
         </div>
-        <button @click="addSection">Add More Sections</button>
       </div>
     </div>
   </div>
@@ -73,8 +248,18 @@ let blog = ref({
     {
       title: "",
       content: "",
-      list: [],
-      photo: "", // Add photo field
+      lists: [
+        {
+          header: "",
+          items: [
+            {
+              title: "",
+              description: "",
+            },
+          ],
+        },
+      ],
+      photo: "",
     },
   ],
   image: "",
@@ -84,6 +269,8 @@ let blog = ref({
   tags: [],
   updated: [],
 });
+
+let jsonInput = ref("");
 
 function init() {
   getBlogs();
@@ -96,8 +283,18 @@ function init() {
       {
         title: "",
         content: "",
-        list: [],
-        photo: "", // Add photo field
+        lists: [
+          {
+            header: "",
+            items: [
+              {
+                title: "",
+                description: "",
+              },
+            ],
+          },
+        ],
+        photo: "",
       },
     ],
     image: "",
@@ -125,8 +322,18 @@ function addSection() {
   blog.value.sections.push({
     title: "",
     content: "",
-    list: [],
-    photo: "", // Add photo field
+    lists: [
+      {
+        header: "",
+        items: [
+          {
+            title: "",
+            description: "",
+          },
+        ],
+      },
+    ],
+    photo: "",
   });
 }
 
@@ -134,25 +341,31 @@ function removeSection(index) {
   blog.value.sections.splice(index, 1);
 }
 
-function addList(index) {
-  if (!blog.value.sections[index].list) {
-    blog.value.sections[index].list = [];
-  }
-  blog.value.sections[index].list.push({
-    title: "",
-    content: "",
+function addList(sectionIndex) {
+  blog.value.sections[sectionIndex].lists.push({
+    header: "",
+    items: [
+      {
+        title: "",
+        description: "",
+      },
+    ],
   });
 }
 
-function addListItem(sectionIndex) {
-  blog.value.sections[sectionIndex].list.push({
+function removeList(sectionIndex, listIndex) {
+  blog.value.sections[sectionIndex].lists.splice(listIndex, 1);
+}
+
+function addListItem(sectionIndex, listIndex) {
+  blog.value.sections[sectionIndex].lists[listIndex].items.push({
     title: "",
-    content: "",
+    description: "",
   });
 }
 
-function removeListItem(sectionIndex, itemIndex) {
-  blog.value.sections[sectionIndex].list.splice(itemIndex, 1);
+function removeListItem(sectionIndex, listIndex, itemIndex) {
+  blog.value.sections[sectionIndex].lists[listIndex].items.splice(itemIndex, 1);
 }
 
 function addReference() {
@@ -174,10 +387,20 @@ function removeTag(index) {
   blog.value.tags.splice(index, 1);
 }
 
+function addSectionPhoto(index) {
+  // Placeholder function to illustrate adding a section photo
+  if (blog.value.sections[index].photo) {
+    alert("Photo added successfully.");
+  }
+}
+
+function removeSectionPhoto(index) {
+  blog.value.sections[index].photo = "";
+}
+
 async function getBlogs() {
   try {
     const response = await $fetch("/api/blogs");
-    console.log(response);
     blogs.value = response || [];
   } catch (error) {
     alert("Error fetching blogs: " + error.message);
@@ -234,15 +457,26 @@ async function deleteBlog() {
     console.error("Error deleting blog:", error);
   }
 }
+
+function addBlogFromJSON() {
+  try {
+    const parsedBlog = JSON.parse(jsonInput.value);
+    blog.value = { ...parsedBlog };
+    addBlog();
+    jsonInput.value = "";
+  } catch (error) {
+    alert("Invalid JSON: " + error.message);
+    console.error("Invalid JSON:", error);
+  }
+}
 </script>
-  
+
 <style scoped>
 .wrapper {
-  padding: 6rem 0;
+  padding: 2rem 0;
   width: 90%;
   margin: 0 auto;
-  min-height: 55rem;
-  height: auto;
+  font-family: Arial, sans-serif;
 }
 
 .content {
@@ -251,38 +485,199 @@ async function deleteBlog() {
 }
 
 .left {
-  width: 50%;
+  width: 30%;
 }
 
 .right {
-  width: 50%;
+  width: 70%;
 }
 
-input,
-textarea,
-select {
+.blog-preview {
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.img-wrapper {
+  width: 100%;
+  height: 25rem;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-post {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  font-family: "Merriweather", serif;
+  color: #444;
+  line-height: 1.8;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.blog-post h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", serif;
+  font-weight: bold;
+  color: #333;
+}
+
+.blog-post h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", serif;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.header {
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.blog-post p {
+  font-size: 1.2rem;
+  margin-bottom: 1.2em;
+}
+
+.section-img-wrapper {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1.5em;
+}
+
+.section-img-wrapper img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.list-section {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.list-section h3 {
+  font-size: 1.5rem;
+  font-family: "Playfair Display", serif;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.list-section ul {
+  padding-left: 1.5rem;
+}
+
+.list-section ul li {
+  margin-bottom: 0.75rem;
+}
+
+.list-section ul li strong {
+  font-size: 1.2rem;
+  font-family: "Merriweather", serif;
+  color: #444;
+}
+
+.references {
+  font-size: 1.2rem;
+  word-break: break-all;
+}
+
+.divider {
+  min-height: 7rem;
+  background-color: #e0f7fa;
+}
+
+.input,
+.textarea,
+.select-input {
   display: block;
   width: 100%;
   margin-bottom: 10px;
   padding: 10px;
   font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-textarea {
-  height: 10rem;
+.textarea {
+  height: 6rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: #eef7ff;
+  border: none;
+  margin-bottom: 0.5rem;
+}
+
+.list-header {
+  font-size: 1.3rem;
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border: none;
+  margin-bottom: 0.5rem;
+}
+
+.item-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #fafafa;
+  border: none;
+  margin-bottom: 0.5rem;
+}
+
+.item-description {
+  height: 4rem;
 }
 
 button {
-  background-color: #4caf50; /* Green */
+  background-color: transparent;
   border: none;
-  color: white;
-  padding: 15px 32px;
+  color: inherit;
+  padding: 0;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
   cursor: pointer;
+  margin: 4px 2px;
+  border-radius: 4px;
+  transition: color 0.3s ease, transform 0.3s ease;
+  margin-right: 2rem;
+}
+
+button.remove-button {
+  color: #f44336;
+}
+
+button.add-button {
+  color: #4caf50;
+}
+
+button:hover {
+  color: #000;
+  transform: scale(1.1);
 }
 
 .final-buttons {
@@ -295,5 +690,15 @@ button {
   padding: 5px 10px;
   margin: 5px;
   border-radius: 5px;
+}
+
+.json-input {
+  margin-top: 2rem;
+}
+
+.json-input textarea {
+  width: 100%;
+  height: 10rem;
+  margin-bottom: 10px;
 }
 </style>

@@ -7,7 +7,7 @@
         <input type="text" v-model="contractor.company" placeholder="Company" />
 
         <div class="operating-states">
-          <label>Select states this contractor operates in:</label>
+          <label>Select all states this contractor operates in:</label>
           <ProfileDropdown
             :items="availableStates"
             :selected-items="contractor.operatingStates"
@@ -17,7 +17,7 @@
         </div>
 
         <div class="tags">
-          <label>Select the services provided by this contractor:</label>
+          <label>Select all services provided by this contractor:</label>
           <ProfileDropdown
             :items="tagDescriptionsArray"
             :selected-items="contractor.tags"
@@ -163,6 +163,8 @@ function resetForm() {
   min-height: 55rem;
   height: auto;
   font-family: "Roboto", sans-serif;
+  background: url("/LoginBG.jpg") no-repeat center top;
+  background-size: cover;
   /* background-color: #f5f5f5; */
 }
 

@@ -4,7 +4,7 @@
 
 <template>
   <div class="home">
-    <section id="search-section" class="search-section">
+    <section id="search-section" class="search-section ramp-black">
       <WebSectionsSearch />
       <!-- <NuxtLink to="/contractor/editContractors" class="edit-button-link">
         <button class="edit-button">Edit Contractors</button>

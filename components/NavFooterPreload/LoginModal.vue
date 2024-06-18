@@ -159,7 +159,7 @@ const handleSignUp = async (signUpData) => {
   max-width: 90%;
   text-align: center;
   position: relative;
-  height: 35rem;
+  height: 40rem;
   width: 50rem;
   transition: transform 0.3s ease;
 }
@@ -267,5 +267,12 @@ h2 {
 *,
 body {
   text-shadow: 1px 1px 1px black;
+}
+
+@media (max-wdith: 480px) {
+  .modal {
+    overflow: hidden;
+    overflow-y: scroll;
+  }
 }
 </style>

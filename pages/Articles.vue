@@ -5,8 +5,25 @@
         <h1>Articles</h1>
       </div>
     </section>
+
+    <div class="filters">
+      <select v-model="selectedTag" @change="filterBlogsByTag">
+        <option value="">All Tags</option>
+        <option v-for="tag in allTags" :key="tag" :value="tag">
+          {{ tag }}
+        </option>
+      </select>
+
+      <select v-model="sortOption" @change="sortBlogs">
+        <option value="alphabetical">Alphabetical</option>
+        <option value="reverse-alphabetical">Reverse Alphabetical</option>
+        <option value="most-recent">Most Recent</option>
+        <option value="oldest-first">Oldest First</option>
+      </select>
+    </div>
+
     <section class="blog-list">
-      <div class="blog-entry" v-for="blog in blogs" :key="blog._id">
+      <div class="blog-entry" v-for="blog in filteredBlogs" :key="blog._id">
         <div class="blog-entry__thumbnail" @click="goToBlog(blog._id)">
           <img :src="resolvedImgPath(blog.thumbnail)" alt="Blog Thumbnail" />
         </div>
@@ -18,15 +35,15 @@
           >
         </div>
       </div>
-      <NuxtLink to="/blog/editBlogs" class="edit-button-link">
+      <!-- <NuxtLink to="/blog/editBlogs" class="edit-button-link">
         <button class="edit-button">Edit Blogs</button>
-      </NuxtLink>
+      </NuxtLink> -->
     </section>
     <section class=""></section>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 useSeoMeta({
   title: "Articles | Subsource – Insights on Commercial Contracting",
   ogTitle: "Articles | Subsource – Insights on Commercial Contracting",
@@ -39,20 +56,45 @@ useSeoMeta({
 });
 
 const router = useRouter();
-// const blogs = ref([]);
-
-// async function getBlogs() {
-//   try {
-//     const response = await $fetch("/api/blogs");
-//     blogs.value = response || [];
-//   } catch (error) {
-//     alert("Error fetching blogs: " + error.message);
-//     console.error("Error fetching blogs:", error);
-//   }
-// }
-
-// Fetch blogs on component mount
 const { data: blogs } = await useFetch("/api/blogs");
+const selectedTag = ref("");
+const sortOption = ref("most-recent");
+
+const allTags = computed(() => {
+  const tags = new Set();
+  blogs.value.forEach((blog) => {
+    blog.tags.forEach((tag) => tags.add(tag));
+  });
+  return Array.from(tags);
+});
+
+const filteredBlogs = computed(() => {
+  let filtered = blogs.value;
+
+  if (selectedTag.value) {
+    filtered = filtered.filter((blog) => blog.tags.includes(selectedTag.value));
+  }
+
+  if (sortOption.value === "alphabetical") {
+    filtered = filtered.sort((a, b) => a.mainTitle.localeCompare(b.mainTitle));
+  } else if (sortOption.value === "reverse-alphabetical") {
+    filtered = filtered.sort((a, b) => b.mainTitle.localeCompare(a.mainTitle));
+  } else if (sortOption.value === "most-recent") {
+    filtered = filtered.sort(
+      (a, b) =>
+        new Date(b.updated[b.updated.length - 1].date) -
+        new Date(a.updated[a.updated.length - 1].date)
+    );
+  } else if (sortOption.value === "oldest-first") {
+    filtered = filtered.sort(
+      (a, b) =>
+        new Date(a.updated[a.updated.length - 1].date) -
+        new Date(b.updated[b.updated.length - 1].date)
+    );
+  }
+
+  return filtered;
+});
 
 const resolvedImgPath = (path) => {
   if (path) {
@@ -62,19 +104,17 @@ const resolvedImgPath = (path) => {
 };
 
 const goToBlog = (blogId) => {
-  const router = useRouter(); // Get the router instance
-  // Navigate to the dynamic route
   router.push(`/blog/${blogId}`);
 };
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .blogs-intro {
   height: 15rem;
   background: url("/IntroBG.jpg") no-repeat center center;
   background-size: cover;
   display: flex;
-  justify-content: center; /* Centering the .blog-title horizontally */
+  justify-content: center;
   align-items: center;
 }
 
@@ -82,7 +122,7 @@ const goToBlog = (blogId) => {
   max-width: 1200px;
   width: 100%;
   padding: 2rem 0rem;
-  text-align: left; /* Ensure the content inside .blog-title is left-aligned */
+  text-align: left;
 }
 
 .blog-title h1 {
@@ -90,17 +130,30 @@ const goToBlog = (blogId) => {
   text-shadow: 1px 1px 2px black;
 }
 
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.filters select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
 .blog-list {
   padding: 6rem 2rem;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .blog-entry {
   display: flex;
-  /* border: 3px solid black; */
   border-radius: 10px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 20px;
@@ -159,7 +212,7 @@ const goToBlog = (blogId) => {
 }
 
 .edit-button {
-  background-color: #4caf50; /* Green */ /* Fix accessibility.. Says its not enough contrast */
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -176,7 +229,6 @@ const goToBlog = (blogId) => {
 }
 
 @media (max-width: 768px) {
-  /*  ------------  MOBILE  ------------   */
   .blog-list {
     padding: 3rem 0;
   }

@@ -238,6 +238,7 @@ function highlightMatch(text) {
   padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
+  width: 100%;
 }
 
 .no-results button {
@@ -249,6 +250,7 @@ function highlightMatch(text) {
   cursor: pointer;
   transition: background 0.3s;
   margin-top: 1rem;
+  font-size: 1rem;
 }
 
 .no-results button:hover {

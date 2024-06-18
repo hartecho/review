@@ -11,6 +11,18 @@
     <div>
       <slot />
     </div>
+    <!-- <div class="divider">
+      <svg
+        width="100%"
+        height="100"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="100" height="10" fill="" />
+        <path d="M 0 0 Q 0 10 25 10 L 100 10 L 100 0 Z" fill="white" />
+      </svg>
+    </div> -->
     <footer>
       <NavFooterPreloadBlackBubbleFooter
         :navPaths="currentPaths"
@@ -94,6 +106,10 @@ footer {
 
 .image-overflow-hidden img {
   width: 100%;
+}
+
+.divider {
+  margin-bottom: -4px;
 }
 
 .divider-grow {

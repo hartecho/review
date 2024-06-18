@@ -165,7 +165,25 @@ function toggleTag(tag) {
   filterByTags();
 }
 
+const lastScrollTop = ref(0);
+
+const handleScroll = () => {
+  const leftColumn = document.querySelector(".left-column");
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop.value) {
+    leftColumn.classList.remove("large");
+    leftColumn.classList.add("small");
+  } else {
+    leftColumn.classList.remove("small");
+    leftColumn.classList.add("large");
+  }
+
+  lastScrollTop.value = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+};
+
 onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
   filterReviews();
   if (props.contractor) {
     availableTags.value = props.contractor.tags || [];
@@ -194,11 +212,19 @@ html {
   background: #f9f9f9;
   position: -webkit-sticky;
   position: sticky;
-  top: 9rem;
   height: fit-content;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   align-self: flex-start;
+  transition: top 0.4s;
+}
+
+.left-column.small {
+  top: 4rem;
+}
+
+.left-column.large {
+  top: 9rem;
 }
 
 .filters {
@@ -342,7 +368,7 @@ html {
   }
 
   .tag-filters .tag {
-    padding: 5px;
+    padding: 7px;
   }
 
   .star {
@@ -374,10 +400,6 @@ html {
 
   .rating-bar {
     font-size: 12px;
-  }
-
-  .tag-filters .tag {
-    padding: 3px;
   }
 
   .star {
