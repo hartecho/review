@@ -433,7 +433,7 @@ a.router-link-exact-active {
   }
 
   .login-button {
-    /* font-size: 16px; */
+    font-size: 18px;
     padding: 6px 12px;
   }
 
@@ -462,8 +462,8 @@ a.router-link-exact-active {
   }
 
   .login-button {
-    font-size: 14px;
-    padding: 4px 8px;
+    font-size: 18px;
+    padding: 6px 8px;
   }
 
   .link {

@@ -34,5 +34,15 @@ export default defineNuxtConfig({
       GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
       DB_URI: process.env.DB_URI,
     }
-  }
+  },
+  ignore: process.env.NODE_ENV === 'production' 
+    ? [
+        'pages/blog/editBlogs.vue', 
+        'pages/contractor/editContractors.vue',
+        'pages/item/editItems.vue',
+        'pages/user/editUsers.vue',
+        'pages/claims.vue',
+        'pages/profile.vue'
+      ] 
+    : [],
 })

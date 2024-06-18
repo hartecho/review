@@ -202,7 +202,9 @@ function sortedUpdatesAndReplies(review) {
 }
 
 function getBusinessName(businessRep) {
-  return props.isPro ? props.contractor.company : businessRep + " (Owner)";
+  return props.isPro
+    ? props.contractor.company
+    : businessRep + " (Representative)";
 }
 
 async function submitReply() {

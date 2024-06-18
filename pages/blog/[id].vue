@@ -46,6 +46,7 @@
 
       <div class="sidebar">
         <h2>Other Popular Posts</h2>
+        <p>Coming Soon...</p>
         <div
           class="sidebar-post"
           v-for="(post, index) in otherPosts"
@@ -75,7 +76,7 @@
 
 <script setup>
 const { data: post } = await useFetch(`/api/blogs?_id=${useRoute().params.id}`);
-const { data: otherPosts } = await useFetch("/api/popular-blogs"); // Fetch other popular or relevant posts
+// const { data: otherPosts } = await useFetch("/api/popular-blogs"); // Fetch other popular or relevant posts
 
 useSeoMeta({
   title: post.value.mainTitle,
@@ -201,6 +202,10 @@ onMounted(() => {
 .blog-post p {
   font-size: 1.2rem;
   margin-bottom: 1.2em;
+}
+
+p {
+  color: black;
 }
 
 .section-img-wrapper {
@@ -373,8 +378,29 @@ onMounted(() => {
 }
 
 @media (max-width: 480px) {
+  .blog-content-wrapper {
+    padding: 0rem;
+  }
+
+  .related-links-wrapper {
+    padding: 0;
+  }
+
+  .related-links {
+    background: white;
+    box-shadow: none;
+  }
+
+  .sidebar {
+    box-shadow: none;
+    background: white;
+    height: auto;
+    min-height: 0;
+  }
+
   .blog-post {
     padding: 2rem 1rem;
+    box-shadow: none;
   }
 }
 </style>

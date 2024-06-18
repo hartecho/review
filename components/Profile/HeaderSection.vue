@@ -31,7 +31,11 @@
             >
               Contact Contractor
             </button> -->
-            <button v-if="!contractor.isClaimed" class="report-button">
+            <button
+              v-if="!contractor.isClaimed"
+              class="report-button"
+              @click="claimBusiness"
+            >
               Claim This Business
             </button>
             <button class="report-button">Report an Issue</button>
@@ -41,8 +45,10 @@
     </div>
   </section>
 </template>
-  
-  <script setup>
+
+<script setup>
+import { useRouter } from "vue-router";
+
 const props = defineProps({
   contractor: Object,
   tagDescriptions: Object,
@@ -50,12 +56,23 @@ const props = defineProps({
   roundedRating: Number,
 });
 
+const router = useRouter();
+
 const resolvedImgPath = () => {
   return `/${props.contractor.picture}`;
 };
+
+const claimBusiness = () => {
+  router.push({
+    path: "/claimBusiness",
+    query: {
+      company: props.contractor.company,
+      _id: props.contractor._id,
+    },
+  });
+};
 </script>
-  
-  
+
 <style scoped>
 .profile-header-section {
   font-family: Arial, sans-serif;
