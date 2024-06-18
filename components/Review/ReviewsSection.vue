@@ -351,6 +351,14 @@ html {
     padding: 1rem;
   }
 
+  .left-column.small {
+    top: 0rem;
+  }
+
+  .left-column.large {
+    top: 0rem;
+  }
+
   .filters {
     padding: 10px;
   }

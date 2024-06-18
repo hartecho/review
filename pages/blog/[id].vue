@@ -362,6 +362,14 @@ onMounted(() => {
     top: 0;
     margin-top: 2rem;
   }
+
+  .sidebar.large {
+    top: 0rem;
+  }
+
+  .sidebar.small {
+    top: 0rem;
+  }
 }
 
 @media (max-width: 480px) {
