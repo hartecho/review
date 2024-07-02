@@ -35,8 +35,8 @@ useSeoMeta({
     "Discover reliable commercial contractors with Subsource. Read trusted reviews and ratings to find the best contractors for your business needs.",
   ogDescription:
     "Discover reliable commercial contractors with Subsource. Read trusted reviews and ratings to find the best contractors for your business needs.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 
 onMounted(() => {

@@ -63,8 +63,8 @@ useSeoMeta({
     "We'd love to hear from you! Contact Subsource through our form or email us at support@subsource.org for any inquiries regarding commercial contractor reviews.",
   ogDescription:
     "We'd love to hear from you! Contact Subsource through our form or email us at support@subsource.org for any inquiries regarding commercial contractor reviews.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 
 const formData = ref({

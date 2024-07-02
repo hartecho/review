@@ -8,9 +8,9 @@ export default defineNuxtConfig({
     },
     head: {
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/SSLogo.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/SSLogo.webp' },
         // For other formats
-        { rel: 'icon', type: 'image/png', href: '/SSLogo.png' },
+        { rel: 'icon', type: 'image/png', href: '/SSLogo.webp' },
       ],
     },
   },

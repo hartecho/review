@@ -100,8 +100,8 @@ useSeoMeta({
     "Read our Privacy Policy to understand how we collect, use, and protect your personal information.",
   ogDescription:
     "Read our Privacy Policy to understand how we collect, use, and protect your personal information.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 </script>
 

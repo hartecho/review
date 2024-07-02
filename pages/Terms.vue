@@ -96,8 +96,8 @@ useSeoMeta({
     "Read our Terms of Service to understand the conditions of using our website, services, and products. By using our services, you agree to be bound by these Terms.",
   ogDescription:
     "Read our Terms of Service to understand the conditions of using our website, services, and products. By using our services, you agree to be bound by these Terms.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 </script>
 

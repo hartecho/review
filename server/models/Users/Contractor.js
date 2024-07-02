@@ -9,7 +9,7 @@ const contractorSchema = new mongoose.Schema({
   picture: {
     type: String,
     required: false,
-    default: 'SSLogo.png'
+    default: 'SSLogo.webp'
   },
   operatingStates: {
     type: [String],

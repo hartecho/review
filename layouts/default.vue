@@ -4,7 +4,7 @@
       :navPaths="currentPaths"
       @toggleMobileNav="showMobileNav = !showMobileNav"
       companyName="SUBSOURCE"
-      logoPath="SSLogo.png"
+      logoPath="SSLogo.webp"
       navBarsButtonPath="NavBars.svg"
     />
 

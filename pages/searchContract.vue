@@ -42,8 +42,8 @@ useSeoMeta({
     "Search for top-rated general contractors by name or operating states. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
     "Search for top-rated general contractors by name or operating states. Use filters to find contractors by star rating and read detailed reviews on Subsource.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 
 const { data: contractors } = await useFetch("/api/contractors");

@@ -51,8 +51,8 @@ useSeoMeta({
     "Browse our articles for the latest news, tips, and insights on commercial contracting. Stay informed with Subsource.",
   ogDescription:
     "Browse our articles for the latest news, tips, and insights on commercial contracting. Stay informed with Subsource.",
-  ogImage: "/SSLogo.png",
-  twitterCard: "/SSLogo.png",
+  ogImage: "/SSLogo.webp",
+  twitterCard: "/SSLogo.webp",
 });
 
 const router = useRouter();
@@ -100,7 +100,7 @@ const resolvedImgPath = (path) => {
   if (path) {
     return "/" + path;
   }
-  return "/SSLogo.png";
+  return "/SSLogo.webp";
 };
 
 const goToBlog = (blogId) => {

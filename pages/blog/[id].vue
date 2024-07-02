@@ -111,7 +111,7 @@ const resolvedImgPath = (path) => {
   if (path) {
     return "/" + path;
   }
-  return "/SSLogo.png";
+  return "/SSLogo.webp";
 };
 
 const lastScrollTop = ref(0);

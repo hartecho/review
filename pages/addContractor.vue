@@ -163,7 +163,6 @@ function resetForm() {
   min-height: 55rem;
   height: auto;
   font-family: "Roboto", sans-serif;
-  background: url("/LoginBG.jpg") no-repeat center top;
   background-size: cover;
   /* background-color: #f5f5f5; */
 }

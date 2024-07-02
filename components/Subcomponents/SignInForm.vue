@@ -6,17 +6,17 @@
         <img src="/EmailLogo.svg" alt="Email Logo" class="icon" />
         Sign in with Email
       </button>
-      <!-- <GoogleSignInButton
+      <GoogleSignInButton
         @success="handleGoogleLogin"
         @error="handleLoginError"
         class="google-button"
-      ></GoogleSignInButton> -->
+      ></GoogleSignInButton>
     </div>
   </div>
 </template>
   
   <script setup>
-// import { GoogleSignInButton } from "vue3-google-signin";
+import { GoogleSignInButton } from "vue3-google-signin";
 
 const emit = defineEmits(["emailSignIn", "googleLogin", "loginError"]);
 
