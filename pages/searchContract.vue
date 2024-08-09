@@ -19,7 +19,7 @@
         />
       </div>
       <div class="right-panel">
-        <SearchResultsList
+        <SearchContractorResultsList
           :filteredContractors="filteredContractors"
           :searchQuery="searchQuery"
           :tagDescriptions="tagDescriptions"

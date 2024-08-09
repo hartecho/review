@@ -2,17 +2,17 @@
   <div class="profile-page">
     <section class="header-section">
       <ProfileHeaderSection
-        :business="contractor"
-        :tagDescriptions="tagDescriptions"
-        :contactContractor="contactContractor"
+        :business="agency"
+        :tagDescriptions="agencyTagDescriptions"
+        :contactAgency="contactAgency"
         :roundedRating="roundedRating"
       />
     </section>
     <section class="tabs-section">
       <ProfileTabsSection
-        :business="contractor"
-        businessType="Contractor"
-        :tagDescriptions="tagDescriptions"
+        :business="agency"
+        businessType="Agency"
+        :tagDescriptions="agencyTagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :existingReview="existingReview"
         :isPro="isPro"
@@ -20,8 +20,8 @@
     </section>
     <section class="reviews-section">
       <ReviewReviewsSection
-        :business="contractor"
-        :tagDescriptions="tagDescriptions"
+        :business="agency"
+        :tagDescriptions="agencyTagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :reviews="reviews"
         :isPro="isPro"
@@ -32,27 +32,24 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { tagDescriptions } from "~/utils/tagDescriptions.js";
+    
+    <script setup>
+import { agencyTagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
 const store = useStore();
 const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
-const { data: contractor, pending: contractorPending } = await useFetch(
-  `/api/contractors?_id=${route.params.id}`
+const { data: agency, pending: agencyPending } = await useFetch(
+  `/api/agencies?_id=${route.params.id}`
 );
 
 const { data: reviews } = await useFetch(
-  `/api/reviews?contractorId=${contractor.value._id}`
+  `/api/reviews?agencyId=${agency.value._id}`
 );
 
-// console.log("Contractor: " + JSON.stringify(contractor.value));
-
 const siftReviews = (reviews) => {
-  // console.log("reviews: " + JSON.stringify(reviews));
   if (isLoggedIn.value) {
     const userReview = reviews.find(
       (review) => review.reviewer._id === store.user._id
@@ -68,19 +65,19 @@ onMounted(() => {
 });
 
 useSeoMeta({
-  title: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  ogTitle: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  description: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogDescription: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogImage: `/${contractor.value?.picture}`,
-  twitterCard: `/${contractor.value?.picture}`,
+  title: `${agency.value?.company} Reviews | Subsource – Trusted Agency Insights`,
+  ogTitle: `${agency.value?.company} Reviews | Subsource – Trusted Agency Insights`,
+  description: `Read detailed reviews and ratings for ${agency.value?.company}. Discover why they are a trusted agency in their field. Leave your own review and share your experience.`,
+  ogDescription: `Read detailed reviews and ratings for ${agency.value?.company}. Discover why they are a trusted agency in their field. Leave your own review and share your experience.`,
+  ogImage: `/${agency.value?.picture}`,
+  twitterCard: `/${agency.value?.picture}`,
 });
 
 const showLoginModal = ref(false);
 const activeTab = ref("reviews");
 
-const contactContractor = () => {
-  alert(`Contacting ${contractor.value?.company}`);
+const contactAgency = () => {
+  alert(`Contacting ${agency.value?.company}`);
 };
 
 const openLoginModal = () => {
@@ -94,14 +91,14 @@ const closeLoginModal = () => {
 };
 
 const roundedRating = computed(() => {
-  return Math.round(contractor.value?.ratings || 0);
+  return Math.round(agency.value?.ratings || 0);
 });
 
 const isBusinessOwner = computed(() => {
-  if (!store.user || !contractor.value) {
+  if (!store.user || !agency.value) {
     return false;
   }
-  const isOwner = store.user.contractor === contractor.value._id;
+  const isOwner = store.user.agency === agency.value._id;
   return isOwner;
 });
 
@@ -110,9 +107,9 @@ const isPro = computed(() => {
   return false;
 });
 </script>
-
-
-<style scoped>
+    
+    
+    <style scoped>
 .profile-page {
   display: flex;
   flex-direction: column;
@@ -213,4 +210,5 @@ const isPro = computed(() => {
   opacity: 1;
 }
 </style>
-
+    
+    

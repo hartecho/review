@@ -145,6 +145,8 @@ function getRoute(link) {
   if (link === "home") return "/";
   else if (link === "search Contractors") return "/searchContract";
   else if (link === "search Subcontractors") return "/searchSub";
+  else if (link === "search Suppliers") return "/searchSupply";
+  else if (link === "search Agencies") return "/searchAgency";
   else return `/${link}`;
 }
 
@@ -228,6 +230,7 @@ function toggleMobileNav() {
 .links {
   display: flex;
   align-items: center;
+  /* padding-left: 1rem; */
 }
 
 .brand {

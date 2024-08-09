@@ -15,29 +15,31 @@
       </button>
     </div>
     <div class="tab-content" v-if="activeTab === 'about'">
-      <h3>Contact Information</h3>
+      <div class="no-market-message">
+        <img src="/lock.webp" alt="lock image" />
+        <h3>Marketing features coming soon...</h3>
+      </div>
       <div class="contact-info">
-        <p v-if="contractor.email">
-          <strong>Email:</strong> {{ contractor.email }}
+        <p v-if="business.email">
+          <strong>Email:</strong> {{ business.email }}
         </p>
-        <p v-if="contractor.phone">
-          <strong>Phone:</strong> {{ contractor.phone }}
+        <p v-if="business.phone">
+          <strong>Phone:</strong> {{ business.phone }}
         </p>
         <p
           v-if="
-            contractor.address &&
-            contractor.address.city &&
-            contractor.address.state
+            business.address && business.address.city && business.address.state
           "
         >
-          <strong>Address:</strong> {{ contractor.address.city }},
-          {{ contractor.address.state }}
+          <strong>Address:</strong> {{ business.address.city }},
+          {{ business.address.state }}
         </p>
       </div>
     </div>
     <div class="tab-content" v-if="activeTab === 'reviews'">
       <ReviewForm
-        :contractor="contractor"
+        :business="business"
+        :businessType="businessType"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :existingReview="existingReview"
@@ -49,7 +51,8 @@
   
   <script setup>
 const props = defineProps({
-  contractor: Object,
+  business: Object,
+  businessType: String,
   tagDescriptions: Object,
   isBusinessOwner: Boolean,
   isPro: Boolean,
@@ -63,9 +66,13 @@ const activeTab = ref("reviews");
 .tabs-section {
   text-align: left;
   max-width: 1400px;
-  padding: 2rem 4rem;
+  padding: 2rem 0rem;
   margin: 0 auto;
   margin-top: 40px;
+}
+
+h3 {
+  color: black;
 }
 
 .tabs {
@@ -97,10 +104,24 @@ const activeTab = ref("reviews");
 .tab-content {
   max-width: 1200px;
   margin: 20px 0;
-  padding: 20px;
+  /* padding: 20px; */
   background: #fff;
   border-radius: 8px;
   width: 100%;
+}
+
+.no-market-message {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.no-market-message img {
+  height: 5rem;
+}
+
+.no-market-message h3 {
 }
 
 .contact-info p {
@@ -111,7 +132,7 @@ const activeTab = ref("reviews");
 
 @media (max-width: 768px) {
   .tabs-section {
-    padding: 1.5rem 2rem;
+    padding: 1.5rem 0rem;
     margin-top: 30px;
   }
 
@@ -121,7 +142,7 @@ const activeTab = ref("reviews");
   }
 
   .tab-content {
-    padding: 16px;
+    /* padding: 16px; */
     margin: 16px 0;
   }
 
@@ -142,7 +163,7 @@ const activeTab = ref("reviews");
   }
 
   .tab-content {
-    padding: 12px;
+    /* padding: 12px; */
     margin: 12px 0;
   }
 

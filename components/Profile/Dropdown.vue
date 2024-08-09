@@ -6,25 +6,21 @@
     <div v-if="showDropdown" class="dropdown-menu">
       <button class="close-button" @click="closeDropdown">×</button>
       <div
-        v-for="item in items"
-        :key="item.abbreviation || item.enum"
+        v-for="(description, key) in items"
+        :key="key"
         class="dropdown-item"
-        :class="{
-          selected: selectedItems.includes(item.abbreviation || item.enum),
-        }"
-        @click="toggleItem(item.abbreviation || item.enum)"
+        :class="{ selected: selectedItems.includes(key) }"
+        @click="toggleItem(key)"
       >
         <input
           type="checkbox"
-          :id="item.abbreviation || item.enum"
-          :value="item.abbreviation || item.enum"
-          :checked="selectedItems.includes(item.abbreviation || item.enum)"
-          @change="updateSelectedItems(item.abbreviation || item.enum)"
+          :id="key"
+          :value="key"
+          :checked="selectedItems.includes(key)"
+          @change="updateSelectedItems(key)"
           class="hidden-checkbox"
         />
-        <label :for="item.abbreviation || item.enum">{{
-          item.name || item.description
-        }}</label>
+        <label :for="key">{{ description }}</label>
       </div>
     </div>
   </div>
@@ -34,7 +30,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps({
-  items: Array,
+  items: Object,
   selectedItems: Array,
   label: String,
 });
@@ -46,12 +42,7 @@ const showDropdown = ref(false);
 
 const selectedItemsText = computed(() => {
   if (props.selectedItems.length === 0) return props.label;
-  return props.items
-    .filter((item) =>
-      props.selectedItems.includes(item.abbreviation || item.enum)
-    )
-    .map((item) => item.name || item.description)
-    .join(", ");
+  return props.selectedItems.map((key) => props.items[key]).join(", ");
 });
 
 const toggleDropdown = () => {

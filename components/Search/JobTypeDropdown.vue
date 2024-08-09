@@ -24,13 +24,13 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from "vue";
-
 const props = defineProps({
   showDropdown: Boolean,
   selectedTags: Array,
   tagDescriptions: Object,
 });
+
+// console.log(props.tagDescriptions);
 
 const emit = defineEmits([
   "toggleDropdown",

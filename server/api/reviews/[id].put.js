@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
         const body = await readBody(event);
         const reviewId = event.context.params.id;
 
+        console.log("Updating a review");
+
         const review = await Review.findById(reviewId);
         if (!review) {
             throw createError({ statusCode: 404, message: 'Review not found' });

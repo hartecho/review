@@ -5,7 +5,7 @@
     </div>
     <div v-else-if="isLoggedIn">
       <h4 class="review-title" v-if="existingReview">
-        Your Review History with {{ contractor.company }}
+        Your Review History with {{ business.company }}
       </h4>
       <div v-if="existingReview">
         <ReviewReviews
@@ -13,7 +13,7 @@
           :tagDescriptions="tagDescriptions"
           :isBusinessOwner="isBusinessOwner"
           :isPro="isPro"
-          :contractor="contractor"
+          :business="business"
         />
       </div>
 
@@ -46,11 +46,14 @@
             </span>
           </div>
         </div>
-        <div class="checkboxes">
+        <div
+          class="checkboxes"
+          v-if="businessType == 'Subcontractor' || businessType == 'Supplier'"
+        >
           <div class="checkbox-group">
             <h4>Select job types your review describes</h4>
             <div class="checkbox-row">
-              <label v-for="tag in contractor.tags" :key="tag">
+              <label v-for="tag in business.tags" :key="tag">
                 <input type="checkbox" :value="tag" v-model="newReview.tags" />
                 {{ tagDescriptions[tag] }}
               </label>
@@ -87,8 +90,12 @@ const props = defineProps({
     type: Object,
     required: false,
   },
-  contractor: {
+  business: {
     type: Object,
+    required: true,
+  },
+  businessType: {
+    type: String,
     required: true,
   },
   tagDescriptions: {
@@ -132,8 +139,10 @@ async function submitReview() {
       const response = await $fetch("/api/reviews", {
         method: "POST",
         body: {
-          contractor: props.contractor._id,
+          businessId: props.business._id,
+          businessType: props.businessType,
           reviewer: store.user._id,
+          reviewerName: store.user.name,
           rating: newReview.value.rating,
           comment: newReview.value.comment,
           tags: newReview.value.tags,

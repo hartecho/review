@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const contractorSchema = new mongoose.Schema({
+const supplierSchema = new mongoose.Schema({
   company: {
     type: String,
     required: true,
@@ -55,6 +55,13 @@ const contractorSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  tags: [{
+    type: String,
+    enum: [
+      'CAB', 'CKE', 'LMEQ', 'LOG', 'SPEQ', 'WARE', 'ACOUST', 'AGG', 'BRK', 'CMP', 'DRY', 'ELE', 'ENG', 'FRM', 'GLAS', 'HRDW', 'INSUL', 'LUM', 'MTL', 'PAIN', 'PLMB', 'RFMS', 'SAF', 'SAND', 'STON', 'SURF', 'TOOLS', 'WALL', 'WNDW', 'HVACS', 'PLST', 'ENV', 'LGT', 'CABL', 'FURN', 'CONV', 'GRDN', 'MAR', 'SEAL', 'TAP', 'TEMP', 'WTRS', 'CNTN', 'CNVY', 'FAB'
+    ],
+    required: true
+  }],
   isClaimed: {
     type: Boolean,
     default: false
@@ -67,6 +74,6 @@ const contractorSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Contractor = mongoose.model('Contractor', contractorSchema);
+const Supplier = mongoose.model('Supplier', supplierSchema);
 
-export default Contractor;
+export default Supplier;

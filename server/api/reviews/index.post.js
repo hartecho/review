@@ -1,17 +1,37 @@
 import Review from '~/server/models/Users/Review.js';
 import Contractor from '~/server/models/Users/Contractor.js';
-import User from '~/server/models/Users/User.js';
+import Subcontractor from '~/server/models/Users/Subcontractor.js';
+import Supplier from '~/server/models/Users/Supplier.js';
+import Agency from '~/server/models/Users/Agency.js';
 import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 import mongoose from 'mongoose';
 
-async function updateContractorRating(contractorId) {
-  console.log("updating contractor rating");
-  const reviews = await Review.find({ contractor: contractorId });
+async function updateBusinessRating(businessId, businessType) {
+  console.log(`Updating rating for ${businessType}`);
+
+  // Map business types to their respective models
+  const businessModels = {
+    Contractor,
+    Subcontractor,
+    Supplier,
+    Agency,
+  };
+
+  // Get the appropriate model for the business type
+  const BusinessModel = businessModels[businessType];
+
+  if (!BusinessModel) {
+    console.error('Invalid business type:', businessType);
+    return;
+  }
+
+  // Find reviews for the business
+  const reviews = await Review.find({ businessId: businessId, businessType: businessType });
 
   if (reviews.length === 0) {
-    console.log("Found no reviews for ", contractorId);
-    await Contractor.findByIdAndUpdate(contractorId, { ratings: 0 });
+    console.log(`Found no reviews for ${businessId}`);
+    await BusinessModel.findByIdAndUpdate(businessId, { ratings: 0 });
     return;
   }
 
@@ -31,9 +51,10 @@ async function updateContractorRating(contractorId) {
   });
 
   const averageRating = (totalRating / reviewCount).toFixed(1);
-  console.log("average rating: " + averageRating);
+  // console.log(`Average rating for ${businessType}: ${averageRating}`);
 
-  await Contractor.findByIdAndUpdate(contractorId, { ratings: parseFloat(averageRating) });
+  // Update the business rating
+  await BusinessModel.findByIdAndUpdate(businessId, { ratings: parseFloat(averageRating) });
 }
 
 export default defineEventHandler(async (event) => {
@@ -41,8 +62,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event);
-    const { contractor, rating, comment, tags, reviewer, reviewId, businessRep, reply } = body;
-    // console.log("Request Body:", body);
+    const { businessId, businessType, rating, comment, tags, reviewer, reviewerName, reviewId, businessRep, reply } = body;
+    console.log("Request Body:", body);
 
     if (reply) {
       console.log("Adding business reply");
@@ -54,22 +75,28 @@ export default defineEventHandler(async (event) => {
       }
     } else {
       let existingReview = await Review.findOne({
-        contractor: contractor,
-        reviewer: reviewer
+        businessId: businessId,
+        businessType,
+        reviewer,
       });
+
+      console.log("ExistingReview: ", existingReview);
 
       if (existingReview) {
         console.log("Existing review found, adding update");
         existingReview.updates.push({
-          rating: rating,
-          comment: comment
+          rating,
+          comment,
         });
+        existingReview.tags = tags;
         await existingReview.save();
       } else {
         console.log("Creating new review");
         const newReview = new Review({
-          contractor: contractor,
-          reviewer: reviewer,
+          businessId: businessId,
+          businessType,
+          reviewer,
+          reviewerName,
           rating,
           comment,
           tags,
@@ -78,8 +105,8 @@ export default defineEventHandler(async (event) => {
         await newReview.save();
       }
 
-      // Update the contractor's rating
-      await updateContractorRating(contractor);
+      // Update the business's rating
+      await updateBusinessRating(businessId, businessType);
     }
 
     await disconnectDB(); // Disconnect from DB after success

@@ -3,7 +3,8 @@
     <h1>Add/Update Contractor</h1>
 
     <div class="content">
-      <div class="left">
+      <div class="section">
+        <h2>Select Contractor</h2>
         <select v-model="selectedContractor" @change="loadContractor">
           <option disabled value="">Please select one</option>
           <option
@@ -14,85 +15,139 @@
             {{ contractor.company }}
           </option>
         </select>
+      </div>
 
-        <input type="text" v-model="contractor.company" placeholder="Company" />
-        <input type="text" v-model="contractor.picture" placeholder="Picture" />
-        <input type="text" v-model="contractor.phone" placeholder="Phone" />
-        <input type="email" v-model="contractor.email" placeholder="Email" />
-        <input type="text" v-model="contractor.website" placeholder="Website" />
-
-        <div class="address">
-          <input
-            type="text"
-            v-model="contractor.address.streetAddress"
-            placeholder="Street Address"
-          />
-          <input
-            type="text"
-            v-model="contractor.address.secondaryAddress"
-            placeholder="Secondary Address"
-          />
-          <input
-            type="text"
-            v-model="contractor.address.city"
-            placeholder="City"
-          />
-          <input
-            type="text"
-            v-model="contractor.address.state"
-            placeholder="State"
-          />
-          <input
-            type="text"
-            v-model="contractor.address.ZIPCode"
-            placeholder="ZIP Code"
-          />
+      <div class="section">
+        <h2>General Information</h2>
+        <div class="input-wrapper">
+          <input type="text" v-model="contractor.company" placeholder=" " />
+          <label>Company</label>
         </div>
+        <div class="input-wrapper">
+          <input type="text" v-model="contractor.picture" placeholder=" " />
+          <label>Picture</label>
+        </div>
+      </div>
 
+      <div class="section">
+        <h2>Contact Information</h2>
+        <div class="input-wrapper">
+          <input type="text" v-model="contractor.phone" placeholder=" " />
+          <label>Phone</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="email" v-model="contractor.email" placeholder=" " />
+          <label>Email</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="text" v-model="contractor.website" placeholder=" " />
+          <label>Website</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Address</h2>
+        <div class="address">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="contractor.address.streetAddress"
+              placeholder=" "
+            />
+            <label>Street Address</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="contractor.address.secondaryAddress"
+              placeholder=" "
+            />
+            <label>Secondary Address</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="contractor.address.city"
+              placeholder=" "
+            />
+            <label>City</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="contractor.address.state"
+              placeholder=" "
+            />
+            <label>State</label>
+          </div>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="contractor.address.ZIPCode"
+              placeholder=" "
+            />
+            <label>ZIP Code</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Operating States</h2>
         <ProfileDropdown
           label="Select Operating States"
-          :items="availableStates"
+          :items="states"
           :selectedItems="contractor.operatingStates"
           @update:selectedItems="updateOperatingStates"
         />
+      </div>
 
+      <div class="section">
+        <h2>Job Types</h2>
         <ProfileDropdown
           label="Select Job Types"
-          :items="availableTags"
+          :items="tagDescriptions"
           :selectedItems="contractor.tags"
           @update:selectedItems="updateTags"
         />
+      </div>
 
-        <div class="final-buttons">
-          <button @click="addContractor">Add Contractor</button>
-          <button @click="updateContractor">Update Contractor</button>
-          <button @click="deleteContractor">Delete Contractor</button>
-          <button @click="resetRatings">Reset All Ratings</button>
-        </div>
+      <div class="section action-buttons">
+        <h2>Available Actions</h2>
+        <button @click="addContractor">Add Contractor</button>
+        <button @click="updateContractor">Update Contractor</button>
+        <button @click="deleteContractor">Delete Contractor</button>
+        <button @click="resetRatings">Reset All Ratings</button>
+      </div>
 
-        <div class="delete-all-section">
-          <label for="delete-confirmation"
-            >Type "Delete All Contractors" to confirm:</label
-          >
-          <input
-            type="text"
-            id="delete-confirmation"
-            v-model="deleteConfirmation"
-            placeholder="Delete All Contractors"
-          />
-          <button
-            @click="deleteAllContractors"
-            :disabled="deleteConfirmation !== 'Delete All Contractors'"
-          >
-            Delete All Contractors
-          </button>
-        </div>
+      <div class="section delete-all-section">
+        <label for="delete-confirmation"
+          >Type "Delete All Contractors" to confirm:</label
+        >
+        <input
+          type="text"
+          id="delete-confirmation"
+          v-model="deleteConfirmation"
+          placeholder="Delete All Contractors"
+        />
+        <button
+          @click="deleteAllContractors"
+          :disabled="deleteConfirmation !== 'Delete All Contractors'"
+        >
+          Delete All Contractors
+        </button>
       </div>
     </div>
   </div>
 </template>
 
+
+
+
 <script setup>
+import { ref, onMounted, watch } from "vue";
+import { tagDescriptions } from "/utils/tagDescriptions.js";
+import { states } from "/utils/states/js";
+
 const contractors = ref([]);
 const selectedContractor = ref("");
 const contractor = ref({
@@ -114,130 +169,116 @@ const contractor = ref({
 
 const deleteConfirmation = ref("");
 
-const availableStates = [
-  { abbreviation: "AL", name: "Alabama" },
-  { abbreviation: "AK", name: "Alaska" },
-  { abbreviation: "AZ", name: "Arizona" },
-  { abbreviation: "AR", name: "Arkansas" },
-  { abbreviation: "CA", name: "California" },
-  { abbreviation: "CO", name: "Colorado" },
-  { abbreviation: "CT", name: "Connecticut" },
-  { abbreviation: "DE", name: "Delaware" },
-  { abbreviation: "FL", name: "Florida" },
-  { abbreviation: "GA", name: "Georgia" },
-  { abbreviation: "HI", name: "Hawaii" },
-  { abbreviation: "ID", name: "Idaho" },
-  { abbreviation: "IL", name: "Illinois" },
-  { abbreviation: "IN", name: "Indiana" },
-  { abbreviation: "IA", name: "Iowa" },
-  { abbreviation: "KS", name: "Kansas" },
-  { abbreviation: "KY", name: "Kentucky" },
-  { abbreviation: "LA", name: "Louisiana" },
-  { abbreviation: "ME", name: "Maine" },
-  { abbreviation: "MD", name: "Maryland" },
-  { abbreviation: "MA", name: "Massachusetts" },
-  { abbreviation: "MI", name: "Michigan" },
-  { abbreviation: "MN", name: "Minnesota" },
-  { abbreviation: "MS", name: "Mississippi" },
-  { abbreviation: "MO", name: "Missouri" },
-  { abbreviation: "MT", name: "Montana" },
-  { abbreviation: "NE", name: "Nebraska" },
-  { abbreviation: "NV", name: "Nevada" },
-  { abbreviation: "NH", name: "New Hampshire" },
-  { abbreviation: "NJ", name: "New Jersey" },
-  { abbreviation: "NM", name: "New Mexico" },
-  { abbreviation: "NY", name: "New York" },
-  { abbreviation: "NC", name: "North Carolina" },
-  { abbreviation: "ND", name: "North Dakota" },
-  { abbreviation: "OH", name: "Ohio" },
-  { abbreviation: "OK", name: "Oklahoma" },
-  { abbreviation: "OR", name: "Oregon" },
-  { abbreviation: "PA", name: "Pennsylvania" },
-  { abbreviation: "RI", name: "Rhode Island" },
-  { abbreviation: "SC", name: "South Carolina" },
-  { abbreviation: "SD", name: "South Dakota" },
-  { abbreviation: "TN", name: "Tennessee" },
-  { abbreviation: "TX", name: "Texas" },
-  { abbreviation: "UT", name: "Utah" },
-  { abbreviation: "VT", name: "Vermont" },
-  { abbreviation: "VA", name: "Virginia" },
-  { abbreviation: "WA", name: "Washington" },
-  { abbreviation: "WV", name: "West Virginia" },
-  { abbreviation: "WI", name: "Wisconsin" },
-  { abbreviation: "WY", name: "Wyoming" },
-];
-
-const availableTags = [
-  { enum: "GEN", description: "General Contractor" },
-  { enum: "FLR", description: "Flooring" },
-  { enum: "CTP", description: "Countertops" },
-  { enum: "CAB", description: "Cabinets" },
-  { enum: "CON", description: "Concrete and Masonry" },
-  { enum: "STL", description: "Steel and Metal Fabrication" },
-  { enum: "FRM", description: "Framing" },
-  { enum: "ROF", description: "Roofing" },
-  { enum: "SID", description: "Siding" },
-  { enum: "WND", description: "Windows and Doors" },
-  { enum: "LND", description: "Landscaping and Hardscaping" },
-  { enum: "DRY", description: "Drywall and Plaster" },
-  { enum: "PNT", description: "Painting and Finishing" },
-  { enum: "INS", description: "Insulation" },
-  { enum: "CLG", description: "Ceiling Systems" },
-  { enum: "HVAC", description: "HVAC" },
-  { enum: "PLM", description: "Plumbing" },
-  { enum: "ELEC", description: "Electrical" },
-  { enum: "EXC", description: "Excavation" },
-  { enum: "DEM", description: "Demolition" },
-  { enum: "GRD", description: "Grading and Paving" },
-  { enum: "FPS", description: "Fire Protection and Sprinkler Systems" },
-  { enum: "SEC", description: "Security Systems" },
-  { enum: "AV", description: "Audio-Visual Installations" },
-  { enum: "ELEV", description: "Elevator and Escalator Installation" },
-  { enum: "SOL", description: "Solar Energy and Green Building Solutions" },
-  { enum: "UTIL", description: "Utility Contractors" },
-  { enum: "FIN", description: "Finishing Contractors" },
-  { enum: "CAR", description: "Carpentry and Woodwork" },
-  { enum: "TLE", description: "Tile and Stone Installation" },
-  { enum: "GLS", description: "Glass and Glazing" },
-  { enum: "SPC", description: "Specialty Coatings and Sealants" },
-  { enum: "REN", description: "Renovation and Restoration" },
-  { enum: "HIS", description: "Historic Restoration" },
-  { enum: "REM", description: "Remodeling" },
-  { enum: "WTR", description: "Waterproofing and Mold Remediation" },
-  { enum: "ENV", description: "Environmental Contractors" },
-  { enum: "ASB", description: "Asbestos Abatement" },
-  { enum: "LEAD", description: "Lead Paint Removal" },
-  { enum: "ENVC", description: "Environmental Cleanup and Remediation" },
-  { enum: "DB", description: "Design and Build Contractors" },
-  { enum: "ARC", description: "Architectural Services" },
-  { enum: "ENG", description: "Engineering Services" },
-  { enum: "LOG", description: "Logistics and Material Handling Contractors" },
-  { enum: "WARE", description: "Warehouse Setup" },
-  { enum: "IEQ", description: "Industrial Equipment Installation" },
-  { enum: "SPEQ", description: "Specialty Equipment Contractors" },
-  { enum: "CKE", description: "Commercial Kitchen Equipment" },
-  { enum: "LMEQ", description: "Laboratory and Medical Equipment" },
-  { enum: "FAC", description: "Facade and Cladding Contractors" },
-  { enum: "EXC", description: "Exterior Cladding Systems" },
-  { enum: "CUR", description: "Curtain Wall Systems" },
-  { enum: "OTH", description: "Other" },
-];
-
 onMounted(async () => {
-  getContractors();
+  await getContractors();
 });
+
+function initializeContractorFields(contractor) {
+  let needsUpdate = false;
+
+  // Ensure the contractor has an address object
+  if (!contractor.address) {
+    contractor.address = {};
+    needsUpdate = true;
+  }
+
+  // Check each field in the address object and set defaults if they are missing
+  const addressFields = [
+    "streetAddress",
+    "secondaryAddress",
+    "city",
+    "state",
+    "ZIPCode",
+  ];
+  addressFields.forEach((field) => {
+    if (contractor.address[field] === undefined) {
+      contractor.address[field] = "";
+      needsUpdate = true;
+    }
+  });
+
+  // Check operatingStates
+  if (contractor.operatingStates === undefined) {
+    contractor.operatingStates = [];
+    needsUpdate = true;
+  }
+
+  // Check tags
+  if (contractor.tags === undefined) {
+    contractor.tags = [];
+    needsUpdate = true;
+  }
+
+  // Check for the rest of the properties and ensure they exist
+  if (contractor.company === undefined) {
+    contractor.company = "";
+    needsUpdate = true;
+  }
+  if (contractor.picture === undefined) {
+    contractor.picture = "SSLogo.webp";
+    needsUpdate = true;
+  }
+  if (contractor.phone === undefined) {
+    contractor.phone = "";
+    needsUpdate = true;
+  }
+  if (contractor.email === undefined) {
+    contractor.email = "";
+    needsUpdate = true;
+  }
+  if (contractor.website === undefined) {
+    contractor.website = "";
+    needsUpdate = true;
+  }
+
+  return needsUpdate;
+}
 
 function loadContractor() {
   const foundContractor = contractors.value.find(
     (c) => c._id === selectedContractor.value
   );
-  contractor.value = { ...foundContractor };
+  if (foundContractor) {
+    // Initialize all fields for the contractor and check if any changes are needed
+    const needsUpdate = initializeContractorFields(foundContractor);
+
+    // Assign the contractor value after initialization
+    contractor.value = { ...foundContractor };
+
+    // Only update if changes were made during initialization
+    if (needsUpdate) {
+      console.log(
+        "Updating contractor due to missing fields:",
+        contractor.value
+      );
+      updateContractor();
+    }
+  } else {
+    // Reset to default values if no contractor is selected
+    contractor.value = {
+      company: "",
+      picture: "",
+      phone: "",
+      email: "",
+      website: "",
+      address: {
+        streetAddress: "",
+        secondaryAddress: "",
+        city: "",
+        state: "",
+        ZIPCode: "",
+      },
+      operatingStates: [],
+      tags: [],
+    };
+  }
 }
 
 async function getContractors() {
   try {
     const response = await $fetch("/api/contractors");
     contractors.value = response || [];
+    contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
     console.log(contractors.value);
   } catch (error) {
     alert("Error fetching contractors: " + error.message);
@@ -252,7 +293,7 @@ async function addContractor() {
       body: contractor.value,
     });
     alert("Contractor added successfully");
-    getContractors();
+    await getContractors();
   } catch (error) {
     alert("Error adding contractor: " + error.message);
     console.error("Error adding contractor:", error);
@@ -261,12 +302,14 @@ async function addContractor() {
 
 async function updateContractor() {
   try {
-    await $fetch(`/api/contractors/${contractor.value._id}`, {
-      method: "PUT",
-      body: contractor.value,
-    });
-    alert("Contractor updated successfully");
-    getContractors();
+    if (contractor.value._id) {
+      await $fetch(`/api/contractors/${contractor.value._id}`, {
+        method: "PUT",
+        body: contractor.value,
+      });
+      console.log("Contractor updated successfully:", contractor.value);
+      getContractors();
+    }
   } catch (error) {
     alert("Error updating contractor: " + error.message);
     console.error("Error updating contractor:", error);
@@ -284,7 +327,7 @@ async function deleteContractor() {
       method: "DELETE",
     });
     alert("Contractor deleted successfully");
-    init();
+    await getContractors();
   } catch (error) {
     alert("Error deleting contractor: " + error.message);
     console.error("Error deleting contractor:", error);
@@ -302,7 +345,7 @@ async function deleteAllContractors() {
       method: "DELETE",
     });
     alert("All contractors deleted successfully");
-    getContractors();
+    await getContractors();
   } catch (error) {
     alert("Error deleting all contractors: " + error.message);
     console.error("Error deleting all contractors:", error);
@@ -315,32 +358,11 @@ async function resetRatings() {
       method: "PUT",
     });
     alert("All contractor ratings have been reset to zero.");
-    getContractors();
+    await getContractors();
   } catch (error) {
     alert("Error resetting ratings: " + error.message);
     console.error("Error resetting ratings:", error);
   }
-}
-
-function init() {
-  getContractors();
-  contractor.value = {
-    name: "",
-    company: "",
-    phone: "",
-    email: "",
-    website: "",
-    address: {
-      streetAddress: "",
-      secondaryAddress: "",
-      city: "",
-      state: "",
-      ZIPCode: "",
-    },
-    operatingStates: [],
-    tags: [],
-  };
-  selectedContractor.value = "";
 }
 
 function updateOperatingStates(states) {
@@ -352,14 +374,15 @@ function updateTags(tags) {
 }
 </script>
 
+
 <style scoped>
 .wrapper {
-  padding: 6rem 0;
-  width: 90%;
-  margin: 0 auto;
-  min-height: 55rem;
-  height: auto;
+  padding: 2rem;
+  width: 100%;
+  margin: 0;
+  min-height: 100vh;
   font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
 }
 
 h1 {
@@ -371,26 +394,34 @@ h1 {
 }
 
 .content {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
+  width: 100%;
 }
 
-.left {
-  width: 60%;
+.section {
   background: #fff;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-input[type="text"],
-input[type="email"],
-textarea,
-select {
+.section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper input[type="text"],
+.input-wrapper input[type="email"] {
   display: block;
   width: 100%;
-  margin-bottom: 1.5rem;
   padding: 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -398,10 +429,30 @@ select {
   transition: border-color 0.3s;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus {
+.input-wrapper input[type="text"]:focus,
+.input-wrapper input[type="email"]:focus {
   border-color: #4caf50;
   outline: none;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  transition: all 0.3s ease;
+  background: #fff;
+  padding: 0 5px;
+  color: #999;
+  pointer-events: none;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 5px;
+  font-size: 0.85rem;
+  color: #4caf50;
 }
 
 label {
@@ -412,7 +463,7 @@ label {
 }
 
 button {
-  background-color: #ff8210; /* Color of the logout button */
+  background-color: #ff8210;
   border: none;
   color: white;
   padding: 1rem 2rem;
@@ -435,76 +486,12 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.final-buttons {
+.action-buttons {
   text-align: center;
-  margin-top: 2rem;
 }
 
-.address,
-.tags,
-.operating-states {
+.address {
   margin-bottom: 2rem;
-}
-
-.tags,
-.operating-states {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-}
-
-.tag-checkbox,
-.state-checkbox {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-.state-checkbox:hover,
-.tag-checkbox:hover {
-  background: #e0e0e0;
-}
-
-.state-checkbox.checked,
-.tag-checkbox.checked {
-  background: #ff8210; /* Color of the logout button */
-  border-color: #ff8210;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.state-checkbox input,
-.tag-checkbox input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.state-checkbox label,
-.tag-checkbox label {
-  color: black;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s;
-  border-radius: 4px;
-}
-
-.state-checkbox.checked label,
-.tag-checkbox.checked label {
-  color: white;
-  /* font-weight: bold; */
 }
 
 .delete-all-section {
@@ -527,3 +514,5 @@ button:disabled {
   outline: none;
 }
 </style>
+
+

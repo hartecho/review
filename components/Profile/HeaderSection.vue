@@ -6,12 +6,12 @@
           <img :src="resolvedImgPath()" alt="Contractor Picture" />
         </div>
         <div class="profile-details">
-          <h1>{{ contractor.company }}</h1>
+          <h1>{{ business.company }}</h1>
           <div class="ratings-section">
-            <p v-if="contractor.ratings > 0" class="star-rating">
-              {{ contractor.ratings.toFixed(1) }}
+            <p v-if="business.ratings > 0" class="star-rating">
+              {{ business.ratings.toFixed(1) }}
             </p>
-            <div v-if="contractor.ratings > 0" class="stars">
+            <div v-if="business.ratings > 0" class="stars">
               <span v-for="n in 5" :key="n" class="star">
                 {{ n <= roundedRating ? "★" : "☆" }}
               </span>
@@ -19,20 +19,20 @@
             <p v-else class="no-reviews">Be the first to leave a review!</p>
           </div>
           <ul class="job-types">
-            <li v-for="(tag, index) in contractor.tags" :key="tag">
+            <li v-for="(tag, index) in business.tags" :key="tag">
               {{ tagDescriptions[tag]
-              }}<span v-if="index < contractor.tags.length - 1"> - </span>
+              }}<span v-if="index < business.tags.length - 1"> - </span>
             </li>
           </ul>
           <div class="actions">
             <!-- <button
-              class="contact-contractor-button"
+              class="contact-business-button"
               @click="contactContractor"
             >
               Contact Contractor
             </button> -->
             <button
-              v-if="!contractor.isClaimed"
+              v-if="!business.isClaimed"
               class="report-button"
               @click="claimBusiness"
             >
@@ -50,7 +50,7 @@
 import { useRouter } from "vue-router";
 
 const props = defineProps({
-  contractor: Object,
+  business: Object,
   tagDescriptions: Object,
   contactContractor: Function,
   roundedRating: Number,
@@ -59,15 +59,15 @@ const props = defineProps({
 const router = useRouter();
 
 const resolvedImgPath = () => {
-  return `/${props.contractor.picture}`;
+  return `/${props.business.picture}`;
 };
 
 const claimBusiness = () => {
   router.push({
     path: "/claimBusiness",
     query: {
-      company: props.contractor.company,
-      _id: props.contractor._id,
+      company: props.business.company,
+      _id: props.business._id,
     },
   });
 };
@@ -234,7 +234,7 @@ const claimBusiness = () => {
   }
 }
 
-.contact-contractor-button,
+.contact-business-button,
 .report-button {
   background-color: #007bff;
   color: white;
@@ -247,13 +247,13 @@ const claimBusiness = () => {
 }
 
 @media (min-width: 768px) {
-  .contact-contractor-button,
+  .contact-business-button,
   .report-button {
     font-size: 16px;
   }
 }
 
-.contact-contractor-button:hover,
+.contact-business-button:hover,
 .report-button:hover {
   background-color: #0056b3;
 }

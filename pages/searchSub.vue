@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <div class="page-header">
-      <h1>Find Subcontractors</h1>
+      <h1>Find Subsubcontractors</h1>
       <p>
-        Search for subcontractors by name, operating states, or job type, and
+        Search for subsubcontractors by name, operating states, or job type, and
         filter by star rating.
       </p>
     </div>
@@ -27,8 +27,8 @@
         />
       </div>
       <div class="right-panel">
-        <SearchResultsList
-          :filteredContractors="filteredContractors"
+        <SearchSubcontractorResultsList
+          :filteredSubcontractors="filteredSubcontractors"
           :searchQuery="searchQuery"
           :tagDescriptions="tagDescriptions"
         />
@@ -45,18 +45,18 @@ const showDropdown = ref(false);
 
 useSeoMeta({
   title:
-    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
+    "Find Subsubcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   ogTitle:
-    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
+    "Find Subsubcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   description:
-    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subsubcontractors by job type, name, or operating states. Use filters to find subsubcontractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
-    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subsubcontractors by job type, name, or operating states. Use filters to find subsubcontractors by star rating and read detailed reviews on Subsource.",
   ogImage: "/SSLogo.webp",
   twitterCard: "/SSLogo.webp",
 });
 
-const { data: contractors } = await useFetch("/api/contractors");
+const { data: subcontractors } = await useFetch("/api/subcontractors");
 
 const tagDescriptions = {
   FLR: "Flooring",
@@ -84,8 +84,8 @@ const tagDescriptions = {
   AV: "Audio-Visual Installations",
   ELEV: "Elevator and Escalator Installation",
   SOL: "Solar Energy and Green Building Solutions",
-  UTIL: "Utility Contractors",
-  FIN: "Finishing Contractors",
+  UTIL: "Utility Subcontractors",
+  FIN: "Finishing Subcontractors",
   CAR: "Carpentry and Woodwork",
   TLE: "Tile and Stone Installation",
   GLS: "Glass and Glazing",
@@ -94,47 +94,47 @@ const tagDescriptions = {
   HIS: "Historic Restoration",
   REM: "Remodeling",
   WTR: "Waterproofing and Mold Remediation",
-  ENV: "Environmental Contractors",
+  ENV: "Environmental Subcontractors",
   ASB: "Asbestos Abatement",
   LEAD: "Lead Paint Removal",
   ENVC: "Environmental Cleanup and Remediation",
-  DB: "Design and Build Contractors",
+  DB: "Design and Build Subcontractors",
   ARC: "Architectural Services",
   ENG: "Engineering Services",
-  LOG: "Logistics and Material Handling Contractors",
+  LOG: "Logistics and Material Handling Subcontractors",
   WARE: "Warehouse Setup",
   IEQ: "Industrial Equipment Installation",
-  SPEQ: "Specialty Equipment Contractors",
+  SPEQ: "Specialty Equipment Subcontractors",
   CKE: "Commercial Kitchen Equipment",
   LMEQ: "Laboratory and Medical Equipment",
-  FAC: "Facade and Cladding Contractors",
+  FAC: "Facade and Cladding Subcontractors",
   CUR: "Curtain Wall Systems",
   OTH: "Other",
 };
 
-const filteredContractors = computed(() => {
-  let filtered = contractors.value.filter(
-    (contractor) => !contractor.tags.includes("GEN")
+const filteredSubcontractors = computed(() => {
+  let filtered = subcontractors.value.filter(
+    (subcontractor) => !subcontractor.tags.includes("GEN")
   );
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(
-      (contractor) =>
-        (contractor.company &&
-          contractor.company.toLowerCase().includes(query)) ||
-        contractor.operatingStates.some((state) =>
+      (subcontractor) =>
+        (subcontractor.company &&
+          subcontractor.company.toLowerCase().includes(query)) ||
+        subcontractor.operatingStates.some((state) =>
           state.toLowerCase().includes(query)
         ) ||
-        contractor.tags.some((tag) =>
+        subcontractor.tags.some((tag) =>
           tagDescriptions[tag].toLowerCase().includes(query)
         )
     );
   }
 
   if (selectedTags.value.length) {
-    filtered = filtered.filter((contractor) =>
-      selectedTags.value.every((tag) => contractor.tags.includes(tag))
+    filtered = filtered.filter((subcontractor) =>
+      selectedTags.value.every((tag) => subcontractor.tags.includes(tag))
     );
   }
 
@@ -143,16 +143,17 @@ const filteredContractors = computed(() => {
     // console.log("Rating: ", rating);
     if (rating === "4_and_above") {
       filtered = filtered.filter(
-        (contractor) => contractor.ratings !== null && contractor.ratings >= 4
+        (subcontractor) =>
+          subcontractor.ratings !== null && subcontractor.ratings >= 4
       );
     } else {
       const minRating = parseInt(rating, 10);
       const maxRating = minRating + 0.999; // Allow ratings up to just below the next whole number
       filtered = filtered.filter(
-        (contractor) =>
-          contractor.ratings !== null &&
-          contractor.ratings >= minRating &&
-          contractor.ratings < maxRating
+        (subcontractor) =>
+          subcontractor.ratings !== null &&
+          subcontractor.ratings >= minRating &&
+          subcontractor.ratings < maxRating
       );
     }
   }

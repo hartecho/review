@@ -6,11 +6,11 @@
         <div class="star-rating-breakdown">
           <h2>Customer reviews</h2>
           <div class="average-rating">
-            <span class="average-rating-score">{{ contractorRating }}</span>
+            <span class="average-rating-score">{{ businessRating }}</span>
             <span class="average-rating-text">out of 5</span>
             <div class="stars">
               <span v-for="n in 5" :key="n" class="star">
-                {{ n <= contractorRating ? "★" : "☆" }}
+                {{ n <= businessRating ? "★" : "☆" }}
               </span>
             </div>
           </div>
@@ -49,7 +49,9 @@
               @change="filterByTags"
               class="hidden-checkbox"
             />
-            <label :for="tag">{{ tagDescriptions[tag] }}</label>
+            <label :for="tag" class="tag-label">{{
+              tagDescriptions[tag]
+            }}</label>
           </div>
         </div>
       </div>
@@ -64,7 +66,7 @@
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :isPro="isPro"
-        :contractor="contractor"
+        :business="business"
       />
     </div>
   </div>
@@ -75,7 +77,7 @@ const props = defineProps({
   reviews: {
     type: Array,
   },
-  contractor: {
+  business: {
     type: Object,
     required: true,
   },
@@ -116,8 +118,8 @@ function updateRatingCounts() {
   }
 }
 
-const contractorRating = computed(() => {
-  return props.contractor ? props.contractor.ratings : 0;
+const businessRating = computed(() => {
+  return props.business ? props.business.ratings : 0;
 });
 
 const ratingPercentages = computed(() => {
@@ -169,6 +171,8 @@ const lastScrollTop = ref(0);
 
 const handleScroll = () => {
   const leftColumn = document.querySelector(".left-column");
+  if (!leftColumn) return; // Check if leftColumn exists
+
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
   if (scrollTop > lastScrollTop.value) {
@@ -185,8 +189,8 @@ const handleScroll = () => {
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
   filterReviews();
-  if (props.contractor) {
-    availableTags.value = props.contractor.tags || [];
+  if (props.business) {
+    availableTags.value = props.business.tags || [];
   }
 });
 </script>
@@ -203,7 +207,7 @@ html {
   display: flex;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 4rem;
+  padding: 2rem 2rem;
   gap: 5rem;
 }
 
@@ -291,6 +295,7 @@ html {
   transition: background 0.3s;
   border-radius: 10px;
   background: white;
+  position: relative;
 }
 
 .tag-filters .tag:hover {
@@ -304,6 +309,12 @@ html {
 
 .tag-filters .hidden-checkbox {
   display: none;
+}
+
+.tag-label {
+  pointer-events: none; /* Prevent the label from intercepting click events */
+  flex: 1;
+  user-select: none; /* Prevent text selection */
 }
 
 .stars {
@@ -337,6 +348,14 @@ html {
     top: 0;
   }
 
+  .left-column.small {
+    top: 0rem;
+  }
+
+  .left-column.large {
+    top: 0rem;
+  }
+
   .reviews-container {
     width: 100%;
   }
@@ -349,14 +368,6 @@ html {
 
   .left-column {
     padding: 1rem;
-  }
-
-  .left-column.small {
-    top: 0rem;
-  }
-
-  .left-column.large {
-    top: 0rem;
   }
 
   .filters {

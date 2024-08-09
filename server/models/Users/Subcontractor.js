@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const contractorSchema = new mongoose.Schema({
+const subcontractorSchema = new mongoose.Schema({
   company: {
     type: String,
     required: true,
@@ -55,6 +55,18 @@ const contractorSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  tags: [{
+    type: String,
+    enum: [
+      'FLR', 'CTP', 'CAB', 'CON', 'STL', 'FRM', 'ROF', 'SID', 'WND',
+      'LND', 'DRY', 'PNT', 'INS', 'CLG', 'HVAC', 'PLM', 'ELEC', 'EXC', 'DEM',
+      'GRD', 'FPS', 'SEC', 'AV', 'ELEV', 'SOL', 'UTIL', 'FIN', 'CAR', 'TLE',
+      'GLS', 'SPC', 'REN', 'HIS', 'REM', 'WTR', 'ENV', 'ASB', 'LEAD', 'ENVC',
+      'DB', 'ARC', 'ENG', 'LOG', 'WARE', 'IEQ', 'SPEQ', 'CKE', 'LMEQ', 'FAC',
+      'CUR', 'OTH'
+    ],
+    required: true
+  }],
   isClaimed: {
     type: Boolean,
     default: false
@@ -67,6 +79,6 @@ const contractorSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Contractor = mongoose.model('Contractor', contractorSchema);
+const Subcontractor = mongoose.model('Subcontractor', subcontractorSchema);
 
-export default Contractor;
+export default Subcontractor;

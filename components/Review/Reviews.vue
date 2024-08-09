@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="loading-spinner">Loading reviews...</div>
   <div v-else class="review">
     <div class="review-header">
-      <h4 class="reviewer-name">{{ review.reviewer.name }}</h4>
+      <h4 class="reviewer-name">{{ review.reviewerName }}</h4>
       <div class="rating">
         <span v-for="n in 5" :key="n" class="star">
           {{ n <= review.rating ? "★" : "☆" }}
@@ -13,7 +13,7 @@
       {{ new Date(review.date).toLocaleDateString() }}
     </p>
     <p class="review-comment">{{ review.comment }}</p>
-    <p class="review-tags">
+    <p class="review-tags" v-if="review.tags.length > 0">
       <strong>Tags:</strong>
       {{ review.tags.map((tag) => tagDescriptions[tag]).join(", ") }}
     </p>
@@ -140,7 +140,7 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  contractor: {
+  business: {
     type: Object,
     required: true,
   },
@@ -203,7 +203,7 @@ function sortedUpdatesAndReplies(review) {
 
 function getBusinessName(businessRep) {
   return props.isPro
-    ? props.contractor.company
+    ? props.business.company
     : businessRep + " (Representative)";
 }
 
@@ -215,7 +215,7 @@ async function submitReply() {
       await $fetch("/api/reviews", {
         method: "POST",
         body: {
-          contractor: props.contractor._id,
+          businessId: props.business._id,
           reviewId: props.review._id,
           businessRep: store.user.name,
           reply: newReply.value,

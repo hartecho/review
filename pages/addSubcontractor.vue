@@ -1,45 +1,55 @@
 <template>
   <div class="wrapper">
-    <h1>Add Contractor</h1>
+    <h1>Add Subcontractor</h1>
 
     <div class="content">
       <div class="left">
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.company" placeholder=" " />
+          <input type="text" v-model="subcontractor.company" placeholder=" " />
           <label>Company</label>
         </div>
 
         <div class="operating-states">
-          <label>Select all states this contractor operates in:</label>
+          <label>Select all states this subcontractor operates in:</label>
           <ProfileDropdown
             :items="states"
-            :selected-items="contractor.operatingStates"
+            :selected-items="subcontractor.operatingStates"
             @update:selectedItems="updateOperatingStates"
             label="Select Operating States"
+          />
+        </div>
+
+        <div class="tags">
+          <label>Select all services provided by this subcontractor:</label>
+          <ProfileDropdown
+            :items="tagDescriptions"
+            :selected-items="subcontractor.tags"
+            @update:selectedItems="updateTags"
+            label="Select Job Types"
           />
         </div>
 
         <div class="final-buttons">
           <SubcomponentsLoadingButton
             :isLoading="isLoading"
-            text="Add Contractor"
-            @click="addContractor"
+            text="Add Subcontractor"
+            @click="addSubcontractor"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
-
   
-<script setup>
+    
+  <script setup>
 import { tagDescriptions } from "~/utils/tagDescriptions.js";
 import { states } from "/utils/states.js";
 
 const router = useRouter();
 const isLoading = ref(false);
 
-const contractor = ref({
+const subcontractor = ref({
   company: "",
   operatingStates: [],
   tags: [],
@@ -47,34 +57,34 @@ const contractor = ref({
 
 const isFormValid = computed(() => {
   return (
-    contractor.value.company &&
-    contractor.value.operatingStates.length > 0 &&
-    contractor.value.tags.length > 0
+    subcontractor.value.company &&
+    subcontractor.value.operatingStates.length > 0 &&
+    subcontractor.value.tags.length > 0
   );
 });
 
 const updateOperatingStates = (states) => {
-  contractor.value.operatingStates = states;
+  subcontractor.value.operatingStates = states;
 };
 
 const updateTags = (tags) => {
-  contractor.value.tags = tags;
+  subcontractor.value.tags = tags;
 };
 
-async function addContractor() {
+async function addSubcontractor() {
   isLoading.value = true;
   if (isFormValid.value) {
     try {
-      const response = await $fetch("/api/contractors", {
+      const response = await $fetch("/api/subcontractors", {
         method: "POST",
-        body: contractor.value,
+        body: subcontractor.value,
       });
       // console.log("response: " + JSON.stringify(response));
-      router.push(`/contractor/${response._id}`);
+      router.push(`/subcontractor/${response._id}`);
     } catch (error) {
       isLoading.value = false;
-      alert("Error adding contractor: " + error.message);
-      console.error("Error adding contractor:", error);
+      alert("Error adding subcontractor: " + error.message);
+      console.error("Error adding subcontractor:", error);
     }
   } else {
     isLoading.value = false;
@@ -83,15 +93,15 @@ async function addContractor() {
 }
 
 function resetForm() {
-  contractor.value = {
+  subcontractor.value = {
     company: "",
     operatingStates: [],
     tags: [],
   };
 }
 </script>
-  
-<style scoped>
+    
+  <style scoped>
 .wrapper {
   padding: 4rem 0;
   width: 100%;
@@ -227,7 +237,7 @@ label {
   color: #333;
 }
 
-.add-contractor-button {
+.add-subcontractor-button {
   background-color: #ff8210;
   border: none;
   color: white;
@@ -319,4 +329,5 @@ button:disabled {
   }
 }
 </style>
-
+  
+  

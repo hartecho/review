@@ -2,16 +2,16 @@
   <div class="profile-page">
     <section class="header-section">
       <ProfileHeaderSection
-        :business="contractor"
+        :business="subcontractor"
         :tagDescriptions="tagDescriptions"
-        :contactContractor="contactContractor"
+        :contactSubcontractor="contactSubcontractor"
         :roundedRating="roundedRating"
       />
     </section>
     <section class="tabs-section">
       <ProfileTabsSection
-        :business="contractor"
-        businessType="Contractor"
+        :business="subcontractor"
+        businessType="Subcontractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :existingReview="existingReview"
@@ -20,7 +20,7 @@
     </section>
     <section class="reviews-section">
       <ReviewReviewsSection
-        :business="contractor"
+        :business="subcontractor"
         :tagDescriptions="tagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :reviews="reviews"
@@ -32,8 +32,8 @@
     </div>
   </div>
 </template>
-
-<script setup>
+  
+  <script setup>
 import { tagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
@@ -41,18 +41,16 @@ const store = useStore();
 const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
-const { data: contractor, pending: contractorPending } = await useFetch(
-  `/api/contractors?_id=${route.params.id}`
+const { data: subcontractor, pending: subcontractorPending } = await useFetch(
+  `/api/subcontractors?_id=${route.params.id}`
 );
 
 const { data: reviews } = await useFetch(
-  `/api/reviews?contractorId=${contractor.value._id}`
+  `/api/reviews?subcontractorId=${subcontractor.value._id}`
 );
 
-// console.log("Contractor: " + JSON.stringify(contractor.value));
-
 const siftReviews = (reviews) => {
-  // console.log("reviews: " + JSON.stringify(reviews));
+  // console.log("reviews: ", reviews);
   if (isLoggedIn.value) {
     const userReview = reviews.find(
       (review) => review.reviewer._id === store.user._id
@@ -68,19 +66,19 @@ onMounted(() => {
 });
 
 useSeoMeta({
-  title: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  ogTitle: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  description: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogDescription: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogImage: `/${contractor.value?.picture}`,
-  twitterCard: `/${contractor.value?.picture}`,
+  title: `${subcontractor.value?.company} Reviews | Subsource – Trusted Subcontractor Insights`,
+  ogTitle: `${subcontractor.value?.company} Reviews | Subsource – Trusted Subcontractor Insights`,
+  description: `Read detailed reviews and ratings for ${subcontractor.value?.company}. Discover why they are a trusted subcontractor in their field. Leave your own review and share your experience.`,
+  ogDescription: `Read detailed reviews and ratings for ${subcontractor.value?.company}. Discover why they are a trusted subcontractor in their field. Leave your own review and share your experience.`,
+  ogImage: `/${subcontractor.value?.picture}`,
+  twitterCard: `/${subcontractor.value?.picture}`,
 });
 
 const showLoginModal = ref(false);
 const activeTab = ref("reviews");
 
-const contactContractor = () => {
-  alert(`Contacting ${contractor.value?.company}`);
+const contactSubcontractor = () => {
+  alert(`Contacting ${subcontractor.value?.company}`);
 };
 
 const openLoginModal = () => {
@@ -94,14 +92,14 @@ const closeLoginModal = () => {
 };
 
 const roundedRating = computed(() => {
-  return Math.round(contractor.value?.ratings || 0);
+  return Math.round(subcontractor.value?.ratings || 0);
 });
 
 const isBusinessOwner = computed(() => {
-  if (!store.user || !contractor.value) {
+  if (!store.user || !subcontractor.value) {
     return false;
   }
-  const isOwner = store.user.contractor === contractor.value._id;
+  const isOwner = store.user.subcontractor === subcontractor.value._id;
   return isOwner;
 });
 
@@ -110,9 +108,9 @@ const isPro = computed(() => {
   return false;
 });
 </script>
-
-
-<style scoped>
+  
+  
+  <style scoped>
 .profile-page {
   display: flex;
   flex-direction: column;
@@ -213,4 +211,5 @@ const isPro = computed(() => {
   opacity: 1;
 }
 </style>
-
+  
+  

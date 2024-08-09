@@ -42,12 +42,13 @@ const showMobileNav = ref(false);
 const store = useStore();
 const isLoggedIn = computed(() => !!store.token);
 
-let paths = ["home", "login", "register", "settings", "blog", "contact"];
 // Define the two arrays
 const paths1 = [
   "home",
   "search Contractors",
   "search Subcontractors",
+  "search Suppliers",
+  "search Agencies",
   "articles",
   "contact",
 ];
@@ -56,6 +57,8 @@ const paths2 = [
   // "profile",
   "search Contractors",
   "search Subcontractors",
+  "search Suppliers",
+  "search Agencies",
   "articles",
   "contact",
 ];

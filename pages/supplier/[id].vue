@@ -2,17 +2,17 @@
   <div class="profile-page">
     <section class="header-section">
       <ProfileHeaderSection
-        :business="contractor"
-        :tagDescriptions="tagDescriptions"
-        :contactContractor="contactContractor"
+        :business="supplier"
+        :tagDescriptions="supplierTagDescriptions"
+        :contactSupplier="contactSupplier"
         :roundedRating="roundedRating"
       />
     </section>
     <section class="tabs-section">
       <ProfileTabsSection
-        :business="contractor"
-        businessType="Contractor"
-        :tagDescriptions="tagDescriptions"
+        :business="supplier"
+        businessType="Supplier"
+        :tagDescriptions="supplierTagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :existingReview="existingReview"
         :isPro="isPro"
@@ -20,8 +20,8 @@
     </section>
     <section class="reviews-section">
       <ReviewReviewsSection
-        :business="contractor"
-        :tagDescriptions="tagDescriptions"
+        :business="supplier"
+        :tagDescriptions="supplierTagDescriptions"
         :isBusinessOwner="isBusinessOwner"
         :reviews="reviews"
         :isPro="isPro"
@@ -32,27 +32,25 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { tagDescriptions } from "~/utils/tagDescriptions.js";
+  
+  <script setup>
+import { supplierTagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
 const store = useStore();
 const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
-const { data: contractor, pending: contractorPending } = await useFetch(
-  `/api/contractors?_id=${route.params.id}`
+const { data: supplier, pending: supplierPending } = await useFetch(
+  `/api/suppliers?_id=${route.params.id}`
 );
 
 const { data: reviews } = await useFetch(
-  `/api/reviews?contractorId=${contractor.value._id}`
+  `/api/reviews?supplierId=${supplier.value._id}`
 );
 
-// console.log("Contractor: " + JSON.stringify(contractor.value));
-
 const siftReviews = (reviews) => {
-  // console.log("reviews: " + JSON.stringify(reviews));
+  // console.log("reviews: ", reviews);
   if (isLoggedIn.value) {
     const userReview = reviews.find(
       (review) => review.reviewer._id === store.user._id
@@ -68,19 +66,19 @@ onMounted(() => {
 });
 
 useSeoMeta({
-  title: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  ogTitle: `${contractor.value?.company} Reviews | Subsource – Trusted Contractor Insights`,
-  description: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogDescription: `Read detailed reviews and ratings for ${contractor.value?.company}. Discover why they are a trusted contractor in their field. Leave your own review and share your experience.`,
-  ogImage: `/${contractor.value?.picture}`,
-  twitterCard: `/${contractor.value?.picture}`,
+  title: `${supplier.value?.company} Reviews | Subsource – Trusted Supplier Insights`,
+  ogTitle: `${supplier.value?.company} Reviews | Subsource – Trusted Supplier Insights`,
+  description: `Read detailed reviews and ratings for ${supplier.value?.company}. Discover why they are a trusted supplier in their field. Leave your own review and share your experience.`,
+  ogDescription: `Read detailed reviews and ratings for ${supplier.value?.company}. Discover why they are a trusted supplier in their field. Leave your own review and share your experience.`,
+  ogImage: `/${supplier.value?.picture}`,
+  twitterCard: `/${supplier.value?.picture}`,
 });
 
 const showLoginModal = ref(false);
 const activeTab = ref("reviews");
 
-const contactContractor = () => {
-  alert(`Contacting ${contractor.value?.company}`);
+const contactSupplier = () => {
+  alert(`Contacting ${supplier.value?.company}`);
 };
 
 const openLoginModal = () => {
@@ -94,14 +92,14 @@ const closeLoginModal = () => {
 };
 
 const roundedRating = computed(() => {
-  return Math.round(contractor.value?.ratings || 0);
+  return Math.round(supplier.value?.ratings || 0);
 });
 
 const isBusinessOwner = computed(() => {
-  if (!store.user || !contractor.value) {
+  if (!store.user || !supplier.value) {
     return false;
   }
-  const isOwner = store.user.contractor === contractor.value._id;
+  const isOwner = store.user.supplier === supplier.value._id;
   return isOwner;
 });
 
@@ -110,9 +108,9 @@ const isPro = computed(() => {
   return false;
 });
 </script>
-
-
-<style scoped>
+  
+  
+  <style scoped>
 .profile-page {
   display: flex;
   flex-direction: column;
@@ -172,7 +170,6 @@ const isPro = computed(() => {
     padding: 0.5rem 0.5rem;
   }
 }
-
 .reviews-section {
   width: 100%;
   margin-top: 20px;
@@ -213,4 +210,5 @@ const isPro = computed(() => {
   opacity: 1;
 }
 </style>
-
+  
+  
