@@ -312,8 +312,15 @@ function loadContractor() {
 async function getContractors() {
   try {
     const response = await $fetch("/api/contractors");
-    contractors.value = response || [];
-    contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
+    if (response && response.length) {
+      contractors.value = response;
+      if (!selectedContractor.value) {
+        selectedContractor.value = contractors.value[0]._id;
+        loadContractor(); // Call to load the first contractor
+      }
+    } else {
+      contractors.value = []; // Ensure it's an empty array if no response
+    }
   } catch (error) {
     showNotification("Error fetching contractors: " + error.message, "error");
   }
