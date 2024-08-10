@@ -32,7 +32,12 @@
             </div>
           </div>
         </div>
-        <div class="tag-filters">
+        <div
+          class="tag-filters"
+          v-if="
+            availableTags && availableTags.length > 0 && availableTags[0] != ''
+          "
+        >
           <h3>Filter by Job Types</h3>
           <div
             v-for="tag in availableTags"
@@ -83,7 +88,7 @@ const props = defineProps({
   },
   tagDescriptions: {
     type: Object,
-    required: true,
+    required: false,
   },
   isBusinessOwner: {
     type: Boolean,

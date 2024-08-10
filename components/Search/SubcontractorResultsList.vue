@@ -8,7 +8,7 @@
         @click="goToSubcontractorPage(subcontractor._id)"
       >
         <img
-          :src="subcontractor.picture"
+          :src="`/` + subcontractor.picture"
           alt="Picture"
           class="subcontractor-logo"
         />
@@ -80,7 +80,7 @@ function goToSubcontractorPage(subcontractorId) {
 }
 
 function goToAddSubcontractorPage() {
-  router.push(`/addSubcontractor`);
+  router.push(`/add/addSubcontractor`);
 }
 
 function splitText(text) {

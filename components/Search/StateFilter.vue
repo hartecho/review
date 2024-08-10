@@ -10,18 +10,18 @@
     <div v-if="showDropdown" class="dropdown-menu">
       <button class="close-button" @click="closeDropdown">×</button>
       <div
-        v-for="(description, tag) in sortedTagDescriptions"
-        :key="tag"
+        v-for="stateKey in sortedStateKeys"
+        :key="stateKey"
         class="dropdown-item"
       >
         <input
           type="checkbox"
-          :id="tag"
-          :value="tag"
-          :checked="selectedTags.includes(tag)"
-          @change="updateSelectedTags(tag)"
+          :id="stateKey"
+          :value="stateKey"
+          :checked="selectedStates.includes(stateKey)"
+          @change="updateSelectedStates(stateKey)"
         />
-        <label :for="tag">{{ description }}</label>
+        <label :for="stateKey">{{ props.states[stateKey] }}</label>
       </div>
     </div>
   </div>
@@ -30,32 +30,29 @@
 <script setup>
 const props = defineProps({
   showDropdown: Boolean,
-  selectedTags: Array,
-  tagDescriptions: Object,
+  selectedStates: Array, // Array of selected state keys
+  states: Object, // Object where keys are state codes and values are state names
 });
 
 const emit = defineEmits([
   "toggleDropdown",
   "closeDropdown",
-  "update:selectedTags",
+  "update:selectedStates",
 ]);
 
-const sortedTagDescriptions = computed(() => {
-  return Object.keys(props.tagDescriptions)
-    .sort((a, b) =>
-      props.tagDescriptions[a].localeCompare(props.tagDescriptions[b])
-    )
-    .reduce((sorted, key) => {
-      sorted[key] = props.tagDescriptions[key];
-      return sorted;
-    }, {});
+// Sorted array of state keys based on their names
+const sortedStateKeys = computed(() => {
+  return Object.keys(props.states).sort((a, b) =>
+    props.states[a].localeCompare(props.states[b])
+  );
 });
 
-const updateSelectedTags = (tag) => {
-  const newTags = props.selectedTags.includes(tag)
-    ? props.selectedTags.filter((t) => t !== tag)
-    : [...props.selectedTags, tag];
-  emit("update:selectedTags", newTags);
+const updateSelectedStates = (stateKey) => {
+  // Toggles the state key in the selectedStates array
+  const newStates = props.selectedStates.includes(stateKey)
+    ? props.selectedStates.filter((s) => s !== stateKey)
+    : [...props.selectedStates, stateKey];
+  emit("update:selectedStates", newStates);
 };
 
 const dropdown = ref(null);
@@ -74,13 +71,13 @@ const closeDropdown = () => {
   emit("closeDropdown");
 };
 
-// Compute button text to display selected tags
+// Compute button text to display selected states
 const buttonText = computed(() => {
-  if (props.selectedTags.length === 0) {
-    return "Select Job Types";
+  if (props.selectedStates.length === 0) {
+    return "Select States";
   } else {
-    return props.selectedTags
-      .map((tag) => props.tagDescriptions[tag])
+    return props.selectedStates
+      .map((stateKey) => props.states[stateKey])
       .join(", ");
   }
 });

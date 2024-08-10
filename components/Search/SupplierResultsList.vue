@@ -7,7 +7,11 @@
         class="results-item"
         @click="goToSupplierPage(supplier._id)"
       >
-        <img :src="supplier.picture" alt="Picture" class="supplier-logo" />
+        <img
+          :src="'/' + supplier.picture"
+          alt="Picture"
+          class="supplier-logo"
+        />
         <div class="supplier-info">
           <h3>
             <span
@@ -76,7 +80,7 @@ function goToSupplierPage(supplierId) {
 }
 
 function goToAddSupplierPage() {
-  router.push(`/addSupplier`);
+  router.push(`/add/addSupplier`);
 }
 
 function splitText(text) {

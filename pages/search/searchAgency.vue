@@ -13,35 +13,40 @@
           :searchQuery="searchQuery"
           @update:searchQuery="searchQuery = $event"
         />
-        <SearchJobTypeDropdown
-          :showDropdown="showDropdown"
-          :selectedTags="selectedTags"
-          :tagDescriptions="tagDescriptions"
-          @toggleDropdown="toggleDropdown"
-          @closeDropdown="closeDropdown"
-          @update:selectedTags="selectedTags = $event"
+        <SearchStateFilter
+          :showDropdown="showStateDropdown"
+          :selectedStates="selectedStates"
+          :states="states"
+          @toggleDropdown="toggleStateDropdown"
+          @closeDropdown="closeStateDropdown"
+          @update:selectedStates="selectedStates = $event"
         />
         <SearchRatingFilter
           :selectedRating="selectedRating"
           @update:selectedRating="selectedRating = $event"
         />
+        <button @click="resetFilters" class="reset-button">
+          Reset Filters
+        </button>
       </div>
       <div class="right-panel">
         <SearchAgencyResultsList
           :filteredAgencies="filteredAgencies"
           :searchQuery="searchQuery"
-          :tagDescriptions="tagDescriptions"
         />
       </div>
     </div>
   </div>
 </template>
-    
-    <script setup>
+
+<script setup>
+import { ref, computed } from "vue";
+import { states } from "/utils/states.js";
+
 const searchQuery = ref("");
-const selectedTags = ref([]);
 const selectedRating = ref("0");
-const showDropdown = ref(false);
+const selectedStates = ref([]);
+const showStateDropdown = ref(false);
 
 useSeoMeta({
   title:
@@ -58,60 +63,10 @@ useSeoMeta({
 
 const { data: agencies } = await useFetch("/api/agencies");
 
-const tagDescriptions = {
-  // Skilled Trades
-  CARP: "Carpentry",
-  ELEC: "Electrical",
-  PLUM: "Plumbing",
-  HVAC: "HVAC Technician",
-  MASN: "Masonry",
-  ROOF: "Roofing",
-  PAIN: "Painting",
-  TILE: "Tile Setting",
-  PLST: "Plastering",
-  FRAM: "Framing",
-  INSL: "Insulation",
-  WELD: "Welding",
-  MILL: "Millwork",
-  // General Labor
-  LABR: "General Laborer",
-  DEMO: "Demolition Worker",
-  FORK: "Forklift Operator",
-  EQUI: "Equipment Operator",
-  // Administrative and Professional
-  ADMN: "Administrative Assistant",
-  ACCT: "Accountant",
-  PMGR: "Project Manager",
-  QACO: "Quality Control Specialist",
-  SAFM: "Safety Manager",
-  SUPR: "Site Supervisor",
-  // Technical and IT
-  DRFT: "Drafter",
-  ENGI: "Engineer",
-  ARCH: "Architect",
-  ITSP: "IT Support Technician",
-  NETW: "Network Engineer",
-  // Specialized Roles
-  SURV: "Surveyor",
-  LAND: "Landscape Designer",
-  ENVG: "Environmental Engineer",
-  LOGI: "Logistics Coordinator",
-  SECW: "Security Personnel",
-  // Sales and Customer Service
-  SALE: "Sales Representative",
-  CUST: "Customer Service Representative",
-  // Health and Safety
-  SAFI: "Safety Inspector",
-  FIRW: "Fire Safety Specialist",
-  // Other
-  OTH: "Other",
-};
-
 const filteredAgencies = computed(() => {
-  let filtered = agencies.value.filter(
-    (agency) => !agency.tags.includes("GEN")
-  );
+  let filtered = agencies.value;
 
+  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(
@@ -119,22 +74,22 @@ const filteredAgencies = computed(() => {
         (agency.company && agency.company.toLowerCase().includes(query)) ||
         agency.operatingStates.some((state) =>
           state.toLowerCase().includes(query)
-        ) ||
-        agency.tags.some((tag) =>
-          tagDescriptions[tag].toLowerCase().includes(query)
         )
     );
   }
 
-  if (selectedTags && selectedTags.value && selectedTags.value.length) {
+  // Filter by selected states
+  if (selectedStates.value.length) {
     filtered = filtered.filter((agency) =>
-      selectedTags.value.every((tag) => agency.tags.includes(tag))
+      selectedStates.value.every((state) =>
+        agency.operatingStates.includes(state)
+      )
     );
   }
 
-  if (selectedRating.value && selectedRating.value != "0") {
+  // Filter by selected rating
+  if (selectedRating.value && selectedRating.value !== "0") {
     const rating = selectedRating.value;
-    // console.log("Rating: ", rating);
     if (rating === "4_and_above") {
       filtered = filtered.filter(
         (agency) => agency.ratings !== null && agency.ratings >= 4
@@ -151,19 +106,43 @@ const filteredAgencies = computed(() => {
     }
   }
 
+  // Sort alphabetically, with non-zero ratings at the top
+  filtered.sort((a, b) => {
+    // Compare ratings, prioritizing non-zero ratings
+    if ((a.ratings || 0) > 0 && (b.ratings || 0) === 0) {
+      return -1; // a has non-zero rating, b has zero rating
+    }
+    if ((a.ratings || 0) === 0 && (b.ratings || 0) > 0) {
+      return 1; // a has zero rating, b has non-zero rating
+    }
+    // If both have non-zero or zero ratings, sort alphabetically by company name
+    const companyA = a.company.toLowerCase();
+    const companyB = b.company.toLowerCase();
+    if (companyA < companyB) return -1;
+    if (companyA > companyB) return 1;
+    return 0;
+  });
+
   return filtered;
 });
 
-function toggleDropdown() {
-  showDropdown.value = !showDropdown.value;
+function toggleStateDropdown() {
+  showStateDropdown.value = !showStateDropdown.value;
 }
 
-function closeDropdown() {
-  showDropdown.value = false;
+function closeStateDropdown() {
+  showStateDropdown.value = false;
+}
+
+function resetFilters() {
+  searchQuery.value = "";
+  selectedRating.value = "0";
+  selectedStates.value = [];
+  showStateDropdown.value = false;
 }
 </script>
-    
-    <style scoped>
+
+<style scoped>
 .wrapper {
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
@@ -205,6 +184,22 @@ function closeDropdown() {
   margin-top: 1rem;
 }
 
+.reset-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+  background-color: #0056b3;
+}
+
 @media (max-width: 768px) {
   .filter-page {
     flex-direction: column;
@@ -231,4 +226,3 @@ function closeDropdown() {
   }
 }
 </style>
-    

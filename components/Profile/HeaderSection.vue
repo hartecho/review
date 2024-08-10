@@ -38,7 +38,9 @@
             >
               Claim This Business
             </button>
-            <button class="report-button">Report an Issue</button>
+            <button class="report-button" @click="router.push('/contact')">
+              Report an Issue
+            </button>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@
         class="results-item"
         @click="goToAgencyPage(agency._id)"
       >
-        <img :src="agency.picture" alt="Picture" class="agency-logo" />
+        <img :src="'/' + agency.picture" alt="Picture" class="agency-logo" />
         <div class="agency-info">
           <h3>
             <span
@@ -30,14 +30,6 @@
               {{ part.text }}
             </span>
           </p>
-          <ul class="jobs-list">
-            <li
-              v-for="(job, index) in displayJobs(agency.tags)"
-              :key="index"
-              v-html="highlightMatch(job)"
-            ></li>
-            <li v-if="agency.tags.length > 3">...</li>
-          </ul>
         </div>
         <div class="star-rating">
           <template v-if="agency.ratings && agency.ratings > 0">
@@ -66,7 +58,6 @@ import { useRouter } from "vue-router";
 const props = defineProps({
   filteredAgencies: Array,
   searchQuery: String,
-  tagDescriptions: Object,
 });
 
 const router = useRouter();
@@ -76,7 +67,7 @@ function goToAgencyPage(agencyId) {
 }
 
 function goToAddAgencyPage() {
-  router.push(`/addAgency`);
+  router.push(`/add/addAgency`);
 }
 
 function splitText(text) {
@@ -88,11 +79,6 @@ function splitText(text) {
     text: part,
     match: part.toLowerCase() === query,
   }));
-}
-
-function displayJobs(tags) {
-  const visibleTags = tags.slice(0, 3);
-  return visibleTags.map((tag) => props.tagDescriptions[tag]);
 }
 
 function highlightMatch(text) {
@@ -200,18 +186,6 @@ function highlightMatch(text) {
   color: #fff;
 }
 
-.jobs-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.jobs-list li {
-  font-size: 14px;
-  display: inline;
-  margin-right: 5px;
-}
-
 .highlight {
   background-color: darkcyan;
   color: white;
@@ -271,10 +245,6 @@ function highlightMatch(text) {
   .agency-info h3,
   .agency-info p {
     font-size: 14px;
-  }
-
-  .jobs-list li {
-    font-size: 12px;
   }
 
   .star {

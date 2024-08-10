@@ -3,7 +3,7 @@
     <section class="header-section">
       <ProfileHeaderSection
         :business="agency"
-        :tagDescriptions="agencyTagDescriptions"
+        :tagDescriptions="{}"
         :contactAgency="contactAgency"
         :roundedRating="roundedRating"
       />
@@ -12,7 +12,7 @@
       <ProfileTabsSection
         :business="agency"
         businessType="Agency"
-        :tagDescriptions="agencyTagDescriptions"
+        :tagDescriptions="{}"
         :isBusinessOwner="isBusinessOwner"
         :existingReview="existingReview"
         :isPro="isPro"
@@ -21,7 +21,7 @@
     <section class="reviews-section">
       <ReviewReviewsSection
         :business="agency"
-        :tagDescriptions="agencyTagDescriptions"
+        :tagDescriptions="{}"
         :isBusinessOwner="isBusinessOwner"
         :reviews="reviews"
         :isPro="isPro"
@@ -34,8 +34,6 @@
 </template>
     
     <script setup>
-import { agencyTagDescriptions } from "~/utils/tagDescriptions.js";
-
 const route = useRoute();
 const store = useStore();
 const existingReview = ref(null);

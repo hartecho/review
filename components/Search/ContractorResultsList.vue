@@ -7,7 +7,11 @@
         class="results-item"
         @click="goToContractorPage(contractor._id)"
       >
-        <img :src="contractor.picture" alt="Picture" class="contractor-logo" />
+        <img
+          :src="'/' + contractor.picture"
+          alt="Picture"
+          class="contractor-logo"
+        />
         <div class="contractor-info">
           <h3>
             <span
@@ -30,14 +34,6 @@
               {{ part.text }}
             </span>
           </p>
-          <ul class="jobs-list">
-            <li
-              v-for="(job, index) in displayJobs(contractor.tags)"
-              :key="index"
-              v-html="highlightMatch(job)"
-            ></li>
-            <li v-if="contractor.tags.length > 3">...</li>
-          </ul>
         </div>
         <div class="star-rating">
           <template v-if="contractor.ratings && contractor.ratings > 0">
@@ -66,7 +62,6 @@ import { useRouter } from "vue-router";
 const props = defineProps({
   filteredContractors: Array,
   searchQuery: String,
-  tagDescriptions: Object,
 });
 
 const router = useRouter();
@@ -76,7 +71,7 @@ function goToContractorPage(contractorId) {
 }
 
 function goToAddContractorPage() {
-  router.push(`/addContractor`);
+  router.push(`/add/addContractor`);
 }
 
 function splitText(text) {
@@ -88,11 +83,6 @@ function splitText(text) {
     text: part,
     match: part.toLowerCase() === query,
   }));
-}
-
-function displayJobs(tags) {
-  const visibleTags = tags.slice(0, 3);
-  return visibleTags.map((tag) => props.tagDescriptions[tag]);
 }
 
 function highlightMatch(text) {
@@ -200,18 +190,6 @@ function highlightMatch(text) {
   color: #fff;
 }
 
-.jobs-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.jobs-list li {
-  font-size: 14px;
-  display: inline;
-  margin-right: 5px;
-}
-
 .highlight {
   background-color: darkcyan;
   color: white;
@@ -271,10 +249,6 @@ function highlightMatch(text) {
   .contractor-info h3,
   .contractor-info p {
     font-size: 14px;
-  }
-
-  .jobs-list li {
-    font-size: 12px;
   }
 
   .star {

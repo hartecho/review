@@ -55,29 +55,6 @@ const agencySchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  tags: [{
-    type: String,
-    enum: [
-      // Skilled Trades
-      'CARP', 'ELEC', 'PLUM', 'HVAC', 'MASN', 'ROOF', 'PAIN', 'TILE', 'PLST',
-      'FRAM', 'INSL', 'WELD', 'MILL',
-      // General Labor
-      'LABR', 'DEMO', 'FORK', 'EQUI',
-      // Administrative and Professional
-      'ADMN', 'ACCT', 'PMGR', 'QACO', 'SAFM', 'SUPR',
-      // Technical and IT
-      'DRFT', 'ENGI', 'ARCH', 'ITSP', 'NETW',
-      // Specialized Roles
-      'SURV', 'LAND', 'ENVG', 'LOGI', 'SECW',
-      // Sales and Customer Service
-      'SALE', 'CUST',
-      // Health and Safety
-      'SAFI', 'FIRW',
-      // Other
-      'OTH',
-    ],
-    required: true,
-  }],
   isClaimed: {
     type: Boolean,
     default: false,

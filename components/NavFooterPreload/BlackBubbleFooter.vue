@@ -53,10 +53,10 @@ const props = defineProps({
 
 function getRoute(link) {
   if (link == "home") return "/";
-  else if (link == "search Contractors") return "/searchContract";
-  else if (link == "search Subcontractors") return "/searchSub";
-  else if (link === "search Suppliers") return "/searchSupply";
-  else if (link === "search Agencies") return "/searchAgency";
+  else if (link == "search Contractors") return "/search/searchContract";
+  else if (link == "search Subcontractors") return "/search/searchSub";
+  else if (link === "search Suppliers") return "/search/searchSupply";
+  else if (link === "search Agencies") return "/search/searchAgency";
   else return `/${link}`;
 }
 </script>

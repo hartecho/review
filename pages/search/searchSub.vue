@@ -14,17 +14,28 @@
           @update:searchQuery="searchQuery = $event"
         />
         <SearchJobTypeDropdown
-          :showDropdown="showDropdown"
+          :showDropdown="showJobDropdown"
           :selectedTags="selectedTags"
           :tagDescriptions="tagDescriptions"
-          @toggleDropdown="toggleDropdown"
-          @closeDropdown="closeDropdown"
+          @toggleDropdown="toggleJobDropdown"
+          @closeDropdown="closeJobDropdown"
           @update:selectedTags="selectedTags = $event"
+        />
+        <SearchStateFilter
+          :showDropdown="showStateDropdown"
+          :selectedStates="selectedStates"
+          :states="states"
+          @toggleDropdown="toggleStateDropdown"
+          @closeDropdown="closeStateDropdown"
+          @update:selectedStates="selectedStates = $event"
         />
         <SearchRatingFilter
           :selectedRating="selectedRating"
           @update:selectedRating="selectedRating = $event"
         />
+        <button @click="resetFilters" class="reset-button">
+          Reset Filters
+        </button>
       </div>
       <div class="right-panel">
         <SearchSubcontractorResultsList
@@ -38,10 +49,16 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+import { tagDescriptions } from "/utils/tagDescriptions.js";
+import { states } from "/utils/states.js";
+
 const searchQuery = ref("");
 const selectedTags = ref([]);
+const selectedStates = ref([]);
 const selectedRating = ref("0");
-const showDropdown = ref(false);
+const showJobDropdown = ref(false);
+const showStateDropdown = ref(false);
 
 useSeoMeta({
   title:
@@ -58,65 +75,12 @@ useSeoMeta({
 
 const { data: subcontractors } = await useFetch("/api/subcontractors");
 
-const tagDescriptions = {
-  FLR: "Flooring",
-  CTP: "Countertops",
-  CAB: "Cabinets",
-  CON: "Concrete and Masonry",
-  STL: "Steel and Metal Fabrication",
-  FRM: "Framing",
-  ROF: "Roofing",
-  SID: "Siding",
-  WND: "Windows and Doors",
-  LND: "Landscaping and Hardscaping",
-  DRY: "Drywall and Plaster",
-  PNT: "Painting and Finishing",
-  INS: "Insulation",
-  CLG: "Ceiling Systems",
-  HVAC: "HVAC",
-  PLM: "Plumbing",
-  ELEC: "Electrical",
-  EXC: "Excavation",
-  DEM: "Demolition",
-  GRD: "Grading and Paving",
-  FPS: "Fire Protection and Sprinkler Systems",
-  SEC: "Security Systems",
-  AV: "Audio-Visual Installations",
-  ELEV: "Elevator and Escalator Installation",
-  SOL: "Solar Energy and Green Building Solutions",
-  UTIL: "Utility Subcontractors",
-  FIN: "Finishing Subcontractors",
-  CAR: "Carpentry and Woodwork",
-  TLE: "Tile and Stone Installation",
-  GLS: "Glass and Glazing",
-  SPC: "Specialty Coatings and Sealants",
-  REN: "Renovation and Restoration",
-  HIS: "Historic Restoration",
-  REM: "Remodeling",
-  WTR: "Waterproofing and Mold Remediation",
-  ENV: "Environmental Subcontractors",
-  ASB: "Asbestos Abatement",
-  LEAD: "Lead Paint Removal",
-  ENVC: "Environmental Cleanup and Remediation",
-  DB: "Design and Build Subcontractors",
-  ARC: "Architectural Services",
-  ENG: "Engineering Services",
-  LOG: "Logistics and Material Handling Subcontractors",
-  WARE: "Warehouse Setup",
-  IEQ: "Industrial Equipment Installation",
-  SPEQ: "Specialty Equipment Subcontractors",
-  CKE: "Commercial Kitchen Equipment",
-  LMEQ: "Laboratory and Medical Equipment",
-  FAC: "Facade and Cladding Subcontractors",
-  CUR: "Curtain Wall Systems",
-  OTH: "Other",
-};
-
 const filteredSubcontractors = computed(() => {
   let filtered = subcontractors.value.filter(
     (subcontractor) => !subcontractor.tags.includes("GEN")
   );
 
+  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(
@@ -126,21 +90,31 @@ const filteredSubcontractors = computed(() => {
         subcontractor.operatingStates.some((state) =>
           state.toLowerCase().includes(query)
         ) ||
-        subcontractor.tags.some((tag) =>
-          tagDescriptions[tag].toLowerCase().includes(query)
+        subcontractor.operatingStates.some((state) =>
+          states[state].toLowerCase().includes(query)
         )
     );
   }
 
+  // Filter by selected tags
   if (selectedTags.value.length) {
     filtered = filtered.filter((subcontractor) =>
       selectedTags.value.every((tag) => subcontractor.tags.includes(tag))
     );
   }
 
-  if (selectedRating.value && selectedRating.value != "0") {
+  // Filter by selected states
+  if (selectedStates.value.length) {
+    filtered = filtered.filter((subcontractor) =>
+      selectedStates.value.every((state) =>
+        subcontractor.operatingStates.includes(state)
+      )
+    );
+  }
+
+  // Filter by selected rating
+  if (selectedRating.value && selectedRating.value !== "0") {
     const rating = selectedRating.value;
-    // console.log("Rating: ", rating);
     if (rating === "4_and_above") {
       filtered = filtered.filter(
         (subcontractor) =>
@@ -158,15 +132,49 @@ const filteredSubcontractors = computed(() => {
     }
   }
 
+  // Sort alphabetically, with non-zero ratings at the top
+  filtered.sort((a, b) => {
+    // Compare ratings, prioritizing non-zero ratings
+    if ((a.ratings || 0) > 0 && (b.ratings || 0) === 0) {
+      return -1; // a has non-zero rating, b has zero rating
+    }
+    if ((a.ratings || 0) === 0 && (b.ratings || 0) > 0) {
+      return 1; // a has zero rating, b has non-zero rating
+    }
+    // If both have non-zero or zero ratings, sort alphabetically by company name
+    const companyA = a.company.toLowerCase();
+    const companyB = b.company.toLowerCase();
+    if (companyA < companyB) return -1;
+    if (companyA > companyB) return 1;
+    return 0;
+  });
+
   return filtered;
 });
 
-function toggleDropdown() {
-  showDropdown.value = !showDropdown.value;
+function toggleJobDropdown() {
+  showJobDropdown.value = !showJobDropdown.value;
 }
 
-function closeDropdown() {
-  showDropdown.value = false;
+function closeJobDropdown() {
+  showJobDropdown.value = false;
+}
+
+function toggleStateDropdown() {
+  showStateDropdown.value = !showStateDropdown.value;
+}
+
+function closeStateDropdown() {
+  showStateDropdown.value = false;
+}
+
+function resetFilters() {
+  searchQuery.value = "";
+  selectedTags.value = [];
+  selectedStates.value = [];
+  selectedRating.value = "0";
+  showJobDropdown.value = false;
+  showStateDropdown.value = false;
 }
 </script>
 
@@ -210,6 +218,22 @@ function closeDropdown() {
 
 .left-panel {
   margin-top: 1rem;
+}
+
+.reset-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+  background-color: #0056b3;
 }
 
 @media (max-width: 768px) {

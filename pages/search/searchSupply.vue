@@ -14,17 +14,28 @@
           @update:searchQuery="searchQuery = $event"
         />
         <SearchJobTypeDropdown
-          :showDropdown="showDropdown"
+          :showDropdown="showJobDropdown"
           :selectedTags="selectedTags"
-          :tagDescriptions="tagDescriptions"
-          @toggleDropdown="toggleDropdown"
-          @closeDropdown="closeDropdown"
+          :tagDescriptions="supplierTagDescriptions"
+          @toggleDropdown="toggleJobDropdown"
+          @closeDropdown="closeJobDropdown"
           @update:selectedTags="selectedTags = $event"
+        />
+        <SearchStateFilter
+          :showDropdown="showStateDropdown"
+          :selectedStates="selectedStates"
+          :states="states"
+          @toggleDropdown="toggleStateDropdown"
+          @closeDropdown="closeStateDropdown"
+          @update:selectedStates="selectedStates = $event"
         />
         <SearchRatingFilter
           :selectedRating="selectedRating"
           @update:selectedRating="selectedRating = $event"
         />
+        <button @click="resetFilters" class="reset-button">
+          Reset Filters
+        </button>
       </div>
       <div class="right-panel">
         <SearchSupplierResultsList
@@ -36,12 +47,18 @@
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
+import { ref, computed } from "vue";
+import { supplierTagDescriptions } from "/utils/tagDescriptions.js";
+import { states } from "/utils/states.js";
+
 const searchQuery = ref("");
 const selectedTags = ref([]);
+const selectedStates = ref([]);
 const selectedRating = ref("0");
-const showDropdown = ref(false);
+const showJobDropdown = ref(false);
+const showStateDropdown = ref(false);
 
 useSeoMeta({
   title:
@@ -58,60 +75,12 @@ useSeoMeta({
 
 const { data: suppliers } = await useFetch("/api/suppliers");
 
-const tagDescriptions = {
-  CAB: "Cabinets",
-  CKE: "Commercial Kitchen Equipment",
-  LMEQ: "Laboratory and Medical Equipment",
-  LOG: "Logistics and Material Handling",
-  SPEQ: "Specialty Equipment Contractors",
-  WARE: "Warehouse Setup",
-  ACOUST: "Acoustic Materials",
-  AGG: "Aggregate Suppliers",
-  BRK: "Brick Suppliers",
-  CMP: "Concrete Materials and Ready-Mix Suppliers",
-  DRY: "Drywall and Plaster Materials",
-  ELE: "Electrical Supplies and Equipment",
-  ENG: "Engineered Wood Products",
-  FRM: "Formwork and Shuttering Materials",
-  GLAS: "Glass and Mirror Suppliers",
-  HRDW: "Hardware and Fasteners",
-  INSUL: "Insulation Materials",
-  LUM: "Lumber and Wood Suppliers",
-  MTL: "Metal and Steel Suppliers",
-  PAIN: "Paint and Coatings Suppliers",
-  PLMB: "Plumbing Supplies and Fixtures",
-  RFMS: "Roofing Materials",
-  SAF: "Safety Equipment and PPE Suppliers",
-  SAND: "Sand and Gravel Suppliers",
-  STON: "Stone and Tile Suppliers",
-  SURF: "Surface Preparation and Coatings",
-  TOOLS: "Tools and Equipment Rental",
-  WALL: "Wall Systems and Panels",
-  WNDW: "Window and Door Suppliers",
-  HVACS: "HVAC Supplies and Equipment",
-  PLST: "Plastic and Composite Materials",
-  ENV: "Environmental and Erosion Control Suppliers",
-  LGT: "Lighting Fixtures and Supplies",
-  CABL: "Cabling and Networking Supplies",
-  FURN: "Furniture and Fixtures Suppliers",
-  CONV: "Construction Vehicles and Equipment Rental",
-  GRDN: "Gardening and Landscaping Supplies",
-  MAR: "Marble and Granite Suppliers",
-  SEAL: "Sealants and Adhesives",
-  TAP: "Tapes and Adhesives",
-  TEMP: "Temporary Fencing and Barricades",
-  WTRS: "Water Supply and Drainage Systems",
-  CNTN: "Containers and Storage Solutions",
-  CNVY: "Conveyors and Lifting Equipment",
-  FAB: "Fabrication and Welding Supplies",
-  OTH: "Other",
-};
-
 const filteredSuppliers = computed(() => {
   let filtered = suppliers.value.filter(
     (supplier) => !supplier.tags.includes("GEN")
   );
 
+  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(
@@ -121,20 +90,30 @@ const filteredSuppliers = computed(() => {
           state.toLowerCase().includes(query)
         ) ||
         supplier.tags.some((tag) =>
-          tagDescriptions[tag].toLowerCase().includes(query)
+          supplierTagDescriptions[tag].toLowerCase().includes(query)
         )
     );
   }
 
+  // Filter by selected tags
   if (selectedTags && selectedTags.value && selectedTags.value.length) {
     filtered = filtered.filter((supplier) =>
       selectedTags.value.every((tag) => supplier.tags.includes(tag))
     );
   }
 
-  if (selectedRating.value && selectedRating.value != "0") {
+  // Filter by selected states
+  if (selectedStates.value.length) {
+    filtered = filtered.filter((supplier) =>
+      selectedStates.value.every((state) =>
+        supplier.operatingStates.includes(state)
+      )
+    );
+  }
+
+  // Filter by selected rating
+  if (selectedRating.value && selectedRating.value !== "0") {
     const rating = selectedRating.value;
-    // console.log("Rating: ", rating);
     if (rating === "4_and_above") {
       filtered = filtered.filter(
         (supplier) => supplier.ratings !== null && supplier.ratings >= 4
@@ -151,19 +130,53 @@ const filteredSuppliers = computed(() => {
     }
   }
 
+  // Sort alphabetically, with non-zero ratings at the top
+  filtered.sort((a, b) => {
+    // Compare ratings, prioritizing non-zero ratings
+    if ((a.ratings || 0) > 0 && (b.ratings || 0) === 0) {
+      return -1; // a has non-zero rating, b has zero rating
+    }
+    if ((a.ratings || 0) === 0 && (b.ratings || 0) > 0) {
+      return 1; // a has zero rating, b has non-zero rating
+    }
+    // If both have non-zero or zero ratings, sort alphabetically by company name
+    const companyA = a.company.toLowerCase();
+    const companyB = b.company.toLowerCase();
+    if (companyA < companyB) return -1;
+    if (companyA > companyB) return 1;
+    return 0;
+  });
+
   return filtered;
 });
 
-function toggleDropdown() {
-  showDropdown.value = !showDropdown.value;
+function toggleJobDropdown() {
+  showJobDropdown.value = !showJobDropdown.value;
 }
 
-function closeDropdown() {
-  showDropdown.value = false;
+function closeJobDropdown() {
+  showJobDropdown.value = false;
+}
+
+function toggleStateDropdown() {
+  showStateDropdown.value = !showStateDropdown.value;
+}
+
+function closeStateDropdown() {
+  showStateDropdown.value = false;
+}
+
+function resetFilters() {
+  searchQuery.value = "";
+  selectedTags.value = [];
+  selectedStates.value = [];
+  selectedRating.value = "0";
+  showJobDropdown.value = false;
+  showStateDropdown.value = false;
 }
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .wrapper {
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
@@ -205,6 +218,22 @@ function closeDropdown() {
   margin-top: 1rem;
 }
 
+.reset-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+  background-color: #0056b3;
+}
+
 @media (max-width: 768px) {
   .filter-page {
     flex-direction: column;
@@ -231,4 +260,3 @@ function closeDropdown() {
   }
 }
 </style>
-  
