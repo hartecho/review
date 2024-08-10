@@ -221,6 +221,13 @@ onMounted(async () => {
 
 function initializeContractorFields(contractor) {
   let needsUpdate = false;
+  if (!contractor) {
+    console.log("Contractor undefined");
+  }
+
+  if (!contractor._id) {
+    console.log("Contractor name with no _id: " + contractor.company);
+  }
 
   // Ensure the contractor has an address object
   if (!contractor.address) {
@@ -312,15 +319,8 @@ function loadContractor() {
 async function getContractors() {
   try {
     const response = await $fetch("/api/contractors");
-    if (response && response.length) {
-      contractors.value = response;
-      if (!selectedContractor.value) {
-        selectedContractor.value = contractors.value[0]._id;
-        loadContractor(); // Call to load the first contractor
-      }
-    } else {
-      contractors.value = []; // Ensure it's an empty array if no response
-    }
+    contractors.value = response || [];
+    contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
   } catch (error) {
     showNotification("Error fetching contractors: " + error.message, "error");
   }
