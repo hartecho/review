@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <h1>Add/Update Blog</h1>
+    <h2>Add/Update Blog</h2>
     <div class="content">
       <div class="left">
         <select v-model="selectedBlog" @change="loadBlog" class="select-input">
@@ -11,17 +11,35 @@
         </select>
 
         <input
+          type="number"
+          v-model="blog.views"
+          placeholder="Views"
+          class="input"
+        />
+
+        <input
           type="text"
           v-model="blog.mainTitle"
           placeholder="Main Title"
           class="input"
         />
         <input
-          type="text"
-          v-model="blog.header"
-          placeholder="Header"
+          type="Date"
+          v-model="blog.date"
+          placeholder="Date"
           class="input"
         />
+        <input
+          type="text"
+          v-model="blog.author"
+          placeholder="Author"
+          class="input"
+        />
+        <textarea
+          v-model="updatedText"
+          placeholder="Updated"
+          class="textarea"
+        ></textarea>
         <textarea
           v-model="blog.intro"
           placeholder="Intro"
@@ -74,6 +92,9 @@
           @keydown.enter.prevent="addTag"
           class="input"
         />
+        <button @click="addTag" class="icon-button add-button">
+          ➕ Add Tag
+        </button>
         <div v-for="(tag, index) in blog.tags" :key="index" class="tag">
           {{ tag }}
           <button @click="removeTag(index)" class="icon-button remove-button">
@@ -94,7 +115,7 @@
         </div>
 
         <div class="json-input">
-          <h2>Paste JSON to Add New Blog</h2>
+          <h3>Paste JSON to Add New Blog</h3>
           <textarea
             v-model="jsonInput"
             placeholder="Paste JSON here"
@@ -104,16 +125,31 @@
             ➕ Add Blog from JSON
           </button>
         </div>
+
+        <div class="all-tags">
+          <h3>All Tags</h3>
+          <div v-for="tag in allTags" :key="tag" class="tag">{{ tag }}</div>
+        </div>
       </div>
 
       <div class="right">
-        <h2>Blog Preview</h2>
+        <h3>Blog Preview</h3>
         <div class="blog-post">
           <div class="img-wrapper" v-if="blog.image">
-            <NuxtImg :src="blog.image" alt="Blog Image" />
+            <NuxtImg
+              :src="resolvedImgPath(blog.image)"
+              alt="Blog Image"
+              :placeholder="generatePlaceholderUrl(blog.image)"
+            />
           </div>
           <p class="header">{{ blog.header }}</p>
           <p>{{ blog.intro }}</p>
+          <div v-if="blog.updated.date && blog.updated.text">
+            <p>
+              <strong>Updated {{ formattedDate(blog.updated.date) }}:</strong>
+              {{ blog.updated.text }}
+            </p>
+          </div>
           <div
             v-for="(section, index) in blog.sections"
             :key="'section-' + index"
@@ -122,7 +158,7 @@
             <div v-if="section.photo" class="section-img-wrapper">
               <NuxtImg
                 v-if="section.photo"
-                :src="section.photo"
+                :src="resolvedImgPath(section.photo)"
                 alt="Section Photo"
               />
               <button
@@ -132,14 +168,14 @@
                 ✖ Remove Photo
               </button>
             </div>
-            <h2>
+            <h3>
               <input
                 type="text"
                 v-model="section.title"
                 placeholder="Section Title"
                 class="input section-title"
               />
-            </h2>
+            </h3>
             <textarea
               v-model="section.content"
               placeholder="Section Content"
@@ -165,26 +201,27 @@
               :key="'list-' + listIndex"
               class="list-section"
             >
-              <h3>
+              <h4>
                 <input
                   type="text"
                   v-model="list.header"
                   placeholder="List Header"
                   class="input list-header"
                 />
-              </h3>
+              </h4>
               <ul>
                 <li
                   v-for="(item, itemIndex) in list.items"
                   :key="'item-' + itemIndex"
                 >
-                  <strong
-                    ><input
+                  <strong>
+                    <input
                       type="text"
                       v-model="item.title"
                       placeholder="Item Title"
                       class="input item-title"
-                  /></strong>
+                    />
+                  </strong>
                   <textarea
                     v-model="item.description"
                     placeholder="Item Description"
@@ -224,7 +261,7 @@
           <button @click="addSection" class="icon-button add-button">
             ➕ Add Section
           </button>
-          <h2 v-if="blog.references[0]">References</h2>
+          <h3 v-if="blog.references[0]">References</h3>
           <div v-for="(reference, index) in blog.references" :key="index">
             <p class="references">{{ reference }}</p>
           </div>
@@ -235,14 +272,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 let blogs = ref([]);
 let selectedBlog = ref("");
 let newTag = ref("");
 let blog = ref({
   mainTitle: "",
-  header: "",
+  date: null,
+  author: "",
+  updated: {
+    date: null,
+    text: "",
+  },
   intro: "",
   sections: [
     {
@@ -267,7 +309,6 @@ let blog = ref({
   references: [""],
   preview: "",
   tags: [],
-  updated: [],
 });
 
 let jsonInput = ref("");
@@ -277,7 +318,12 @@ function init() {
   selectedBlog.value = "";
   blog.value = {
     mainTitle: "",
-    header: "",
+    date: null,
+    author: "",
+    updated: {
+      date: null,
+      text: "",
+    },
     intro: "",
     sections: [
       {
@@ -302,9 +348,35 @@ function init() {
     references: [""],
     preview: "",
     tags: [],
-    updated: [],
   };
 }
+
+// Computed property for updated.text
+const updatedText = computed({
+  get() {
+    return blog.value.updated?.text || "";
+  },
+  set(value) {
+    if (!blog.value.updated) {
+      blog.value.updated = {};
+    }
+    blog.value.updated.text = value;
+  },
+});
+
+// Function to format the date
+const formattedDate = (date) => {
+  return new Date(date).toLocaleDateString();
+};
+
+// Computed property for all tags
+const allTags = computed(() => {
+  const tags = new Set();
+  blogs.value.forEach((b) => {
+    b.tags.forEach((tag) => tags.add(tag));
+  });
+  return Array.from(tags).sort();
+});
 
 // Fetch blogs on component mount
 onMounted(async () => {
@@ -424,10 +496,6 @@ async function addBlog() {
 
 async function updateBlog() {
   try {
-    blog.value.updated.push({
-      date: new Date(),
-      text: "Blog updated",
-    });
     await $fetch(`/api/blogs/${blog.value._id}`, {
       method: "PUT",
       body: blog.value,
@@ -469,6 +537,22 @@ function addBlogFromJSON() {
     console.error("Invalid JSON:", error);
   }
 }
+
+const generatePlaceholderUrl = (url) => {
+  const lastDotIndex = url.lastIndexOf(".");
+  if (lastDotIndex === -1) return url; // If no extension found, return original URL
+
+  const extension = url.slice(lastDotIndex);
+  const baseUrl = url.slice(0, lastDotIndex);
+  return resolvedImgPath(`${baseUrl}Blur${extension}`);
+};
+
+const resolvedImgPath = (path) => {
+  if (path) {
+    return "/BlogPics/" + path;
+  }
+  return "/HARTECHOLogo.webp";
+};
 </script>
 
 <style scoped>
@@ -525,7 +609,7 @@ function addBlogFromJSON() {
   border-radius: 8px;
 }
 
-.blog-post h1 {
+.blog-post h2 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   font-family: "Playfair Display", serif;
@@ -533,7 +617,7 @@ function addBlogFromJSON() {
   color: #333;
 }
 
-.blog-post h2 {
+.blog-post h3 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
   font-family: "Playfair Display", serif;
@@ -576,7 +660,7 @@ function addBlogFromJSON() {
   margin-bottom: 1.5rem;
 }
 
-.list-section h3 {
+.list-section h4 {
   font-size: 1.5rem;
   font-family: "Playfair Display", serif;
   color: #333;
@@ -692,13 +776,15 @@ button:hover {
   border-radius: 5px;
 }
 
-.json-input {
+.all-tags {
   margin-top: 2rem;
 }
 
-.json-input textarea {
-  width: 100%;
-  height: 10rem;
-  margin-bottom: 10px;
+.all-tags .tag {
+  display: inline-block;
+  background-color: #e0e0e0;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 5px;
 }
 </style>

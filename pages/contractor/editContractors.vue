@@ -5,10 +5,14 @@
     <div class="content">
       <div class="section">
         <h2>Select Contractor</h2>
-        <select v-model="selectedContractor" @change="loadContractor">
+        <select
+          v-model="selectedContractor"
+          @change="loadContractor"
+          class="dropdown-button"
+        >
           <option disabled value="">Please select one</option>
           <option
-            v-for="contractor in contractors"
+            v-for="contractor in sortedContractors"
             :key="contractor._id"
             :value="contractor._id"
           >
@@ -101,22 +105,20 @@
         />
       </div>
 
-      <div class="section">
-        <h2>Job Types</h2>
-        <ProfileDropdown
-          label="Select Job Types"
-          :items="tagDescriptions"
-          :selectedItems="contractor.tags"
-          @update:selectedItems="updateTags"
-        />
-      </div>
-
       <div class="section action-buttons">
         <h2>Available Actions</h2>
-        <button @click="addContractor">Add Contractor</button>
-        <button @click="updateContractor">Update Contractor</button>
-        <button @click="deleteContractor">Delete Contractor</button>
-        <button @click="resetRatings">Reset All Ratings</button>
+        <button @click="addContractor" class="action-button">
+          Add Contractor
+        </button>
+        <button @click="updateContractor" class="action-button">
+          Update Contractor
+        </button>
+        <button @click="deleteContractor" class="action-button">
+          Delete Contractor
+        </button>
+        <button @click="resetRatings" class="action-button">
+          Reset All Ratings
+        </button>
       </div>
 
       <div class="section delete-all-section">
@@ -132,21 +134,48 @@
         <button
           @click="deleteAllContractors"
           :disabled="deleteConfirmation !== 'Delete All Contractors'"
+          class="action-button"
         >
           Delete All Contractors
         </button>
       </div>
+
+      <div class="section navigation-buttons">
+        <h2>Navigate to Other Pages</h2>
+        <button
+          @click="navigateTo('/subcontractor/editSubcontractors')"
+          class="action-button"
+        >
+          Edit Subcontractors
+        </button>
+        <button
+          @click="navigateTo('/supplier/editSuppliers')"
+          class="action-button"
+        >
+          Edit Suppliers
+        </button>
+        <button
+          @click="navigateTo('/agency/editAgencies')"
+          class="action-button"
+        >
+          Edit Agencies
+        </button>
+      </div>
     </div>
+
+    <!-- Notification Popup -->
+    <SubcomponentsNotificationPopup
+      v-if="notificationMessage"
+      :message="notificationMessage"
+      :type="notificationType"
+    />
   </div>
 </template>
 
-
-
-
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { tagDescriptions } from "/utils/tagDescriptions.js";
-import { states } from "/utils/states/js";
+import { ref, computed, onMounted } from "vue";
+import { states } from "/utils/states.js";
+import { useRouter } from "vue-router"; // Import useRouter for navigation
 
 const contractors = ref([]);
 const selectedContractor = ref("");
@@ -164,10 +193,27 @@ const contractor = ref({
     ZIPCode: "",
   },
   operatingStates: [],
-  tags: [],
 });
 
 const deleteConfirmation = ref("");
+
+const notificationMessage = ref(""); // Notification message
+const notificationType = ref("info"); // Notification type: 'info', 'success', 'error'
+
+// Use the Vue Router to navigate to different pages
+const router = useRouter();
+
+// Function to navigate to different edit pages
+function navigateTo(route) {
+  router.push(route);
+}
+
+// Computed property to sort contractors alphabetically by company name
+const sortedContractors = computed(() => {
+  return [...contractors.value].sort((a, b) =>
+    a.company.localeCompare(b.company)
+  );
+});
 
 onMounted(async () => {
   await getContractors();
@@ -200,12 +246,6 @@ function initializeContractorFields(contractor) {
   // Check operatingStates
   if (contractor.operatingStates === undefined) {
     contractor.operatingStates = [];
-    needsUpdate = true;
-  }
-
-  // Check tags
-  if (contractor.tags === undefined) {
-    contractor.tags = [];
     needsUpdate = true;
   }
 
@@ -247,10 +287,6 @@ function loadContractor() {
 
     // Only update if changes were made during initialization
     if (needsUpdate) {
-      console.log(
-        "Updating contractor due to missing fields:",
-        contractor.value
-      );
       updateContractor();
     }
   } else {
@@ -269,7 +305,6 @@ function loadContractor() {
         ZIPCode: "",
       },
       operatingStates: [],
-      tags: [],
     };
   }
 }
@@ -279,10 +314,8 @@ async function getContractors() {
     const response = await $fetch("/api/contractors");
     contractors.value = response || [];
     contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
-    console.log(contractors.value);
   } catch (error) {
-    alert("Error fetching contractors: " + error.message);
-    console.error("Error fetching contractors:", error);
+    showNotification("Error fetching contractors: " + error.message, "error");
   }
 }
 
@@ -292,11 +325,10 @@ async function addContractor() {
       method: "POST",
       body: contractor.value,
     });
-    alert("Contractor added successfully");
+    showNotification("Contractor added successfully", "success");
     await getContractors();
   } catch (error) {
-    alert("Error adding contractor: " + error.message);
-    console.error("Error adding contractor:", error);
+    showNotification("Error adding contractor: " + error.message, "error");
   }
 }
 
@@ -307,18 +339,17 @@ async function updateContractor() {
         method: "PUT",
         body: contractor.value,
       });
-      console.log("Contractor updated successfully:", contractor.value);
+      showNotification("Contractor updated successfully", "success");
       getContractors();
     }
   } catch (error) {
-    alert("Error updating contractor: " + error.message);
-    console.error("Error updating contractor:", error);
+    showNotification("Error updating contractor: " + error.message, "error");
   }
 }
 
 async function deleteContractor() {
   if (!selectedContractor.value) {
-    alert("Please select a contractor to delete");
+    showNotification("Please select a contractor to delete", "error");
     return;
   }
 
@@ -326,17 +357,19 @@ async function deleteContractor() {
     await $fetch(`/api/contractors/${contractor.value._id}`, {
       method: "DELETE",
     });
-    alert("Contractor deleted successfully");
+    showNotification("Contractor deleted successfully", "success");
     await getContractors();
   } catch (error) {
-    alert("Error deleting contractor: " + error.message);
-    console.error("Error deleting contractor:", error);
+    showNotification("Error deleting contractor: " + error.message, "error");
   }
 }
 
 async function deleteAllContractors() {
   if (deleteConfirmation.value !== "Delete All Contractors") {
-    alert("Please type 'Delete All Contractors' to confirm");
+    showNotification(
+      "Please type 'Delete All Contractors' to confirm",
+      "error"
+    );
     return;
   }
 
@@ -344,11 +377,13 @@ async function deleteAllContractors() {
     await $fetch("/api/contractors/all", {
       method: "DELETE",
     });
-    alert("All contractors deleted successfully");
+    showNotification("All contractors deleted successfully", "success");
     await getContractors();
   } catch (error) {
-    alert("Error deleting all contractors: " + error.message);
-    console.error("Error deleting all contractors:", error);
+    showNotification(
+      "Error deleting all contractors: " + error.message,
+      "error"
+    );
   }
 }
 
@@ -357,11 +392,13 @@ async function resetRatings() {
     await $fetch("/api/contractors/reset", {
       method: "PUT",
     });
-    alert("All contractor ratings have been reset to zero.");
+    showNotification(
+      "All contractor ratings have been reset to zero.",
+      "success"
+    );
     await getContractors();
   } catch (error) {
-    alert("Error resetting ratings: " + error.message);
-    console.error("Error resetting ratings:", error);
+    showNotification("Error resetting ratings: " + error.message, "error");
   }
 }
 
@@ -369,11 +406,12 @@ function updateOperatingStates(states) {
   contractor.value.operatingStates = states;
 }
 
-function updateTags(tags) {
-  contractor.value.tags = tags;
+// Function to show notifications
+function showNotification(message, type = "info") {
+  notificationMessage.value = message;
+  notificationType.value = type;
 }
 </script>
-
 
 <style scoped>
 .wrapper {
@@ -462,23 +500,24 @@ label {
   color: #333;
 }
 
-button {
-  background-color: #ff8210;
-  border: none;
-  color: white;
-  padding: 1rem 2rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1rem;
-  margin: 1rem 0.5rem 0 0;
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-button:hover {
-  background-color: #e65a00;
+.action-button:hover {
+  background-color: #ff8210;
+  color: white;
 }
 
 button:disabled {
@@ -513,6 +552,30 @@ button:disabled {
   border-color: #ff8210;
   outline: none;
 }
+
+.dropdown-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-button:hover {
+  background-color: #ff8210;
+  color: white;
+}
+
+.navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
 </style>
-
-

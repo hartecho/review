@@ -1,18 +1,22 @@
 <template>
   <div class="wrapper">
-    <h1>Add/Update Contractor</h1>
+    <h1>Add/Update Agency</h1>
 
     <div class="content">
       <div class="section">
-        <h2>Select Contractor</h2>
-        <select v-model="selectedContractor" @change="loadContractor">
+        <h2>Select Agency</h2>
+        <select
+          v-model="selectedAgency"
+          @change="loadAgency"
+          class="dropdown-button"
+        >
           <option disabled value="">Please select one</option>
           <option
-            v-for="contractor in contractors"
-            :key="contractor._id"
-            :value="contractor._id"
+            v-for="agency in sortedAgencies"
+            :key="agency._id"
+            :value="agency._id"
           >
-            {{ contractor.company }}
+            {{ agency.company }}
           </option>
         </select>
       </div>
@@ -20,11 +24,11 @@
       <div class="section">
         <h2>General Information</h2>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.company" placeholder=" " />
+          <input type="text" v-model="agency.company" placeholder=" " />
           <label>Company</label>
         </div>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.picture" placeholder=" " />
+          <input type="text" v-model="agency.picture" placeholder=" " />
           <label>Picture</label>
         </div>
       </div>
@@ -32,15 +36,15 @@
       <div class="section">
         <h2>Contact Information</h2>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.phone" placeholder=" " />
+          <input type="text" v-model="agency.phone" placeholder=" " />
           <label>Phone</label>
         </div>
         <div class="input-wrapper">
-          <input type="email" v-model="contractor.email" placeholder=" " />
+          <input type="email" v-model="agency.email" placeholder=" " />
           <label>Email</label>
         </div>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.website" placeholder=" " />
+          <input type="text" v-model="agency.website" placeholder=" " />
           <label>Website</label>
         </div>
       </div>
@@ -51,7 +55,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.streetAddress"
+              v-model="agency.address.streetAddress"
               placeholder=" "
             />
             <label>Street Address</label>
@@ -59,31 +63,23 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.secondaryAddress"
+              v-model="agency.address.secondaryAddress"
               placeholder=" "
             />
             <label>Secondary Address</label>
           </div>
           <div class="input-wrapper">
-            <input
-              type="text"
-              v-model="contractor.address.city"
-              placeholder=" "
-            />
+            <input type="text" v-model="agency.address.city" placeholder=" " />
             <label>City</label>
           </div>
           <div class="input-wrapper">
-            <input
-              type="text"
-              v-model="contractor.address.state"
-              placeholder=" "
-            />
+            <input type="text" v-model="agency.address.state" placeholder=" " />
             <label>State</label>
           </div>
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.ZIPCode"
+              v-model="agency.address.ZIPCode"
               placeholder=" "
             />
             <label>ZIP Code</label>
@@ -96,61 +92,84 @@
         <ProfileDropdown
           label="Select Operating States"
           :items="states"
-          :selectedItems="contractor.operatingStates"
+          :selectedItems="agency.operatingStates"
           @update:selectedItems="updateOperatingStates"
-        />
-      </div>
-
-      <div class="section">
-        <h2>Job Types</h2>
-        <ProfileDropdown
-          label="Select Job Types"
-          :items="tagDescriptions"
-          :selectedItems="contractor.tags"
-          @update:selectedItems="updateTags"
         />
       </div>
 
       <div class="section action-buttons">
         <h2>Available Actions</h2>
-        <button @click="addContractor">Add Contractor</button>
-        <button @click="updateContractor">Update Contractor</button>
-        <button @click="deleteContractor">Delete Contractor</button>
-        <button @click="resetRatings">Reset All Ratings</button>
+        <button @click="addAgency" class="action-button">Add Agency</button>
+        <button @click="updateAgency" class="action-button">
+          Update Agency
+        </button>
+        <button @click="deleteAgency" class="action-button">
+          Delete Agency
+        </button>
+        <button @click="resetRatings" class="action-button">
+          Reset All Ratings
+        </button>
       </div>
 
       <div class="section delete-all-section">
         <label for="delete-confirmation"
-          >Type "Delete All Contractors" to confirm:</label
+          >Type "Delete All Agencies" to confirm:</label
         >
         <input
           type="text"
           id="delete-confirmation"
           v-model="deleteConfirmation"
-          placeholder="Delete All Contractors"
+          placeholder="Delete All Agencies"
         />
         <button
-          @click="deleteAllContractors"
-          :disabled="deleteConfirmation !== 'Delete All Contractors'"
+          @click="deleteAllAgencies"
+          :disabled="deleteConfirmation !== 'Delete All Agencies'"
+          class="action-button"
         >
-          Delete All Contractors
+          Delete All Agencies
+        </button>
+      </div>
+
+      <div class="section navigation-buttons">
+        <h2>Navigate to Other Pages</h2>
+        <button
+          @click="navigateTo('/contractor/editContractors')"
+          class="action-button"
+        >
+          Edit Contractors
+        </button>
+        <button
+          @click="navigateTo('/subcontractor/editSubcontractors')"
+          class="action-button"
+        >
+          Edit Subcontractors
+        </button>
+        <button
+          @click="navigateTo('/supplier/editSuppliers')"
+          class="action-button"
+        >
+          Edit Suppliers
         </button>
       </div>
     </div>
+
+    <!-- Notification Popup -->
+    <SubcomponentsNotificationPopup
+      v-if="notificationMessage"
+      :message="notificationMessage"
+      :type="notificationType"
+    />
   </div>
 </template>
-  
-  
-  
-  
-  <script setup>
-import { ref, onMounted, watch } from "vue";
-import { tagDescriptions } from "/utils/tagDescriptions.js";
-import { states } from "/utils/states/js";
 
-const contractors = ref([]);
-const selectedContractor = ref("");
-const contractor = ref({
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { states } from "/utils/states.js";
+import { useRouter } from "vue-router"; // Import useRouter for navigation
+
+const agencies = ref([]);
+const selectedAgency = ref("");
+const agency = ref({
   company: "",
   picture: "",
   phone: "",
@@ -164,21 +183,36 @@ const contractor = ref({
     ZIPCode: "",
   },
   operatingStates: [],
-  tags: [],
 });
 
 const deleteConfirmation = ref("");
 
-onMounted(async () => {
-  await getContractors();
+const notificationMessage = ref(""); // Notification message
+const notificationType = ref("info"); // Notification type: 'info', 'success', 'error'
+
+// Use the Vue Router to navigate to different pages
+const router = useRouter();
+
+// Function to navigate to different edit pages
+function navigateTo(route) {
+  router.push(route);
+}
+
+// Computed property to sort agencies alphabetically by company name
+const sortedAgencies = computed(() => {
+  return [...agencies.value].sort((a, b) => a.company.localeCompare(b.company));
 });
 
-function initializeContractorFields(contractor) {
+onMounted(async () => {
+  await getAgencies();
+});
+
+function initializeAgencyFields(agency) {
   let needsUpdate = false;
 
-  // Ensure the contractor has an address object
-  if (!contractor.address) {
-    contractor.address = {};
+  // Ensure the agency has an address object
+  if (!agency.address) {
+    agency.address = {};
     needsUpdate = true;
   }
 
@@ -191,71 +225,61 @@ function initializeContractorFields(contractor) {
     "ZIPCode",
   ];
   addressFields.forEach((field) => {
-    if (contractor.address[field] === undefined) {
-      contractor.address[field] = "";
+    if (agency.address[field] === undefined) {
+      agency.address[field] = "";
       needsUpdate = true;
     }
   });
 
   // Check operatingStates
-  if (contractor.operatingStates === undefined) {
-    contractor.operatingStates = [];
-    needsUpdate = true;
-  }
-
-  // Check tags
-  if (contractor.tags === undefined) {
-    contractor.tags = [];
+  if (agency.operatingStates === undefined) {
+    agency.operatingStates = [];
     needsUpdate = true;
   }
 
   // Check for the rest of the properties and ensure they exist
-  if (contractor.company === undefined) {
-    contractor.company = "";
+  if (agency.company === undefined) {
+    agency.company = "";
     needsUpdate = true;
   }
-  if (contractor.picture === undefined) {
-    contractor.picture = "SSLogo.webp";
+  if (agency.picture === undefined) {
+    agency.picture = "SSLogo.webp";
     needsUpdate = true;
   }
-  if (contractor.phone === undefined) {
-    contractor.phone = "";
+  if (agency.phone === undefined) {
+    agency.phone = "";
     needsUpdate = true;
   }
-  if (contractor.email === undefined) {
-    contractor.email = "";
+  if (agency.email === undefined) {
+    agency.email = "";
     needsUpdate = true;
   }
-  if (contractor.website === undefined) {
-    contractor.website = "";
+  if (agency.website === undefined) {
+    agency.website = "";
     needsUpdate = true;
   }
 
   return needsUpdate;
 }
 
-function loadContractor() {
-  const foundContractor = contractors.value.find(
-    (c) => c._id === selectedContractor.value
+function loadAgency() {
+  const foundAgency = agencies.value.find(
+    (c) => c._id === selectedAgency.value
   );
-  if (foundContractor) {
-    // Initialize all fields for the contractor and check if any changes are needed
-    const needsUpdate = initializeContractorFields(foundContractor);
+  if (foundAgency) {
+    // Initialize all fields for the agency and check if any changes are needed
+    const needsUpdate = initializeAgencyFields(foundAgency);
 
-    // Assign the contractor value after initialization
-    contractor.value = { ...foundContractor };
+    // Assign the agency value after initialization
+    agency.value = { ...foundAgency };
 
     // Only update if changes were made during initialization
     if (needsUpdate) {
-      console.log(
-        "Updating contractor due to missing fields:",
-        contractor.value
-      );
-      updateContractor();
+      updateAgency();
     }
   } else {
-    // Reset to default values if no contractor is selected
-    contractor.value = {
+    // Reset to default values if no agency is selected
+    agency.value = {
       company: "",
       picture: "",
       phone: "",
@@ -269,113 +293,106 @@ function loadContractor() {
         ZIPCode: "",
       },
       operatingStates: [],
-      tags: [],
     };
   }
 }
 
-async function getContractors() {
+async function getAgencies() {
   try {
-    const response = await $fetch("/api/contractors");
-    contractors.value = response || [];
-    contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
-    console.log(contractors.value);
+    const response = await $fetch("/api/agencies");
+    agencies.value = response || [];
+    agencies.value.forEach(initializeAgencyFields); // Ensure all agencies have initialized fields
   } catch (error) {
-    alert("Error fetching contractors: " + error.message);
-    console.error("Error fetching contractors:", error);
+    showNotification("Error fetching agencies: " + error.message, "error");
   }
 }
 
-async function addContractor() {
+async function addAgency() {
   try {
-    const savedContractor = await $fetch("/api/contractors", {
+    const savedAgency = await $fetch("/api/agencies", {
       method: "POST",
-      body: contractor.value,
+      body: agency.value,
     });
-    alert("Contractor added successfully");
-    await getContractors();
+    showNotification("Agency added successfully", "success");
+    await getAgencies();
   } catch (error) {
-    alert("Error adding contractor: " + error.message);
-    console.error("Error adding contractor:", error);
+    showNotification("Error adding agency: " + error.message, "error");
   }
 }
 
-async function updateContractor() {
+async function updateAgency() {
   try {
-    if (contractor.value._id) {
-      await $fetch(`/api/contractors/${contractor.value._id}`, {
+    if (agency.value._id) {
+      await $fetch(`/api/agencies/${agency.value._id}`, {
         method: "PUT",
-        body: contractor.value,
+        body: agency.value,
       });
-      console.log("Contractor updated successfully:", contractor.value);
-      getContractors();
+      showNotification("Agency updated successfully", "success");
+      getAgencies();
     }
   } catch (error) {
-    alert("Error updating contractor: " + error.message);
-    console.error("Error updating contractor:", error);
+    showNotification("Error updating agency: " + error.message, "error");
   }
 }
 
-async function deleteContractor() {
-  if (!selectedContractor.value) {
-    alert("Please select a contractor to delete");
+async function deleteAgency() {
+  if (!selectedAgency.value) {
+    showNotification("Please select a agency to delete", "error");
     return;
   }
 
   try {
-    await $fetch(`/api/contractors/${contractor.value._id}`, {
+    await $fetch(`/api/agencies/${agency.value._id}`, {
       method: "DELETE",
     });
-    alert("Contractor deleted successfully");
-    await getContractors();
+    showNotification("Agency deleted successfully", "success");
+    await getAgencies();
   } catch (error) {
-    alert("Error deleting contractor: " + error.message);
-    console.error("Error deleting contractor:", error);
+    showNotification("Error deleting agency: " + error.message, "error");
   }
 }
 
-async function deleteAllContractors() {
-  if (deleteConfirmation.value !== "Delete All Contractors") {
-    alert("Please type 'Delete All Contractors' to confirm");
+async function deleteAllAgencies() {
+  if (deleteConfirmation.value !== "Delete All Agencies") {
+    showNotification("Please type 'Delete All Agencies' to confirm", "error");
     return;
   }
 
   try {
-    await $fetch("/api/contractors/all", {
+    await $fetch("/api/agencies/all", {
       method: "DELETE",
     });
-    alert("All contractors deleted successfully");
-    await getContractors();
+    showNotification("All agencies deleted successfully", "success");
+    await getAgencies();
   } catch (error) {
-    alert("Error deleting all contractors: " + error.message);
-    console.error("Error deleting all contractors:", error);
+    showNotification("Error deleting all agencies: " + error.message, "error");
   }
 }
 
 async function resetRatings() {
   try {
-    await $fetch("/api/contractors/reset", {
+    await $fetch("/api/agencies/reset", {
       method: "PUT",
     });
-    alert("All contractor ratings have been reset to zero.");
-    await getContractors();
+    showNotification("All agency ratings have been reset to zero.", "success");
+    await getAgencies();
   } catch (error) {
-    alert("Error resetting ratings: " + error.message);
-    console.error("Error resetting ratings:", error);
+    showNotification("Error resetting ratings: " + error.message, "error");
   }
 }
 
 function updateOperatingStates(states) {
-  contractor.value.operatingStates = states;
+  agency.value.operatingStates = states;
 }
 
-function updateTags(tags) {
-  contractor.value.tags = tags;
+// Function to show notifications
+function showNotification(message, type = "info") {
+  notificationMessage.value = message;
+  notificationType.value = type;
 }
 </script>
-  
-  
-  <style scoped>
+
+<style scoped>
 .wrapper {
   padding: 2rem;
   width: 100%;
@@ -462,23 +479,24 @@ label {
   color: #333;
 }
 
-button {
-  background-color: #ff8210;
-  border: none;
-  color: white;
-  padding: 1rem 2rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1rem;
-  margin: 1rem 0.5rem 0 0;
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-button:hover {
-  background-color: #e65a00;
+.action-button:hover {
+  background-color: #ff8210;
+  color: white;
 }
 
 button:disabled {
@@ -513,7 +531,30 @@ button:disabled {
   border-color: #ff8210;
   outline: none;
 }
+
+.dropdown-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-button:hover {
+  background-color: #ff8210;
+  color: white;
+}
+
+.navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
 </style>
-  
-  
-  

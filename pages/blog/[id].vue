@@ -1,12 +1,33 @@
 <template>
   <div>
     <div class="img-wrapper" v-if="post">
-      <NuxtImg :src="post.image" alt="Blog Image" />
+      <NuxtImg
+        :src="resolvedImgPath(post.image)"
+        :alt="post.mainTitle + ' picture'"
+        :placeholder="generatePlaceholderUrl(post.image)"
+        loading="eager"
+        @load="onImageLoad"
+        :class="{ 'image-loaded': imageLoaded }"
+      />
     </div>
     <div class="blog-content-wrapper">
       <div class="blog-post" v-if="post">
         <h1>{{ post.mainTitle }}</h1>
-        <p class="header">{{ post.header }}</p>
+        <div class="post-header" v-if="post.author && post.date">
+          <p class="header">
+            Authored by {{ post.author }}, {{ formattedDate(post.date) }}
+          </p>
+          <div class="views">
+            <img src="/ViewCountEye.svg" alt="Views Icon" class="views-icon" />
+            <span>{{ formattedViews }}</span>
+          </div>
+        </div>
+        <div v-if="post.updated && post.updated.date && post.updated.text">
+          <p>
+            <strong>Updated {{ formattedDate(post.updated.date) }}:</strong>
+            {{ post.updated.text }}
+          </p>
+        </div>
         <p>{{ post.intro }}</p>
         <div
           v-for="(section, index) in post.sections"
@@ -16,7 +37,8 @@
             <NuxtImg
               v-if="section.photo"
               :src="section.photo"
-              alt="Section Photo"
+              :alt="section.title + ' Section Photo'"
+              loading="lazy"
             />
           </div>
           <h2>{{ section.title }}</h2>
@@ -38,32 +60,20 @@
             </ul>
           </div>
         </div>
-        <h2 v-if="post.references[0]">References</h2>
+        <h2 v-if="post.references.length">References</h2>
         <div v-for="(reference, index) in post.references" :key="index">
-          <p class="references">{{ reference }}</p>
+          <p class="references">
+            {{ reference }}
+          </p>
         </div>
       </div>
 
-      <div class="sidebar">
-        <h2>Other Popular Posts</h2>
-        <p>Coming Soon...</p>
-        <div
-          class="sidebar-post"
-          v-for="(post, index) in otherPosts"
-          :key="index"
-        >
-          <NuxtLink :to="`/blog/${post._id}`">
-            <img :src="resolvedImgPath(post.thumbnail)" alt="Post Thumbnail" />
-            <h3>{{ post.mainTitle }}</h3>
-            <p>{{ post.preview }}</p>
-          </NuxtLink>
-        </div>
-      </div>
+      <SubcomponentsBlogSidebar />
     </div>
 
     <div class="related-links-wrapper">
       <div class="related-links" v-if="relatedLinks.length">
-        <h2>Related Blog Websites</h2>
+        <h2>Related External Blogs</h2>
         <ul>
           <li v-for="(link, index) in relatedLinks" :key="index">
             <a :href="link.url" target="_blank">{{ link.title }}</a>
@@ -75,65 +85,158 @@
 </template>
 
 <script setup>
-const { data: post } = await useFetch(`/api/blogs?_id=${useRoute().params.id}`);
-// const { data: otherPosts } = await useFetch("/api/popular-blogs"); // Fetch other popular or relevant posts
+// Fetch data during build
+const route = useRoute();
+const { data: post } = await useAsyncData(() =>
+  $fetch(`/api/blogs?_id=${route.params.id}`)
+);
 
+// Function to format numbers with commas
+const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+// Computed property to format the view count
+const formattedViews = computed(() => {
+  return post.value ? formatNumberWithCommas(post.value.views) : "0";
+});
+
+// Function to format the date
+const formattedDate = (date) => {
+  return new Date(date).toLocaleDateString();
+};
+
+// Function to extract the first sentence
+const getFirstSentence = (text) => {
+  const firstSentenceMatch = text.match(/(.*?[.?!])\s/);
+  return firstSentenceMatch ? firstSentenceMatch[1] : text;
+};
+
+// Structured data
+const structuredData = computed(() => {
+  if (!post.value || !window) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.value.mainTitle,
+    image: post.value.image,
+    author: {
+      "@type": "Person",
+      name: post.value.author || "HARTECHO Digital Marketing",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "HARTECHO Digital Marketing",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.hartecho.com/HARTECHOLogo.webp",
+      },
+    },
+    datePublished: new Date(post.value.date).toISOString(),
+    dateModified: new Date(
+      post.value.updated?.date || post.value.date
+    ).toISOString(),
+    description: post.value.preview,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": window.location.href,
+    },
+  };
+});
+
+const description = computed(() => {
+  return post.value
+    ? getFirstSentence(post.value.preview) +
+        " HARTECHO || #1 Utah-based Marketing Agency"
+    : "HARTECHO || #1 Utah-based Marketing Agency";
+});
+
+// SEO meta tags setup
+onMounted(() => {
+  incrementViews();
+});
+
+// Set structured data using useHead
+useHead({
+  script: [
+    {
+      type: "application/ld+json",
+      children: JSON.stringify(structuredData.value),
+    },
+  ],
+});
+
+// Set SEO meta tags using useSeoMeta
 useSeoMeta({
   title: post.value.mainTitle,
   ogTitle: post.value.mainTitle,
-  description: post.value.preview,
-  ogDescription: post.value.preview,
-  ogImage: post.value.thumbnail,
-  twitterCard: post.value.thumbnail,
+  description: description.value,
+  ogDescription: description.value,
+  ogImage: post.value ? post.value.thumbnail : "",
+  twitterCard: post.value ? post.value.thumbnail : "",
 });
 
-const relatedLinks = ref([
-  {
-    title: "Commercial Construction Trends",
-    url: "https://www.constructiondive.com/topic/commercial/",
-  },
-  {
-    title: "Modern Techniques in Commercial Construction",
-    url: "https://www.forconstructionpros.com/",
-  },
-  {
-    title: "Sustainable Building Materials",
-    url: "https://www.buildinggreen.com/",
-  },
-  { title: "Latest News in Construction", url: "https://www.enr.com/" },
-  {
-    title: "Commercial Construction Contracts",
-    url: "https://www.constructionexec.com/",
-  },
-]);
+const incrementViews = async () => {
+  if (post.value) {
+    post.value.views += 1;
+    await $fetch(`/api/blogs/${post.value._id}`, {
+      method: "PUT",
+      body: JSON.stringify(post.value),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
+
+const generatePlaceholderUrl = (url) => {
+  const lastDotIndex = url.lastIndexOf(".");
+  if (lastDotIndex === -1) return url; // If no extension found, return original URL
+
+  const extension = url.slice(lastDotIndex);
+  const baseUrl = url.slice(0, lastDotIndex);
+  return resolvedImgPath(`${baseUrl}Blur${extension}`);
+};
 
 const resolvedImgPath = (path) => {
   if (path) {
-    return "/" + path;
+    return "/BlogPics/" + path;
   }
-  return "/SSLogo.webp";
+  return "/HARTECHOLogo.webp";
 };
 
-const lastScrollTop = ref(0);
+// State to track image loading status
+const imageLoaded = ref(false);
 
-const handleScroll = () => {
-  const sidebar = document.querySelector(".sidebar");
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-  if (scrollTop > lastScrollTop.value) {
-    sidebar.classList.remove("large");
-    sidebar.classList.add("small");
-  } else {
-    sidebar.classList.remove("small");
-    sidebar.classList.add("large");
-  }
-
-  lastScrollTop.value = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+// Function to handle image load event
+const onImageLoad = () => {
+  imageLoaded.value = true;
 };
 
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
+const relatedLinks = ref([
+  {
+    title: "2024 Commercial Construction Trends - Scott + Reid",
+    url: "https://www.scottandreid.com/news/2024-commercial-construction-trends",
+  },
+  {
+    title:
+      "Unveiling the Future: 2024 Commercial Construction Trends - Joseph Schmitt Construction",
+    url: "https://www.jschmitt.cc/blog/unveiling-the-future-2024-commercial-construction-trends",
+  },
+  {
+    title:
+      "Emerging Trends in Commercial Construction for 2024 - Clark Pacific",
+    url: "https://www.clarkpacific.com/news/emerging-trends-in-commercial-construction-for-2024",
+  },
+  {
+    title: "2024 Construction Industry Economic Outlook",
+    url: "https://www.bdcnetwork.com/2024-construction-industry-economic-outlook",
+  },
+  {
+    title: "The Future of Construction: 10 Trends for 2024",
+    url: "https://www.theb1m.com/article/the-future-of-construction-10-trends-for-2024",
+  },
+]);
 </script>
 
 
@@ -150,25 +253,48 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.2);
+  transition: transform 0.5s ease-in-out;
+}
+
+.img-wrapper img.image-loaded {
+  transform: scale(1);
 }
 
 .blog-content-wrapper {
   display: flex;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
 .blog-post {
-  flex: 1;
+  flex: 3;
   margin-right: 2rem;
   padding: 4rem 2rem;
   font-family: "Merriweather", serif;
-  color: #444;
+  color: black;
   line-height: 1.8;
-  background: #fff;
+  background: #f2f2f2;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.views {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.views-icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .blog-post h1 {
@@ -177,7 +303,7 @@ onMounted(() => {
   margin-bottom: 1.5rem;
   font-family: "Playfair Display", serif;
   font-weight: bold;
-  color: #333;
+  color: black;
 }
 
 .blog-post h2 {
@@ -186,7 +312,7 @@ onMounted(() => {
   margin-bottom: 1.5rem;
   font-family: "Playfair Display", serif;
   font-weight: bold;
-  color: #333;
+  color: #555;
   border-bottom: 2px solid #eee;
   padding-bottom: 0.5rem;
 }
@@ -196,16 +322,17 @@ onMounted(() => {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 2rem;
-  color: #666;
+  color: black;
 }
 
 .blog-post p {
   font-size: 1.2rem;
   margin-bottom: 1.2em;
+  color: #555;
 }
 
 p {
-  color: black;
+  color: #666;
 }
 
 .section-img-wrapper {
@@ -222,7 +349,7 @@ p {
 }
 
 .list-section {
-  background: #f9f9f9;
+  background: white;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -231,7 +358,7 @@ p {
 .list-section h3 {
   font-size: 1.5rem;
   font-family: "Playfair Display", serif;
-  color: #333;
+  color: black;
   margin-bottom: 0.5rem;
 }
 
@@ -246,16 +373,17 @@ p {
 .list-section ul li strong {
   font-size: 1.2rem;
   font-family: "Merriweather", serif;
-  color: #444;
+  color: black;
 }
 
 .references {
   font-size: 1.2rem;
   word-break: break-all;
+  color: black;
 }
 
 .related-links-wrapper {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 2rem auto;
   padding: 2rem;
 }
@@ -263,7 +391,7 @@ p {
 .related-links {
   padding: 2rem;
   font-family: "Merriweather", serif;
-  color: #444;
+  color: black;
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -275,7 +403,7 @@ p {
   margin-bottom: 1.5rem;
   font-family: "Playfair Display", serif;
   font-weight: bold;
-  color: #333;
+  color: black;
 }
 
 .related-links ul {
@@ -296,58 +424,6 @@ p {
   text-decoration: underline;
 }
 
-.sidebar {
-  flex: 0 0 300px;
-  position: -webkit-sticky;
-  position: sticky;
-  height: fit-content;
-  background: #f9f9f9;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: top 0.4s;
-}
-
-.sidebar.large {
-  top: 9rem;
-}
-
-.sidebar.small {
-  top: 4rem;
-}
-
-.sidebar h2 {
-  font-size: 1.5rem;
-  font-family: "Playfair Display", serif;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.sidebar-post {
-  margin-bottom: 1.5rem;
-}
-
-.sidebar-post img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-}
-
-.sidebar-post h3 {
-  font-size: 1.2rem;
-  font-family: "Merriweather", serif;
-  color: #444;
-  margin-bottom: 0.5rem;
-}
-
-.sidebar-post p {
-  font-size: 1rem;
-  font-family: "Merriweather", serif;
-  color: #666;
-}
-
 .divider {
   min-height: 7rem;
   background-color: #e0f7fa;
@@ -360,20 +436,6 @@ p {
 
   .blog-post {
     margin-right: 0;
-  }
-
-  .sidebar {
-    position: relative;
-    top: 0;
-    margin-top: 2rem;
-  }
-
-  .sidebar.large {
-    top: 0rem;
-  }
-
-  .sidebar.small {
-    top: 0rem;
   }
 }
 
@@ -391,17 +453,9 @@ p {
     box-shadow: none;
   }
 
-  .sidebar {
-    box-shadow: none;
-    background: white;
-    height: auto;
-    min-height: 0;
-  }
-
   .blog-post {
     padding: 2rem 1rem;
     box-shadow: none;
   }
 }
 </style>
-

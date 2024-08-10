@@ -10,7 +10,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/SSLogo.webp' },
         // For other formats
-        { rel: 'icon', type: 'image/png', href: '/SSLogo.webp' },
+        { rel: 'icon', type: 'image/webp', href: '/SSLogo.webp' },
       ],
     },
   },

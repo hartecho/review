@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <div class="page-header">
-      <h1>Find Subsubcontractors</h1>
+      <h1>Find Subcontractors</h1>
       <p>
-        Search for subsubcontractors by name, operating states, or job type, and
+        Search for subcontractors by name, operating states, or job type, and
         filter by star rating.
       </p>
     </div>
@@ -66,9 +66,9 @@ useSeoMeta({
   ogTitle:
     "Find Subsubcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   description:
-    "Search for top-rated subsubcontractors by job type, name, or operating states. Use filters to find subsubcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
-    "Search for top-rated subsubcontractors by job type, name, or operating states. Use filters to find subsubcontractors by star rating and read detailed reviews on Subsource.",
+    "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
   ogImage: "/SSLogo.webp",
   twitterCard: "/SSLogo.webp",
 });

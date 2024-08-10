@@ -1,18 +1,22 @@
 <template>
   <div class="wrapper">
-    <h1>Add/Update Contractor</h1>
+    <h1>Add/Update Subcontractor</h1>
 
     <div class="content">
       <div class="section">
-        <h2>Select Contractor</h2>
-        <select v-model="selectedContractor" @change="loadContractor">
+        <h2>Select Subcontractor</h2>
+        <select
+          v-model="selectedSubcontractor"
+          @change="loadSubcontractor"
+          class="dropdown-button"
+        >
           <option disabled value="">Please select one</option>
           <option
-            v-for="contractor in contractors"
-            :key="contractor._id"
-            :value="contractor._id"
+            v-for="subcontractor in sortedSubcontractors"
+            :key="subcontractor._id"
+            :value="subcontractor._id"
           >
-            {{ contractor.company }}
+            {{ subcontractor.company }}
           </option>
         </select>
       </div>
@@ -20,11 +24,11 @@
       <div class="section">
         <h2>General Information</h2>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.company" placeholder=" " />
+          <input type="text" v-model="subcontractor.company" placeholder=" " />
           <label>Company</label>
         </div>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.picture" placeholder=" " />
+          <input type="text" v-model="subcontractor.picture" placeholder=" " />
           <label>Picture</label>
         </div>
       </div>
@@ -32,15 +36,15 @@
       <div class="section">
         <h2>Contact Information</h2>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.phone" placeholder=" " />
+          <input type="text" v-model="subcontractor.phone" placeholder=" " />
           <label>Phone</label>
         </div>
         <div class="input-wrapper">
-          <input type="email" v-model="contractor.email" placeholder=" " />
+          <input type="email" v-model="subcontractor.email" placeholder=" " />
           <label>Email</label>
         </div>
         <div class="input-wrapper">
-          <input type="text" v-model="contractor.website" placeholder=" " />
+          <input type="text" v-model="subcontractor.website" placeholder=" " />
           <label>Website</label>
         </div>
       </div>
@@ -51,7 +55,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.streetAddress"
+              v-model="subcontractor.address.streetAddress"
               placeholder=" "
             />
             <label>Street Address</label>
@@ -59,7 +63,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.secondaryAddress"
+              v-model="subcontractor.address.secondaryAddress"
               placeholder=" "
             />
             <label>Secondary Address</label>
@@ -67,7 +71,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.city"
+              v-model="subcontractor.address.city"
               placeholder=" "
             />
             <label>City</label>
@@ -75,7 +79,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.state"
+              v-model="subcontractor.address.state"
               placeholder=" "
             />
             <label>State</label>
@@ -83,7 +87,7 @@
           <div class="input-wrapper">
             <input
               type="text"
-              v-model="contractor.address.ZIPCode"
+              v-model="subcontractor.address.ZIPCode"
               placeholder=" "
             />
             <label>ZIP Code</label>
@@ -96,7 +100,7 @@
         <ProfileDropdown
           label="Select Operating States"
           :items="states"
-          :selectedItems="contractor.operatingStates"
+          :selectedItems="subcontractor.operatingStates"
           @update:selectedItems="updateOperatingStates"
         />
       </div>
@@ -106,51 +110,87 @@
         <ProfileDropdown
           label="Select Job Types"
           :items="tagDescriptions"
-          :selectedItems="contractor.tags"
+          :selectedItems="subcontractor.tags"
           @update:selectedItems="updateTags"
         />
       </div>
 
       <div class="section action-buttons">
         <h2>Available Actions</h2>
-        <button @click="addContractor">Add Contractor</button>
-        <button @click="updateContractor">Update Contractor</button>
-        <button @click="deleteContractor">Delete Contractor</button>
-        <button @click="resetRatings">Reset All Ratings</button>
+        <button @click="addSubcontractor" class="action-button">
+          Add Subcontractor
+        </button>
+        <button @click="updateSubcontractor" class="action-button">
+          Update Subcontractor
+        </button>
+        <button @click="deleteSubcontractor" class="action-button">
+          Delete Subcontractor
+        </button>
+        <button @click="resetRatings" class="action-button">
+          Reset All Ratings
+        </button>
       </div>
 
       <div class="section delete-all-section">
         <label for="delete-confirmation"
-          >Type "Delete All Contractors" to confirm:</label
+          >Type "Delete All Subcontractors" to confirm:</label
         >
         <input
           type="text"
           id="delete-confirmation"
           v-model="deleteConfirmation"
-          placeholder="Delete All Contractors"
+          placeholder="Delete All Subcontractors"
         />
         <button
-          @click="deleteAllContractors"
-          :disabled="deleteConfirmation !== 'Delete All Contractors'"
+          @click="deleteAllSubcontractors"
+          :disabled="deleteConfirmation !== 'Delete All Subcontractors'"
+          class="action-button"
         >
-          Delete All Contractors
+          Delete All Subcontractors
+        </button>
+      </div>
+
+      <div class="section navigation-buttons">
+        <h2>Navigate to Other Pages</h2>
+        <button
+          @click="navigateTo('/contractor/editContractors')"
+          class="action-button"
+        >
+          Edit Contractors
+        </button>
+        <button
+          @click="navigateTo('/supplier/editSuppliers')"
+          class="action-button"
+        >
+          Edit Suppliers
+        </button>
+        <button
+          @click="navigateTo('/agency/editAgencies')"
+          class="action-button"
+        >
+          Edit Agencies
         </button>
       </div>
     </div>
+
+    <!-- Notification Popup -->
+    <SubcomponentsNotificationPopup
+      v-if="notificationMessage"
+      :message="notificationMessage"
+      :type="notificationType"
+    />
   </div>
 </template>
-  
-  
-  
-  
-  <script setup>
-import { ref, onMounted, watch } from "vue";
-import { tagDescriptions } from "/utils/tagDescriptions.js";
-import { states } from "/utils/states/js";
 
-const contractors = ref([]);
-const selectedContractor = ref("");
-const contractor = ref({
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { tagDescriptions } from "/utils/tagDescriptions.js";
+import { states } from "/utils/states.js";
+import { useRouter } from "vue-router"; // Import useRouter for navigation
+
+const subcontractors = ref([]);
+const selectedSubcontractor = ref("");
+const subcontractor = ref({
   company: "",
   picture: "",
   phone: "",
@@ -169,16 +209,34 @@ const contractor = ref({
 
 const deleteConfirmation = ref("");
 
-onMounted(async () => {
-  await getContractors();
+const notificationMessage = ref(""); // Notification message
+const notificationType = ref("info"); // Notification type: 'info', 'success', 'error'
+
+// Use the Vue Router to navigate to different pages
+const router = useRouter();
+
+// Function to navigate to different edit pages
+function navigateTo(route) {
+  router.push(route);
+}
+
+// Computed property to sort subcontractors alphabetically by company name
+const sortedSubcontractors = computed(() => {
+  return [...subcontractors.value].sort((a, b) =>
+    a.company.localeCompare(b.company)
+  );
 });
 
-function initializeContractorFields(contractor) {
+onMounted(async () => {
+  await getSubcontractors();
+});
+
+function initializeSubcontractorFields(subcontractor) {
   let needsUpdate = false;
 
-  // Ensure the contractor has an address object
-  if (!contractor.address) {
-    contractor.address = {};
+  // Ensure the subcontractor has an address object
+  if (!subcontractor.address) {
+    subcontractor.address = {};
     needsUpdate = true;
   }
 
@@ -191,71 +249,67 @@ function initializeContractorFields(contractor) {
     "ZIPCode",
   ];
   addressFields.forEach((field) => {
-    if (contractor.address[field] === undefined) {
-      contractor.address[field] = "";
+    if (subcontractor.address[field] === undefined) {
+      subcontractor.address[field] = "";
       needsUpdate = true;
     }
   });
 
   // Check operatingStates
-  if (contractor.operatingStates === undefined) {
-    contractor.operatingStates = [];
+  if (subcontractor.operatingStates === undefined) {
+    subcontractor.operatingStates = [];
     needsUpdate = true;
   }
 
   // Check tags
-  if (contractor.tags === undefined) {
-    contractor.tags = [];
+  if (subcontractor.tags === undefined) {
+    subcontractor.tags = [];
     needsUpdate = true;
   }
 
   // Check for the rest of the properties and ensure they exist
-  if (contractor.company === undefined) {
-    contractor.company = "";
+  if (subcontractor.company === undefined) {
+    subcontractor.company = "";
     needsUpdate = true;
   }
-  if (contractor.picture === undefined) {
-    contractor.picture = "SSLogo.webp";
+  if (subcontractor.picture === undefined) {
+    subcontractor.picture = "SSLogo.webp";
     needsUpdate = true;
   }
-  if (contractor.phone === undefined) {
-    contractor.phone = "";
+  if (subcontractor.phone === undefined) {
+    subcontractor.phone = "";
     needsUpdate = true;
   }
-  if (contractor.email === undefined) {
-    contractor.email = "";
+  if (subcontractor.email === undefined) {
+    subcontractor.email = "";
     needsUpdate = true;
   }
-  if (contractor.website === undefined) {
-    contractor.website = "";
+  if (subcontractor.website === undefined) {
+    subcontractor.website = "";
     needsUpdate = true;
   }
 
   return needsUpdate;
 }
 
-function loadContractor() {
-  const foundContractor = contractors.value.find(
-    (c) => c._id === selectedContractor.value
+function loadSubcontractor() {
+  const foundSubcontractor = subcontractors.value.find(
+    (c) => c._id === selectedSubcontractor.value
   );
-  if (foundContractor) {
-    // Initialize all fields for the contractor and check if any changes are needed
-    const needsUpdate = initializeContractorFields(foundContractor);
+  if (foundSubcontractor) {
+    // Initialize all fields for the subcontractor and check if any changes are needed
+    const needsUpdate = initializeSubcontractorFields(foundSubcontractor);
 
-    // Assign the contractor value after initialization
-    contractor.value = { ...foundContractor };
+    // Assign the subcontractor value after initialization
+    subcontractor.value = { ...foundSubcontractor };
 
     // Only update if changes were made during initialization
     if (needsUpdate) {
-      console.log(
-        "Updating contractor due to missing fields:",
-        contractor.value
-      );
-      updateContractor();
+      updateSubcontractor();
     }
   } else {
-    // Reset to default values if no contractor is selected
-    contractor.value = {
+    // Reset to default values if no subcontractor is selected
+    subcontractor.value = {
       company: "",
       picture: "",
       phone: "",
@@ -274,108 +328,118 @@ function loadContractor() {
   }
 }
 
-async function getContractors() {
+async function getSubcontractors() {
   try {
-    const response = await $fetch("/api/contractors");
-    contractors.value = response || [];
-    contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
-    console.log(contractors.value);
+    const response = await $fetch("/api/subcontractors");
+    subcontractors.value = response || [];
+    subcontractors.value.forEach(initializeSubcontractorFields); // Ensure all subcontractors have initialized fields
   } catch (error) {
-    alert("Error fetching contractors: " + error.message);
-    console.error("Error fetching contractors:", error);
+    showNotification(
+      "Error fetching subcontractors: " + error.message,
+      "error"
+    );
   }
 }
 
-async function addContractor() {
+async function addSubcontractor() {
   try {
-    const savedContractor = await $fetch("/api/contractors", {
+    const savedSubcontractor = await $fetch("/api/subcontractors", {
       method: "POST",
-      body: contractor.value,
+      body: subcontractor.value,
     });
-    alert("Contractor added successfully");
-    await getContractors();
+    showNotification("Subcontractor added successfully", "success");
+    await getSubcontractors();
   } catch (error) {
-    alert("Error adding contractor: " + error.message);
-    console.error("Error adding contractor:", error);
+    showNotification("Error adding subcontractor: " + error.message, "error");
   }
 }
 
-async function updateContractor() {
+async function updateSubcontractor() {
   try {
-    if (contractor.value._id) {
-      await $fetch(`/api/contractors/${contractor.value._id}`, {
+    if (subcontractor.value._id) {
+      await $fetch(`/api/subcontractors/${subcontractor.value._id}`, {
         method: "PUT",
-        body: contractor.value,
+        body: subcontractor.value,
       });
-      console.log("Contractor updated successfully:", contractor.value);
-      getContractors();
+      showNotification("Subcontractor updated successfully", "success");
+      getSubcontractors();
     }
   } catch (error) {
-    alert("Error updating contractor: " + error.message);
-    console.error("Error updating contractor:", error);
+    showNotification("Error updating subcontractor: " + error.message, "error");
   }
 }
 
-async function deleteContractor() {
-  if (!selectedContractor.value) {
-    alert("Please select a contractor to delete");
+async function deleteSubcontractor() {
+  if (!selectedSubcontractor.value) {
+    showNotification("Please select a subcontractor to delete", "error");
     return;
   }
 
   try {
-    await $fetch(`/api/contractors/${contractor.value._id}`, {
+    await $fetch(`/api/subcontractors/${subcontractor.value._id}`, {
       method: "DELETE",
     });
-    alert("Contractor deleted successfully");
-    await getContractors();
+    showNotification("Subcontractor deleted successfully", "success");
+    await getSubcontractors();
   } catch (error) {
-    alert("Error deleting contractor: " + error.message);
-    console.error("Error deleting contractor:", error);
+    showNotification("Error deleting subcontractor: " + error.message, "error");
   }
 }
 
-async function deleteAllContractors() {
-  if (deleteConfirmation.value !== "Delete All Contractors") {
-    alert("Please type 'Delete All Contractors' to confirm");
+async function deleteAllSubcontractors() {
+  if (deleteConfirmation.value !== "Delete All Subcontractors") {
+    showNotification(
+      "Please type 'Delete All Subcontractors' to confirm",
+      "error"
+    );
     return;
   }
 
   try {
-    await $fetch("/api/contractors/all", {
+    await $fetch("/api/subcontractors/all", {
       method: "DELETE",
     });
-    alert("All contractors deleted successfully");
-    await getContractors();
+    showNotification("All subcontractors deleted successfully", "success");
+    await getSubcontractors();
   } catch (error) {
-    alert("Error deleting all contractors: " + error.message);
-    console.error("Error deleting all contractors:", error);
+    showNotification(
+      "Error deleting all subcontractors: " + error.message,
+      "error"
+    );
   }
 }
 
 async function resetRatings() {
   try {
-    await $fetch("/api/contractors/reset", {
+    await $fetch("/api/subcontractors/reset", {
       method: "PUT",
     });
-    alert("All contractor ratings have been reset to zero.");
-    await getContractors();
+    showNotification(
+      "All subcontractor ratings have been reset to zero.",
+      "success"
+    );
+    await getSubcontractors();
   } catch (error) {
-    alert("Error resetting ratings: " + error.message);
-    console.error("Error resetting ratings:", error);
+    showNotification("Error resetting ratings: " + error.message, "error");
   }
 }
 
 function updateOperatingStates(states) {
-  contractor.value.operatingStates = states;
+  subcontractor.value.operatingStates = states;
 }
 
 function updateTags(tags) {
-  contractor.value.tags = tags;
+  subcontractor.value.tags = tags;
+}
+
+// Function to show notifications
+function showNotification(message, type = "info") {
+  notificationMessage.value = message;
+  notificationType.value = type;
 }
 </script>
-  
-  
-  <style scoped>
+
+<style scoped>
 .wrapper {
   padding: 2rem;
   width: 100%;
@@ -462,23 +526,24 @@ label {
   color: #333;
 }
 
-button {
-  background-color: #ff8210;
-  border: none;
-  color: white;
-  padding: 1rem 2rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1rem;
-  margin: 1rem 0.5rem 0 0;
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-button:hover {
-  background-color: #e65a00;
+.action-button:hover {
+  background-color: #ff8210;
+  color: white;
 }
 
 button:disabled {
@@ -513,7 +578,30 @@ button:disabled {
   border-color: #ff8210;
   outline: none;
 }
+
+.dropdown-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-button:hover {
+  background-color: #ff8210;
+  color: white;
+}
+
+.navigation-buttons {
+  text-align: center;
+  margin-top: 2rem;
+}
 </style>
-  
-  
-  

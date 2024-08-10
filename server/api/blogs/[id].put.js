@@ -3,7 +3,6 @@ import { connectDB } from '~/server/utils/dbConnect';
 import { disconnectDB } from '~/server/utils/dbDisconnect';
 
 export default defineEventHandler(async (event) => {
-    // await authMiddleware(event);
     await connectDB(); // Ensure DB connection
     try {
         const body = await readBody(event);

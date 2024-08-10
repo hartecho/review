@@ -1,30 +1,33 @@
 <template>
   <div class="nav-container">
     <button
-      @click="navigateTo('/contractor/editContractor')"
+      @click="navigateTo('/contractor/editContractors')"
       class="nav-button"
     >
-      Edit Contractor
+      Edit Contractors
     </button>
     <button
-      @click="navigateTo('/subcontractor/editSubcontractor')"
+      @click="navigateTo('/subcontractor/editSubcontractors')"
       class="nav-button"
     >
-      Edit Subcontractor
+      Edit Subcontractors
     </button>
-    <button @click="navigateTo('/supplier/editSupplier')" class="nav-button">
-      Edit Supplier
+    <button @click="navigateTo('/supplier/editSuppliers')" class="nav-button">
+      Edit Suppliers
     </button>
-    <button @click="navigateTo('/agency/editAgency')" class="nav-button">
-      Edit Agency
+    <button @click="navigateTo('/agency/editAgencies')" class="nav-button">
+      Edit Agencies
     </button>
-    <button @click="navigateTo('/user/editUser')" class="nav-button">
-      Edit User
+    <button @click="navigateTo('/blog/editBlogs')" class="nav-button">
+      Edit Blogs
+    </button>
+    <button @click="navigateTo('/user/editUsers')" class="nav-button">
+      Edit Users
     </button>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -33,30 +36,45 @@ const navigateTo = (path) => {
   router.push(path);
 };
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .nav-container {
+  padding: 2rem 2rem;
+  height: 50rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
   padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .nav-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff;
+  width: 100%;
+  padding: 15px 0;
+  font-size: 1rem;
+  background-color: #ff8210;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-button:hover {
-  background-color: #0056b3;
+  background-color: #e65a00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
-  

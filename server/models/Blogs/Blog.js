@@ -30,7 +30,11 @@ const sectionSchema = new mongoose.Schema({
 
 const blogSchema = new mongoose.Schema({
   mainTitle: String,
-  header: String,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  author: String,
   intro: String,
   sections: [sectionSchema],
   references: [String],
@@ -38,7 +42,8 @@ const blogSchema = new mongoose.Schema({
   thumbnail: String,
   preview: String,
   tags: [String],
-  updated: [updateSchema],
+  updated: updateSchema,
+  views: { type: Number, default: 0 } // New field for tracking views
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
