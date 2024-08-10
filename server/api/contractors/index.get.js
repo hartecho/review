@@ -5,7 +5,11 @@ import { disconnectDB } from '~/server/utils/dbDisconnect';
 export default defineEventHandler(async (event) => {
   await connectDB(); // Ensure DB connection
   const query = getQuery(event);
-  const _id = query._id;
+  let _id;
+
+  if (query) {
+    _id = query._id;
+  }
 
   console.log("QUERY FOR CONTRACTOR GET API" + query);
 
