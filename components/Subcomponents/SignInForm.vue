@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <h2>Sign in</h2>
+    <h2>Sign In</h2>
     <div class="form-content">
       <button class="button sign-in-button" @click="onEmailSignIn">
         <img src="/EmailLogo.svg" alt="Email Logo" class="icon" />
@@ -41,6 +41,7 @@ const onEmailSignIn = () => {
 
 h2 {
   color: white;
+  text-decoration: underline;
 }
 
 .form-content {
@@ -102,7 +103,7 @@ h2 {
   .form-content {
     min-height: 0;
     height: auto;
-    padding: 2rem 0;
+    padding: 1rem 0;
   }
 }
 </style>

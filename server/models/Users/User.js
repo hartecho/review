@@ -9,33 +9,40 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
-    required: false
+    required: false,
   },
   profilePicture: {
     type: String,
-    default: ''
+    default: '',
   },
   bio: {
     type: String,
-    default: ''
+    default: '',
   },
-  contractor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Contractor._id',
-    required: false // Only available if the user is a business
-  },
+  businesses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: 'businessTypes',
+    },
+  ],
+  businessTypes: [
+    {
+      type: String,
+      enum: ['Contractor', 'Subcontractor', 'Supplier', 'Agency'],
+    },
+  ],
   created_at: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updated_at: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Pre-save hook to hash the password before saving it to the database
@@ -49,6 +56,16 @@ userSchema.pre('save', async function (next) {
   } catch (error) {
     next(error);
   }
+});
+
+// Pre-save hook to ensure no duplicates in the businesses array
+userSchema.pre('save', function (next) {
+  const uniqueBusinesses = [...new Set(this.businesses.map(String))];
+  if (uniqueBusinesses.length !== this.businesses.length) {
+    return next(new Error('Businesses array contains duplicates.'));
+  }
+  this.businesses = uniqueBusinesses;
+  next();
 });
 
 // Method to compare given password with the hashed one in the database

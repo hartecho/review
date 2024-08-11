@@ -98,10 +98,16 @@ const roundedRating = computed(() => {
 });
 
 const isBusinessOwner = computed(() => {
+  // console.log("contractor.value._id: " + contractor.value._id);
+  // console.log("store.user.businesses: " + store.user.businesses);
+  // console.log(
+  //   "store.user.businesses.includes(contractor.value._id): " +
+  //     store.user.businesses.includes(contractor.value._id)
+  // );
   if (!store.user || !contractor.value) {
     return false;
   }
-  const isOwner = store.user.contractor === contractor.value._id;
+  const isOwner = store.user.businesses.includes(contractor.value._id);
   return isOwner;
 });
 

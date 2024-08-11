@@ -255,6 +255,11 @@ h2 {
 }
 
 @media (max-width: 480px) {
+  h1 {
+    margin: 1rem 0;
+    font-size: 1.5rem;
+  }
+
   .form-wrapper {
     flex-direction: column;
   }

@@ -318,12 +318,12 @@ function loadContractor() {
 
 async function getContractors() {
   try {
-    console.log("Fetching Contractors...");
+    // console.log("Fetching Contractors...");
     const response = await $fetch("/api/contractors");
     contractors.value = response || [];
-    console.log("Contractors fetched: " + JSON.stringify(contractors.value));
+    // console.log("Contractors fetched: " + JSON.stringify(contractors.value));
     contractors.value.forEach(initializeContractorFields); // Ensure all contractors have initialized fields
-    console.log("After initialize");
+    // console.log("After initialize");
   } catch (error) {
     showNotification("Error fetching contractors: " + error.message, "error");
   }

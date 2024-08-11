@@ -58,6 +58,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 
 const props = defineProps({
   filteredContractors: Array,
@@ -67,7 +68,11 @@ const props = defineProps({
 const router = useRouter();
 
 function goToContractorPage(contractorId) {
-  router.push(`/contractor/${contractorId}`);
+  if (contractorId) {
+    router.push(`/contractor/${contractorId}`);
+  } else {
+    console.error("Contractor ID is undefined");
+  }
 }
 
 function goToAddContractorPage() {

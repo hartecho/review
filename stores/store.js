@@ -10,6 +10,7 @@ export const useStore = defineStore('store', () => {
   };
 
   const setUser = (newUser) => {
+    console.log("User: " + JSON.stringify(newUser));
     user.value = newUser;
   };
 

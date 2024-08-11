@@ -11,19 +11,19 @@ export default defineEventHandler(async (event) => {
     _id = query._id;
   }
 
-  console.log("QUERY FOR CONTRACTOR GET API" + query);
+  // console.log("QUERY FOR CONTRACTOR GET API" + query);
 
   try {
     if (_id) {
-      console.log("FOUND _ID IN API");
+      // console.log("FOUND _ID IN API");
       const contractor = await Contractor.findById(_id);
-      console.log("SINGLE CONTRACTOR FOUND: " + contractor);
+      // console.log("SINGLE CONTRACTOR FOUND: " + contractor);
       await disconnectDB(); // Disconnect from DB for static file generation to close after build success
       return contractor;
     } else {
-      console.log("FETCHING ALL CONTRACTORS");
+      // console.log("FETCHING ALL CONTRACTORS");
       const allContractors = await Contractor.find({});
-      console.log("CONTRACTORS: " + allContractors);
+      // console.log("CONTRACTORS: " + allContractors);
       await disconnectDB();
       return allContractors;
     }

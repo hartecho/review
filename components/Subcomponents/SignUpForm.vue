@@ -166,6 +166,7 @@ const isFormValid = computed(() => {
 h2 {
   margin-bottom: 1.5rem;
   color: white;
+  text-decoration: underline;
 }
 
 .input {

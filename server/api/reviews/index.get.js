@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
         .populate({ path: 'businessId', model: Agency, select: 'company' });
         
     } else if (contractorId) {
-      console.log("Has contractorId: " + contractorId);
+      // console.log("Has contractorId: " + contractorId);
       reviews = await Review.find({
         businessId: contractorId,
         businessType: businessTypes.contractor,
