@@ -119,7 +119,7 @@ const handleSignUp = async (signUpData) => {
         name: signUpData.name,
       },
     });
-    console.log("User registered:", response);
+    // console.log("User registered:", response);
     email.value = signUpData.email;
     password.value = signUpData.password;
     await handleEmailLogin({
@@ -235,6 +235,7 @@ h2 {
 .form-wrapper {
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
 }
 
 .fade-enter-active,
@@ -256,7 +257,7 @@ h2 {
 
 @media (max-width: 480px) {
   h1 {
-    margin: 1rem 0;
+    margin: 1rem 0 3rem 0;
     font-size: 1.5rem;
   }
 

@@ -88,7 +88,7 @@ function removeImage(index) {
 async function getItems() {
   try {
     const response = await $fetch("/api/items");
-    console.log(response);
+    // console.log(response);
     items.value = response || [];
   } catch (error) {
     alert("Error fetching items: " + error.message);
