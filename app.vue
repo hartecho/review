@@ -10,6 +10,12 @@
 </template>
 
 <script setup>
+useHead({
+  link: [{ rel: "icon", type: "image/x-icon", href: "/SSLogo.webp" }],
+  htmlAttrs: {
+    lang: "en", // Change 'en' to your desired language code
+  },
+});
 </script>
 
 <style scoped>
