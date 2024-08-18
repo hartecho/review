@@ -237,6 +237,9 @@ const relatedLinks = ref([
     url: "https://www.theb1m.com/article/the-future-of-construction-10-trends-for-2024",
   },
 ]);
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 

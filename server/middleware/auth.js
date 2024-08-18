@@ -15,7 +15,7 @@ export default defineEventHandler((event) => {
     return;
   }
   
-  console.log('Auth middleware called for URL:', event.req.url);
+  // console.log('Auth middleware called for URL:', event.req.url);
 
   if (!token) {
     throw createError({ statusCode: 401, statusMessage: 'Authentication token not found' });

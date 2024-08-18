@@ -37,21 +37,28 @@
           Reset Filters
         </button>
       </div>
-      <div class="right-panel">
+
+      <div class="right-panel" v-if="!loading">
         <SearchSubcontractorResultsList
           :filteredSubcontractors="filteredSubcontractors"
           :searchQuery="searchQuery"
           :tagDescriptions="tagDescriptions"
         />
       </div>
+      <div v-else class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { tagDescriptions } from "/utils/tagDescriptions.js";
-import { states } from "/utils/states.js";
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "~/stores/store"; // Adjust the path if necessary
+import { tagDescriptions } from "~/utils/tagDescriptions.js";
+import { states } from "~/utils/states.js";
+
+const store = useStore();
 
 const searchQuery = ref("");
 const selectedTags = ref([]);
@@ -59,12 +66,13 @@ const selectedStates = ref([]);
 const selectedRating = ref("0");
 const showJobDropdown = ref(false);
 const showStateDropdown = ref(false);
+const loading = ref(true); // Loading state
 
 useSeoMeta({
   title:
-    "Find Subsubcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
+    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   ogTitle:
-    "Find Subsubcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
+    "Find Subcontractors | Subsource – Search by Job Type, Name, Operating States, or Rating",
   description:
     "Search for top-rated subcontractors by job type, name, or operating states. Use filters to find subcontractors by star rating and read detailed reviews on Subsource.",
   ogDescription:
@@ -73,10 +81,30 @@ useSeoMeta({
   twitterCard: "/SSLogo.webp",
 });
 
-const { data: subcontractors } = await useFetch("/api/subcontractors");
+// Fetch and cache data for subcontractors
+async function fetchSubcontractorsAndCache() {
+  if (
+    store.subcontractors.length === 0 ||
+    !store.lastFetchTime ||
+    Date.now() - store.lastFetchTime >= store.CACHE_DURATION
+  ) {
+    try {
+      const subcontractors = await $fetch("/api/subcontractors");
+      store.setSubcontractors(subcontractors);
+    } catch (error) {
+      console.error("Error fetching subcontractors:", error);
+    }
+  }
+  loading.value = false; // Set loading to false once data is fetched
+}
+
+onMounted(async () => {
+  await fetchSubcontractorsAndCache();
+  emit("hide-loading"); // Notify that loading is done
+});
 
 const filteredSubcontractors = computed(() => {
-  let filtered = subcontractors.value.filter(
+  let filtered = store.subcontractors.filter(
     (subcontractor) => !subcontractor.tags.includes("GEN")
   );
 
@@ -89,9 +117,6 @@ const filteredSubcontractors = computed(() => {
           subcontractor.company.toLowerCase().includes(query)) ||
         subcontractor.operatingStates.some((state) =>
           state.toLowerCase().includes(query)
-        ) ||
-        subcontractor.operatingStates.some((state) =>
-          states[state].toLowerCase().includes(query)
         )
     );
   }
@@ -134,14 +159,12 @@ const filteredSubcontractors = computed(() => {
 
   // Sort alphabetically, with non-zero ratings at the top
   filtered.sort((a, b) => {
-    // Compare ratings, prioritizing non-zero ratings
     if ((a.ratings || 0) > 0 && (b.ratings || 0) === 0) {
       return -1; // a has non-zero rating, b has zero rating
     }
     if ((a.ratings || 0) === 0 && (b.ratings || 0) > 0) {
       return 1; // a has zero rating, b has non-zero rating
     }
-    // If both have non-zero or zero ratings, sort alphabetically by company name
     const companyA = a.company.toLowerCase();
     const companyB = b.company.toLowerCase();
     if (companyA < companyB) return -1;
@@ -176,6 +199,9 @@ function resetFilters() {
   showJobDropdown.value = false;
   showStateDropdown.value = false;
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>
@@ -236,6 +262,31 @@ function resetFilters() {
   background-color: #0056b3;
 }
 
+.loading-spinner {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 1);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border-left-color: white;
+  animation: spin 1s ease infinite;
+  margin-top: 2rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
   .filter-page {
     flex-direction: column;
@@ -243,6 +294,11 @@ function resetFilters() {
 
   .left-panel,
   .right-panel {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .loading-spinner {
     width: 100%;
     padding: 10px;
   }

@@ -128,6 +128,9 @@ async function submitClaim() {
     alert("Please fill out all required fields.");
   }
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
   
   <style scoped>

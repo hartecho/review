@@ -158,6 +158,9 @@ useSeoMeta({
   ogImage: "/HARTECHOLogo.webp",
   twitterCard: "/HARTECHOLogo.webp",
 });
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

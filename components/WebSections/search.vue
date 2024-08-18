@@ -1,43 +1,46 @@
 <template>
   <div class="search-container">
-    <h2 class="search-title">Search for Contractors</h2>
+    <h2 class="search-title">Search for a Business</h2>
     <input
       type="text"
       v-model="searchQuery"
       @focus="showList = true"
       @blur="hideList"
       @input="filterList"
-      placeholder="Search contractors by name, operating states, or job types..."
+      placeholder="Search for a business by name, operating states, or job types..."
       class="search-input"
     />
     <transition name="dropdown">
       <ul
-        v-if="searchQuery.length > 0 && filteredContractors.length && showList"
+        v-if="
+          !loading &&
+          searchQuery.length > 0 &&
+          filteredBusinesses.length &&
+          showList
+        "
         class="dropdown-list"
       >
         <li
-          v-for="contractor in filteredContractors"
-          :key="contractor._id"
+          v-for="business in filteredBusinesses"
+          :key="business._id"
           class="dropdown-item"
-          @mousedown.prevent="goToContractorPage(contractor._id)"
+          @mousedown.prevent="goToBusinessPage(business._id, business.type)"
         >
-          <img
-            :src="contractor.picture"
-            alt="Picture"
-            class="contractor-logo"
-          />
-          <div class="contractor-info">
+          <img :src="business.picture" alt="Picture" class="business-logo" />
+          <div class="business-info">
             <h3>
               <span
-                v-for="(part, index) in splitText(contractor.company)"
+                v-for="(part, index) in splitText(business.company)"
                 :key="index"
                 :class="{ highlight: part.match }"
               >
                 {{ part.text }}
               </span>
             </h3>
+            <!-- Business type label -->
+            <p class="business-type">{{ capitalize(business.type) }}</p>
             <ul class="operating-states-list">
-              <li v-for="state in contractor.operatingStates" :key="state">
+              <li v-for="state in business.operatingStates" :key="state">
                 <span
                   v-for="(part, index) in splitText(state)"
                   :key="index"
@@ -48,7 +51,7 @@
               </li>
             </ul>
             <ul class="jobs-list">
-              <li v-for="job in contractor.tags" :key="job">
+              <li v-for="job in business.tags" :key="job">
                 <span
                   v-for="(part, index) in splitText(tagDescriptions[job])"
                   :key="index"
@@ -61,37 +64,88 @@
           </div>
         </li>
       </ul>
+      <div v-else-if="loading" class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
     </transition>
   </div>
 </template>
 
 <script setup>
-import { tagDescriptions } from "~/utils/tagDescriptions.js";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "~/stores/store";
+import { tagDescriptions } from "~/utils/tagDescriptions.js";
+
+const store = useStore();
 
 const searchQuery = ref("");
 const showList = ref(false);
+const loading = ref(true); // Loading state
 const router = useRouter();
 
-const { data: contractors } = await useFetch("/api/contractors");
+// Function to fetch and set data in the store
+async function fetchDataAndCache() {
+  if (
+    !store.lastFetchTime ||
+    Date.now() - store.lastFetchTime >= store.CACHE_DURATION
+  ) {
+    console.log("Data is not valid, fetching new data...");
 
-const filteredContractors = computed(() => {
-  if (!searchQuery.value) return [];
-  const query = searchQuery.value.toLowerCase();
-  return contractors.value.filter(
-    (contractor) =>
-      (contractor.company &&
-        contractor.company.toLowerCase().includes(query)) ||
-      contractor.operatingStates.some((state) =>
-        state.toLowerCase().includes(query)
-      ) ||
-      contractor.tags.some((tag) =>
-        tagDescriptions[tag].toLowerCase().includes(query)
-      )
-  );
+    try {
+      const contractors = await $fetch("/api/contractors");
+      const subcontractors = await $fetch("/api/subcontractors");
+      const suppliers = await $fetch("/api/suppliers");
+      const agencies = await $fetch("/api/agencies");
+
+      store.setContractors(contractors);
+      store.setSubcontractors(subcontractors);
+      store.setSuppliers(suppliers);
+      store.setAgencies(agencies);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  }
+
+  loading.value = false; // Set loading to false once data is fetched
+}
+
+onMounted(async () => {
+  await fetchDataAndCache();
 });
 
+// Combine all businesses into a single list with their types
+const allBusinesses = computed(() => {
+  return [
+    ...store.contractors.map((item) => ({ ...item, type: "contractor" })),
+    ...store.subcontractors.map((item) => ({ ...item, type: "subcontractor" })),
+    ...store.suppliers.map((item) => ({ ...item, type: "supplier" })),
+    ...store.agencies.map((item) => ({ ...item, type: "agency" })),
+  ];
+});
+
+// Filter businesses based on the search query
+const filteredBusinesses = computed(() => {
+  if (!searchQuery.value) return [];
+  const query = searchQuery.value.toLowerCase();
+
+  return allBusinesses.value.filter((business) => {
+    const matchesCompany =
+      business.company?.toLowerCase().includes(query) || false;
+    const matchesStates =
+      business.operatingStates?.some((state) =>
+        state?.toLowerCase().includes(query)
+      ) || false;
+    const matchesTags =
+      business.tags?.some((tag) =>
+        tagDescriptions[tag]?.toLowerCase().includes(query)
+      ) || false;
+
+    return matchesCompany || matchesStates || matchesTags;
+  });
+});
+
+// Utility functions for the UI
 function filterList() {
   showList.value = true;
 }
@@ -102,19 +156,27 @@ function hideList() {
   }, 200);
 }
 
-function goToContractorPage(contractorId) {
-  router.push(`/contractor/${contractorId}`);
+function goToBusinessPage(businessId, businessType) {
+  router.push(`/${businessType}/${businessId}`);
 }
 
 function splitText(text) {
   const query = searchQuery.value.toLowerCase();
-  if (!query) return [{ text, match: false }];
+
+  if (!text || typeof text !== "string") {
+    return [{ text: "", match: false }];
+  }
 
   const parts = text.split(new RegExp(`(${query})`, "gi"));
   return parts.map((part) => ({
     text: part,
     match: part.toLowerCase() === query,
   }));
+}
+
+function capitalize(word) {
+  if (!word) return "";
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
 </script>
 
@@ -217,30 +279,31 @@ function splitText(text) {
   border-bottom: none;
 }
 
-.contractor-logo {
+.business-logo {
   width: 40px;
   height: 40px;
   margin-right: 10px;
   border-radius: 50%;
 }
 
-.contractor-info {
+.business-info {
   flex: 1;
   text-align: left;
   margin-left: 0rem;
 }
 
-.contractor-info h3,
-.contractor-info p,
-.contractor-info ul {
+.business-info h3,
+.business-info p,
+.business-info ul {
   margin: 0 auto;
   font-size: 16px;
   color: #fff;
-  /* max-width: 250px; */
-  /* max-width: 50%; */
 }
 
-.contractor-info h3 {
+.business-type {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ddd;
 }
 
 .operating-states-list,
@@ -249,23 +312,45 @@ function splitText(text) {
   padding: 0;
   margin: 0;
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   justify-content: flex-start;
 }
 
 .operating-states-list li,
 .jobs-list li {
   font-size: 14px;
-  margin: 0 5px;
+  margin: 0 15px 0 0;
   padding: 0;
   color: #fff;
-  max-width: 150px;
+  /* max-width: 150px; */
   text-align: left;
 }
 
 .highlight {
   background-color: darkcyan;
   color: white;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: white;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -296,7 +381,7 @@ function splitText(text) {
     align-items: flex-start;
   }
 
-  .contractor-logo {
+  .business-logo {
     margin-top: 5px;
   }
 }

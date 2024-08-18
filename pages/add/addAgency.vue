@@ -74,6 +74,9 @@ function resetForm() {
     operatingStates: [],
   };
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
     
   <style scoped>

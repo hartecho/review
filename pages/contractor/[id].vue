@@ -115,6 +115,9 @@ const isPro = computed(() => {
   // ISPRO
   return false;
 });
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 

@@ -141,6 +141,9 @@ async function deleteItem() {
     console.error("Error deleting item:", error);
   }
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
   

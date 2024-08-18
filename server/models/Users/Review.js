@@ -39,6 +39,10 @@ const reviewSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    businessName: {
+      type: String,
+      required: true,
+    },
     businessType: {
       type: String,
       required: true,

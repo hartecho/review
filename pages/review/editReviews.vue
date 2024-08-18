@@ -1,297 +1,387 @@
 <template>
-  <div class="wrapper">
-    <h1>Add/Update Review</h1>
+  <div class="edit-reviews-container">
+    <h1>Edit Reviews</h1>
 
-    <div class="content">
-      <div class="section">
-        <h2>Select Business</h2>
-        <select v-model="selectedBusinessId" @change="loadReviews">
-          <option disabled value="">Please select one</option>
-          <option
-            v-for="business in businesses"
-            :key="business._id"
-            :value="business._id"
-          >
-            {{ business.name }}
+    <div class="filter-section">
+      <label for="businessFilter">Filter by Business:</label>
+      <select v-model="selectedBusinessId" @change="filterReviews">
+        <option value="">All Businesses</option>
+        <option
+          v-for="business in uniqueBusinesses"
+          :key="business.businessId"
+          :value="business.businessId"
+        >
+          {{ business.businessName }} ({{ business.businessType }})
+        </option>
+      </select>
+      <button @click="clearFilter">Clear Filter</button>
+    </div>
+
+    <div class="delete-all-section">
+      <label for="deleteConfirmation"
+        >Type "Delete All Reviews" to delete all reviews:</label
+      >
+      <input
+        type="text"
+        v-model="deleteConfirmation"
+        id="deleteConfirmation"
+        placeholder="Delete All Reviews"
+      />
+      <button
+        @click="deleteAllReviews"
+        :disabled="deleteConfirmation !== 'Delete All Reviews'"
+      >
+        Delete All Reviews
+      </button>
+    </div>
+
+    <div class="reviews-list">
+      <div
+        v-for="review in filteredReviews"
+        :key="review._id"
+        class="review-item"
+      >
+        <h2>{{ review.businessName }} ({{ review.businessType }})</h2>
+        <p><strong>Reviewer:</strong> {{ review.reviewerName }}</p>
+        <p><strong>Rating:</strong> {{ review.rating }}</p>
+        <p><strong>Comment:</strong> {{ review.comment }}</p>
+        <p><strong>Tags:</strong> {{ review.tags.join(", ") }}</p>
+        <p>
+          <strong>Date:</strong>
+          {{ new Date(review.date).toLocaleDateString() }}
+        </p>
+
+        <h3>Business Replies</h3>
+        <ul>
+          <li v-for="reply in review.businessReplies" :key="reply._id">
+            <strong>{{ reply.businessRep }}:</strong> {{ reply.comment }}
+            <small> ({{ new Date(reply.date).toLocaleDateString() }})</small>
+          </li>
+        </ul>
+
+        <h3>Review Updates</h3>
+        <ul>
+          <li v-for="update in review.updates" :key="update._id">
+            <strong>Rating:</strong> {{ update.rating }} - {{ update.comment }}
+            <small> ({{ new Date(update.date).toLocaleDateString() }})</small>
+          </li>
+        </ul>
+
+        <div class="edit-buttons">
+          <button @click="editReview(review)">Edit Review</button>
+          <button @click="deleteReview(review._id)">Delete Review</button>
+          <button @click="reassignReview(review)">Reassign Business</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="editingReview" class="edit-modal">
+      <h2>Edit Review</h2>
+      <form @submit.prevent="updateReview">
+        <label for="editRating">Rating:</label>
+        <select v-model="editingReview.rating" id="editRating">
+          <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
+        </select>
+
+        <label for="editComment">Comment:</label>
+        <textarea v-model="editingReview.comment" id="editComment"></textarea>
+
+        <label for="editTags">Tags:</label>
+        <select v-model="editingReview.tags" id="editTags" multiple>
+          <option v-for="tag in availableTags" :key="tag" :value="tag">
+            {{ tag }}
           </option>
         </select>
-      </div>
 
-      <div class="section">
-        <h2>General Information</h2>
-        <div class="input-wrapper">
-          <input
-            type="number"
-            v-model.number="review.rating"
-            min="1"
-            max="5"
-            placeholder=" "
-          />
-          <label>Rating</label>
-        </div>
-        <div class="input-wrapper">
-          <input type="text" v-model="review.comment" placeholder=" " />
-          <label>Comment</label>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>Reviewer Information</h2>
-        <select v-model="review.reviewer" @change="updateReviewer">
-          <option disabled value="">Please select a reviewer</option>
-          <option v-for="user in users" :key="user._id" :value="user._id">
-            {{ user.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="section">
-        <h2>Tags</h2>
-        <ProfileDropdown
-          label="Select Tags"
-          :items="tagDescriptions"
-          :selectedItems="review.tags"
-          @update:selectedItems="updateTags"
+        <label for="editBusiness">Business:</label>
+        <input
+          v-model="editingReview.businessName"
+          id="editBusiness"
+          disabled
         />
-      </div>
 
-      <div class="section action-buttons">
-        <h2>Available Actions</h2>
-        <button @click="addReview">Add Review</button>
-        <button @click="updateReview">Update Review</button>
-        <button @click="deleteReview">Delete Review</button>
-      </div>
+        <label for="editReviewer">Reviewer:</label>
+        <input
+          v-model="editingReview.reviewerName"
+          id="editReviewer"
+          disabled
+        />
+
+        <button type="submit">Save Changes</button>
+        <button type="button" @click="cancelEdit">Cancel</button>
+      </form>
+    </div>
+
+    <div v-if="reassigningReview" class="edit-modal">
+      <h2>Reassign Business</h2>
+      <form @submit.prevent="performReassignment">
+        <label for="newBusinessId">New Business ID:</label>
+        <input v-model="newBusinessId" id="newBusinessId" required />
+
+        <button type="submit">Reassign</button>
+        <button type="button" @click="cancelReassign">Cancel</button>
+      </form>
     </div>
   </div>
 </template>
-  
-  <script setup>
-import { ref, onMounted } from "vue";
-import { tagDescriptions } from "/utils/tagDescriptions.js";
 
-const businesses = ref([]);
-const users = ref([]);
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const reviews = ref([]);
 const selectedBusinessId = ref("");
-const review = ref({
-  businessId: "",
-  businessType: "",
-  reviewer: "",
-  rating: 1,
-  comment: "",
-  tags: [],
+const editingReview = ref(null);
+const reassigningReview = ref(null);
+const newBusinessId = ref("");
+const deleteConfirmation = ref("");
+
+const availableTags = [
+  "GEN",
+  "ARC",
+  "ENG",
+  "DB",
+  "CON",
+  "EXC",
+  "GRD",
+  "STL",
+  "FRM",
+  "DRY",
+  "FLR",
+  "ROF",
+  "SID",
+  "INS",
+  "WTR",
+  "REN",
+  "REM",
+  "DEM",
+  "FIN",
+  "FAC",
+  "HIS",
+  "LND",
+  "CAB",
+  "CTP",
+  "CUR",
+  "TLE",
+  "GLS",
+  "ELEC",
+  "HVAC",
+  "PLM",
+  "AV",
+  "SEC",
+  "ELEV",
+  "UTIL",
+  "SOL",
+  "SPC",
+  "SPEQ",
+  "CLG",
+  "IEQ",
+  "LOG",
+  "WND",
+  "WARE",
+  "ENV",
+  "ENVC",
+  "ASB",
+  "LEAD",
+  "FPS",
+  "SAF",
+  "CKE",
+  "LMEQ",
+  "DTCM",
+  "IEQ",
+  "ACOUST",
+  "AGG",
+  "BRK",
+  "CMP",
+  "CNTN",
+  "CONV",
+  "CNVY",
+  "DRY",
+  "ELE",
+  "FAB",
+  "FRM",
+  "FURN",
+  "GLAS",
+  "GRDN",
+  "HRDW",
+  "HVACS",
+  "INSUL",
+  "LGT",
+  "LUM",
+  "MAR",
+  "MTL",
+  "PAIN",
+  "PLMB",
+  "PLST",
+  "RFMS",
+  "SAND",
+  "SEAL",
+  "STON",
+  "SURF",
+  "TAP",
+  "TEMP",
+  "TOOLS",
+  "WTRS",
+  "OTH",
+];
+
+// Fetch and cache reviews
+onMounted(async () => {
+  try {
+    const response = await $fetch("/api/reviews");
+    reviews.value = response;
+  } catch (error) {
+    console.error("Failed to load reviews:", error);
+  }
 });
 
-const getBusinesses = async () => {
-  try {
-    const response = await $fetch("/api/businesses");
-    businesses.value = response || [];
-  } catch (error) {
-    console.error("Error fetching businesses:", error);
-  }
-};
+const uniqueBusinesses = computed(() => {
+  const businessMap = new Map();
 
-const getUsers = async () => {
-  try {
-    const response = await $fetch("/api/users");
-    users.value = response || [];
-  } catch (error) {
-    console.error("Error fetching users:", error);
-  }
-};
-
-const loadReviews = async () => {
-  try {
-    const response = await $fetch(
-      `/api/reviews?businessId=${selectedBusinessId.value}`
-    );
-    if (response) {
-      const latestReview = response[0];
-      review.value = { ...latestReview };
+  reviews.value.forEach((review) => {
+    if (!businessMap.has(review.businessId)) {
+      businessMap.set(review.businessId, {
+        businessId: review.businessId,
+        businessName: review.businessName,
+        businessType: review.businessType,
+      });
     }
-  } catch (error) {
-    console.error("Error loading reviews:", error);
-  }
-};
+  });
 
-const addReview = async () => {
+  return Array.from(businessMap.values());
+});
+
+const filteredReviews = computed(() => {
+  if (!selectedBusinessId.value) {
+    return reviews.value;
+  }
+  return reviews.value.filter(
+    (review) => review.businessId === selectedBusinessId.value
+  );
+});
+
+function filterReviews() {
+  // Trigger the recomputation of filteredReviews based on selectedBusinessId
+}
+
+function clearFilter() {
+  selectedBusinessId.value = "";
+}
+
+function editReview(review) {
+  editingReview.value = { ...review };
+}
+
+async function updateReview() {
+  const updatedReview = editingReview.value;
+
   try {
-    const newReview = {
-      ...review.value,
-      businessId: selectedBusinessId.value,
-      businessType: businesses.value.find(
-        (b) => b._id === selectedBusinessId.value
-      ).type,
-    };
-    await $fetch("/api/reviews", {
-      method: "POST",
-      body: newReview,
+    await $fetch(`/api/reviews/${updatedReview._id}`, {
+      method: "PUT",
+      body: updatedReview,
     });
-    alert("Review added successfully");
-    loadReviews();
+    const index = reviews.value.findIndex((r) => r._id === updatedReview._id);
+    reviews.value[index] = { ...updatedReview };
+    editingReview.value = null;
   } catch (error) {
-    alert("Error adding review: " + error.message);
-    console.error("Error adding review:", error);
+    console.error("Failed to update review:", error);
   }
-};
+}
 
-const updateReview = async () => {
+function cancelEdit() {
+  editingReview.value = null;
+}
+
+async function deleteReview(reviewId) {
   try {
-    if (review.value._id) {
-      await $fetch(`/api/reviews/${review.value._id}`, {
-        method: "PUT",
-        body: review.value,
-      });
-      alert("Review updated successfully");
-      loadReviews();
-    }
+    await $fetch(`/api/reviews/${reviewId}`, {
+      method: "DELETE",
+    });
+    reviews.value = reviews.value.filter((r) => r._id !== reviewId);
   } catch (error) {
-    alert("Error updating review: " + error.message);
-    console.error("Error updating review:", error);
+    console.error("Failed to delete review:", error);
   }
-};
+}
 
-const deleteReview = async () => {
+async function deleteAllReviews() {
   try {
-    if (review.value._id) {
-      await $fetch(`/api/reviews/${review.value._id}`, {
-        method: "DELETE",
-      });
-      alert("Review deleted successfully");
-      loadReviews();
-    }
+    const response = await $fetch("/api/reviews/deleteAll", {
+      method: "DELETE",
+    });
+    console.log(response.message);
   } catch (error) {
-    alert("Error deleting review: " + error.message);
-    console.error("Error deleting review:", error);
+    console.error("Error deleting all reviews:", error);
   }
-};
+}
 
-const updateTags = (tags) => {
-  review.value.tags = tags;
-};
+function reassignReview(review) {
+  reassigningReview.value = review;
+}
 
-const updateReviewer = (reviewer) => {
-  review.value.reviewer = reviewer;
-};
+async function performReassignment() {
+  try {
+    reassigningReview.value.businessId = newBusinessId.value;
+    await $fetch(`/api/reviews/${reassigningReview.value._id}/reassign`, {
+      method: "POST",
+      body: { newBusinessId: newBusinessId.value },
+    });
+    reassigningReview.value = null;
+    newBusinessId.value = "";
+  } catch (error) {
+    console.error("Failed to reassign review:", error);
+  }
+}
 
-onMounted(() => {
-  getBusinesses();
-  getUsers();
-});
+function cancelReassign() {
+  reassigningReview.value = null;
+}
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
-  
-  <style scoped>
-.wrapper {
-  padding: 2rem;
-  width: 100%;
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Roboto", sans-serif;
-  background-color: #f5f5f5;
+
+<style scoped>
+.edit-reviews-container {
+  padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 2rem;
-  font-weight: 700;
+.filter-section,
+.delete-all-section {
+  margin-bottom: 20px;
 }
 
-.content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  width: 100%;
-}
-
-.section {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.section h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.input-wrapper {
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.input-wrapper input[type="text"],
-.input-wrapper input[type="email"],
-.input-wrapper input[type="number"],
-.input-wrapper select {
-  display: block;
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
+.review-item {
   border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s;
-  background: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
-.input-wrapper input[type="text"]:focus,
-.input-wrapper input[type="email"]:focus,
-.input-wrapper input[type="number"]:focus,
-.input-wrapper select:focus {
-  border-color: #4caf50;
-  outline: none;
+.edit-buttons {
+  margin-top: 10px;
 }
 
-.input-wrapper label {
-  position: absolute;
+.edit-buttons button {
+  margin-right: 5px;
+}
+
+.edit-modal {
+  position: fixed;
   top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  transition: all 0.3s ease;
-  background: #fff;
-  padding: 0 5px;
-  color: #999;
-  pointer-events: none;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 1000;
 }
 
-.input-wrapper input:focus + label,
-.input-wrapper input:not(:placeholder-shown) + label,
-.input-wrapper select:focus + label,
-.input-wrapper select:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 5px;
-  font-size: 0.85rem;
-  color: #4caf50;
+.edit-modal h2 {
+  margin-top: 0;
 }
 
-button {
-  background-color: #ff8210;
-  border: none;
-  color: white;
-  padding: 1rem 2rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1rem;
-  margin: 1rem 0.5rem 0 0;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #e65a00;
-}
-
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.action-buttons {
-  text-align: center;
+.edit-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>
-  

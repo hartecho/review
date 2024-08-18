@@ -154,7 +154,7 @@ function highlightMatch(text) {
 /* For all browsers */
 .results-container {
   overflow-y: auto;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  /* -ms-overflow-style: none; Internet Explorer 10+ */
   scrollbar-width: thin; /* Firefox */
 }
 
@@ -226,6 +226,7 @@ function highlightMatch(text) {
   top: 10px;
   right: 15px;
   text-align: center;
+  color: white;
 }
 
 .star {
@@ -243,6 +244,7 @@ function highlightMatch(text) {
   background: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   width: 100%;
+  color: white;
 }
 
 .no-results button {

@@ -113,8 +113,8 @@ export default defineEventHandler(async (event) => {
         })
       );
     } else { 
-      console.log("Returning ALL Reviews");
-      console.log("query: " + JSON.stringify(query));
+      // console.log("Returning ALL Reviews");
+      // console.log("query: " + JSON.stringify(query));
       reviews = await Review.find({});
     }
 

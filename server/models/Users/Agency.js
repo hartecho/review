@@ -51,6 +51,10 @@ const agencySchema = new mongoose.Schema({
   website: {
     type: String,
   },
+  reviewCount: {
+    type: Number,
+    default: 0
+  },
   ratings: {
     type: Number,
     default: 0,

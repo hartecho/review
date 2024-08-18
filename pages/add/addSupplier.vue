@@ -22,7 +22,7 @@
             :items="supplierTagDescriptions"
             :selected-items="supplier.tags"
             @update:selectedItems="updateTags"
-            label="Select Job Types"
+            label="Select Supply Types"
           />
         </div>
 
@@ -95,6 +95,9 @@ function resetForm() {
     tags: [],
   };
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
     
   <style scoped>

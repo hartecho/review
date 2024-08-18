@@ -98,6 +98,9 @@ const decreaseQuantity = () => {
     removeFromCart(item.value._id);
   }
 };
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
       
 

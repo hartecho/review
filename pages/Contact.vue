@@ -54,6 +54,9 @@
 </template>
 
 <script setup>
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
+
 useSeoMeta({
   title:
     "Contact Us | Subsource – Reach Out for questions regarding Reviews or Promotional Services",

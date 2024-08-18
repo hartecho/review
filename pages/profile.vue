@@ -123,6 +123,9 @@ onMounted(async () => {
     alert("Failed to load profile. Please try again.");
   }
 });
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

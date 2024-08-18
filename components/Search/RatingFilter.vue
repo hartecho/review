@@ -27,6 +27,12 @@ const props = defineProps({
   margin-top: 10px;
 }
 
+label {
+  color: white;
+  margin-left: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .rating-select {
   margin-left: 10px;
   padding: 5px;

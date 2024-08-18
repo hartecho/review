@@ -56,6 +56,9 @@ const sortedClaims = computed(() => {
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 });
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
   
   <style scoped>

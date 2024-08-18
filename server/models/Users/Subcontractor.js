@@ -55,6 +55,10 @@ const subcontractorSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  reviewCount: {
+    type: Number,
+    default: 0
+  },
   tags: [{
     type: String,
     enum: [

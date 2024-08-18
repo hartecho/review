@@ -25,6 +25,7 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
 const config = useRuntimeConfig();
+const emit = defineEmits(["hide-loading"]);
 
 await preloadComponents("WebSectionsIntroWithVid");
 
@@ -40,6 +41,7 @@ useSeoMeta({
 });
 
 onMounted(() => {
+  emit("hide-loading");
   const searchSection = document.getElementById("search-section");
 
   // console.log("config.public.JWT: ", config.public.JWT_SECRET);

@@ -24,6 +24,9 @@
     <button @click="navigateTo('/user/editUsers')" class="nav-button">
       Edit Users
     </button>
+    <button @click="navigateTo('/review/editReviews')" class="nav-button">
+      Edit Reviews
+    </button>
   </div>
 </template>
 
@@ -35,6 +38,9 @@ const router = useRouter();
 const navigateTo = (path) => {
   router.push(path);
 };
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

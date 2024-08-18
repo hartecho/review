@@ -40,6 +40,7 @@
               :class="{ filled: n <= Math.round(agency.ratings) }"
               >&#9733;</span
             >
+            <span class="review-count">({{ agency.reviewCount }})</span>
           </template>
           <p v-else>No Reviews</p>
         </div>
@@ -51,8 +52,8 @@
     </div>
   </div>
 </template>
-    
-    <script setup>
+
+<script setup>
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -89,8 +90,8 @@ function highlightMatch(text) {
   return text.replace(regex, '<span class="highlight">$1</span>');
 }
 </script>
-    
-    <style scoped>
+
+<style scoped>
 .results-container {
   display: flex;
   flex-direction: column;
@@ -196,6 +197,7 @@ function highlightMatch(text) {
   top: 10px;
   right: 15px;
   text-align: center;
+  color: white;
 }
 
 .star {
@@ -207,12 +209,19 @@ function highlightMatch(text) {
   color: #ffd700;
 }
 
+.review-count {
+  font-size: 16px;
+  margin-left: 5px;
+  margin-bottom: 20px;
+}
+
 .no-results {
   text-align: center;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   width: 100%;
+  color: white;
 }
 
 .no-results button {
@@ -250,6 +259,9 @@ function highlightMatch(text) {
   .star {
     font-size: 18px;
   }
+
+  .review-count {
+    font-size: 14px;
+  }
 }
 </style>
-    

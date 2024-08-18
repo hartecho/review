@@ -390,6 +390,9 @@ function showNotification(message, type = "info") {
   notificationMessage.value = message;
   notificationType.value = type;
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

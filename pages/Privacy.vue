@@ -103,6 +103,9 @@ useSeoMeta({
   ogImage: "/SSLogo.webp",
   twitterCard: "/SSLogo.webp",
 });
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

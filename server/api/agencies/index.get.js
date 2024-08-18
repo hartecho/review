@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   if (query) {
     _id = query._id;
   }
-
+  // console.log("In agencies GET");
   try {
     if (_id) {
       const agency = await Agency.findById(_id);
@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
     } else {
       const allAgencies = await Agency.find({});
       await disconnectDB();
+      // console.log("All agencies: " + allAgencies);
       return allAgencies;
     }
   } catch (error) {

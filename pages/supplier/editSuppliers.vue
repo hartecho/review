@@ -108,7 +108,7 @@
       <div class="section">
         <h2>Job Types</h2>
         <ProfileDropdown
-          label="Select Job Types"
+          label="Select Supply Types"
           :items="tagDescriptions"
           :selectedItems="supplier.tags"
           @update:selectedItems="updateTags"
@@ -426,6 +426,9 @@ function showNotification(message, type = "info") {
   notificationMessage.value = message;
   notificationType.value = type;
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>

@@ -29,24 +29,32 @@
           Reset Filters
         </button>
       </div>
-      <div class="right-panel">
+
+      <div class="right-panel" v-if="!loading">
         <SearchAgencyResultsList
           :filteredAgencies="filteredAgencies"
           :searchQuery="searchQuery"
         />
+      </div>
+      <div v-else class="loading-spinner">
+        <div class="spinner"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { states } from "/utils/states.js";
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "~/stores/store"; // Adjust the path if necessary
+import { states } from "~/utils/states.js";
+
+const store = useStore();
 
 const searchQuery = ref("");
 const selectedRating = ref("0");
 const selectedStates = ref([]);
 const showStateDropdown = ref(false);
+const loading = ref(true); // Loading state
 
 useSeoMeta({
   title:
@@ -61,10 +69,31 @@ useSeoMeta({
   twitterCard: "/SSLogo.webp",
 });
 
-const { data: agencies } = await useFetch("/api/agencies");
+// Fetch and cache data for agencies
+async function fetchAgenciesAndCache() {
+  if (
+    store.agencies.length == 0 ||
+    !store.lastFetchTime ||
+    Date.now() - store.lastFetchTime >= store.CACHE_DURATION
+  ) {
+    try {
+      const agencies = await $fetch("/api/agencies");
+      // console.log("agencies: " + JSON.stringify(agencies));
+      store.setAgencies(agencies);
+    } catch (error) {
+      console.log("error: " + error);
+    }
+  }
+  loading.value = false; // Set loading to false once data is fetched
+}
+
+onMounted(async () => {
+  await fetchAgenciesAndCache();
+  emit("hide-loading"); // Notify that loading is done
+});
 
 const filteredAgencies = computed(() => {
-  let filtered = agencies.value;
+  let filtered = store.agencies;
 
   // Filter by search query
   if (searchQuery.value) {
@@ -140,6 +169,9 @@ function resetFilters() {
   selectedStates.value = [];
   showStateDropdown.value = false;
 }
+
+const emit = defineEmits(["hide-loading"]);
+emit("hide-loading");
 </script>
 
 <style scoped>
@@ -200,6 +232,31 @@ function resetFilters() {
   background-color: #0056b3;
 }
 
+.loading-spinner {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 1);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border-left-color: white;
+  animation: spin 1s ease infinite;
+  margin-top: 2rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
   .filter-page {
     flex-direction: column;
@@ -207,6 +264,11 @@ function resetFilters() {
 
   .left-panel,
   .right-panel {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .loading-spinner {
     width: 100%;
     padding: 10px;
   }

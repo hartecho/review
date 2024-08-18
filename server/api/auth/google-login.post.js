@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
             });
         }
 
-        console.log(payload);
+        // console.log(payload);
 
         let user = await User.findOne({ email: payload.email });
         if (!user) {

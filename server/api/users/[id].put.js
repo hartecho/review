@@ -22,11 +22,49 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    // Retrieve the current user
+    const existingUser = await User.findById(userId);
+
+    if (!existingUser) {
+      console.error(`Error: User with id ${userId} not found`);
+      throw createError({ statusCode: 404, message: 'User not found' });
+    }
+
     // Remove duplicates from businesses and businessTypes arrays
     const uniqueBusinesses = [...new Set(body.businesses)];
     const uniqueBusinessTypes = uniqueBusinesses.map((id, index) => {
       return body.businessTypes[body.businesses.indexOf(id)];
     });
+
+    // Identify businesses that are no longer associated with the user
+    const businessesToUnclaim = existingUser.businesses.filter(
+      (businessId) => !uniqueBusinesses.includes(businessId.toString())
+    );
+
+    // Update these businesses to mark them as unclaimed
+    await Promise.all(
+      businessesToUnclaim.map(async (businessId, index) => {
+        const type = existingUser.businessTypes[index];
+        let Model;
+        switch (type) {
+          case 'Contractor':
+            Model = Contractor;
+            break;
+          case 'Subcontractor':
+            Model = Subcontractor;
+            break;
+          case 'Supplier':
+            Model = Supplier;
+            break;
+          case 'Agency':
+            Model = Agency;
+            break;
+          default:
+            return;
+        }
+        await Model.findByIdAndUpdate(businessId, { isClaimed: false });
+      })
+    );
 
     // Update user with unique business assignments
     const updatedUser = await User.findByIdAndUpdate(
@@ -44,11 +82,11 @@ export default defineEventHandler(async (event) => {
     );
 
     if (!updatedUser) {
-      console.error(`Error: User with id ${userId} not found`);
-      throw createError({ statusCode: 404, message: 'User not found' });
+      console.error(`Error: User with id ${userId} not found after update`);
+      throw createError({ statusCode: 404, message: 'User not found after update' });
     }
 
-    // Update all businesses to reflect changes
+    // Update all newly added businesses to reflect changes (mark as claimed)
     await Promise.all(
       updatedUser.businesses.map(async (businessId, index) => {
         const type = updatedUser.businessTypes[index];
