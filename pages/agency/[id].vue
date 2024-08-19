@@ -35,7 +35,7 @@
     
     <script setup>
 const route = useRoute();
-const store = useStore();
+const store = useUserStore();
 const isLoggedIn = computed(() => !!store.token);
 
 const { data: agency, pending: agencyPending } = await useFetch(

@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-const store = useStore();
+const store = useUserStore();
 const emailSignIn = ref(false);
 const email = ref("");
 const password = ref("");

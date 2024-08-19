@@ -114,7 +114,7 @@ const props = defineProps({
 
 const newReview = ref({ rating: null, comment: "", tags: [] });
 const hoverRating = ref(0);
-const store = useStore();
+const store = useUserStore();
 const isLoggedIn = computed(() => !!store.token);
 const loading = ref(false);
 const showLoginModal = ref(false);

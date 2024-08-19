@@ -74,10 +74,9 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "~/stores/store";
 import { tagDescriptions } from "~/utils/tagDescriptions.js";
 
-const store = useStore();
+const store = useBusinessStore();
 
 const searchQuery = ref("");
 const showList = ref(false);

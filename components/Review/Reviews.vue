@@ -146,7 +146,7 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
+const store = useUserStore();
 const showReplies = ref(false);
 const newReply = ref("");
 const loading = ref(false);

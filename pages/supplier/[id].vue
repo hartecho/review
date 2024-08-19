@@ -37,7 +37,7 @@
 import { supplierTagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
-const store = useStore();
+const store = useUserStore();
 const isLoggedIn = computed(() => !!store.token);
 
 const { data: supplier, pending: supplierPending } = await useFetch(

@@ -31,7 +31,7 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
+const store = useUserStore();
 const newReply = ref("");
 const loading = ref(false);
 const error = ref("");

@@ -45,10 +45,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useStore } from "~/stores/store"; // Adjust the path if necessary
 import { states } from "~/utils/states.js";
 
-const store = useStore();
+const store = useBusinessStore();
 
 const searchQuery = ref("");
 const selectedRating = ref("0");
@@ -78,7 +77,6 @@ async function fetchAgenciesAndCache() {
   ) {
     try {
       const agencies = await $fetch("/api/agencies");
-      // console.log("agencies: " + JSON.stringify(agencies));
       store.setAgencies(agencies);
     } catch (error) {
       console.log("error: " + error);

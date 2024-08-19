@@ -39,7 +39,7 @@
 <script setup>
 const showMobileNav = ref(false);
 
-const store = useStore();
+const store = useUserStore();
 const isLoggedIn = computed(() => !!store.token);
 
 // Define the two arrays

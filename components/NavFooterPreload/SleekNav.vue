@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-const store = useStore();
+const store = useUserStore();
 const isLoggedIn = computed(() => !!store.token);
 const userName = computed(() =>
   store.user && store.user.name ? store.user.name : ""

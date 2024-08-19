@@ -54,11 +54,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useStore } from "~/stores/store"; // Adjust the path if necessary
 import { supplierTagDescriptions } from "~/utils/tagDescriptions.js";
 import { states } from "~/utils/states.js";
 
-const store = useStore();
+const store = useBusinessStore();
 
 const searchQuery = ref("");
 const selectedTags = ref([]);
