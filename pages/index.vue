@@ -6,12 +6,9 @@
   <div class="home">
     <section id="search-section" class="search-section ramp-black">
       <WebSectionsSearch />
-      <!-- <NuxtLink to="/contractor/editContractors" class="edit-button-link">
-        <button class="edit-button">Edit Contractors</button>
-      </NuxtLink> -->
     </section>
 
-    <section class="services-section boil-bot-white">
+    <section class="about">
       <!-- prettier-ignore -->
     </section>
 
@@ -84,6 +81,12 @@ onMounted(() => {
   align-items: center;
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
+}
+
+.about {
+  /* height: 45rem;
+  background: url("/aboutBG.webp") no-repeat center top;
+  background-size: cover; */
 }
 </style>
 

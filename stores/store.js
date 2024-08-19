@@ -13,10 +13,12 @@ export const useStore = defineStore('store', () => {
 
   // Token and user management
   const setToken = (newToken) => {
+    // console.log("Setting new token: " + newToken);
     token.value = newToken;
   };
 
   const setUser = (newUser) => {
+    // console.log("Setting new user: " + newUser);
     user.value = newUser;
   };
 
@@ -66,5 +68,14 @@ export const useStore = defineStore('store', () => {
     setAgencies,
   };
 }, {
-  persist: true // This will persist the store's state across page reloads
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'my-store-key', // Custom key for storage in localStorage
+        storage: typeof localStorage !== 'undefined' ? localStorage : null, // Safe access to localStorage
+        paths: ['token', 'user'], // Optional: specify which state properties to persist
+      },
+    ],
+  } // This will persist the store's state across page reloads
 });

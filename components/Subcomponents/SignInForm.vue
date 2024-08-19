@@ -6,83 +6,46 @@
         <img src="/EmailLogo.svg" alt="Email Logo" class="icon" />
         Sign in with Email
       </button>
-      <!-- Custom Google Sign-In Button -->
-      <button class="button google-sign-in-button" @click="triggerGoogleSignIn">
-        <img src="/GoogleLogo.svg" alt="Google Logo" class="icon" />
-        Sign in with Google
-      </button>
-      <!-- Hidden Google Sign-In Element -->
-      <div
-        id="g_id_onload"
-        :data-client_id="googleClientId"
-        data-callback="handleCredentialResponse"
-        data-auto_select="false"
-        data-context="signin"
-        data-itp_support="true"
-        class="hidden"
-      ></div>
-      <div class="g_id_signin hidden" data-type="standard"></div>
+      <GoogleSignInButton
+        @success="handleGoogleLogin"
+        @error="handleLoginError"
+        class="google-button"
+      ></GoogleSignInButton>
     </div>
   </div>
 </template>
+  
+  <script setup>
+import { GoogleSignInButton } from "vue3-google-signin";
 
-<script setup>
-import { onMounted } from "vue";
+const emit = defineEmits(["emailSignIn", "googleLogin", "loginError"]);
 
-const config = useRuntimeConfig();
-const emit = defineEmits([
-  "emailSignIn",
-  "googleLogin",
-  "loginError",
-  "closeModal",
-]);
+const handleGoogleLogin = (response) => {
+  emit("googleLogin", response);
+};
 
-const googleClientId = config.public.GOOGLE_CLIENT_ID;
+const handleLoginError = (error) => {
+  emit("loginError", error);
+};
 
 const onEmailSignIn = () => {
   emit("emailSignIn");
 };
-
-const triggerGoogleSignIn = () => {
-  emit("closeModal");
-  const googleSignInButton = document.querySelector(
-    '.g_id_signin div[role="button"]'
-  );
-  if (googleSignInButton) {
-    googleSignInButton.click();
-  }
-};
-
-onMounted(() => {
-  // Load Google Identity Services library
-  const script = document.createElement("script");
-  script.src = "https://accounts.google.com/gsi/client";
-  script.async = true;
-  script.defer = true;
-  document.head.appendChild(script);
-
-  // Define the callback function for handling the sign-in response
-  window.handleCredentialResponse = (response) => {
-    emit("googleLogin", response);
-  };
-});
 </script>
-
+  
 <style scoped>
 .form-container {
   width: 48%;
   position: relative;
-  margin: 0 auto;
-  height: auto;
 }
 
 h2 {
-  margin-bottom: 1.5rem;
   color: white;
   text-decoration: underline;
 }
 
 .form-content {
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -90,55 +53,47 @@ h2 {
 }
 
 .button {
-  width: 100%;
+  color: black;
   padding: 0.75rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
   border: none;
-  border-radius: 25px;
-  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: box-shadow 0.3s, transform 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+  transition: background 0.3s;
+  width: 11.25rem;
+  display: block;
 }
 
 .sign-in-button {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: background 0.3s;
   color: white;
   font-weight: bold;
 }
 
 .sign-in-button:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+  background: #0056b3;
 }
 
-.google-sign-in-button {
-  background: white;
-  color: black;
-  font-weight: bold;
-  border: 1px solid #4285f4;
+.google-button {
+  color: #4285f4;
+  text-shadow: none;
+  transition: background 0.3s, color 0.3s;
 }
 
-.google-sign-in-button:hover {
-  background: #ff8310;
-  color: white;
+.google-button:hover {
+  color: #fff;
 }
 
 .icon {
   width: 20px;
   height: 20px;
   margin-right: 8px;
-}
-
-.hidden {
-  display: none;
 }
 
 @media (max-width: 480px) {
