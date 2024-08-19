@@ -283,8 +283,9 @@ function toggleMobileNav() {
 }
 
 .login-button:active {
-  background-color: #388e3c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: #ff8210;
+  transform: translateY(2px); /* Moves the button down slightly */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Reduces the shadow to make it look indented */
 }
 
 .link {

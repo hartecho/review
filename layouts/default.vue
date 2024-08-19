@@ -88,7 +88,9 @@ const currentPaths = computed(() => {
 
 footer {
   position: relative;
-  background-color: #101118;
+  /* background-color: #101118; */
+  background-color: black;
+  border-top: 1px solid gray;
   z-index: 5;
   display: flex;
   align-items: center;

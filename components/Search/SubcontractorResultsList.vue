@@ -117,6 +117,7 @@ function highlightMatch(text) {
   overflow-y: auto;
   padding-top: 1rem;
   padding-right: 0.5rem;
+  color: white;
 }
 
 /* Webkit-based browsers (Chrome, Safari, Edge) */

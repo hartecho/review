@@ -184,6 +184,7 @@ emit("hide-loading");
   font-size: 3rem;
   text-shadow: 1px 1px 2px black;
   color: white;
+  padding-left: 1rem;
 }
 
 .filters {
@@ -310,6 +311,10 @@ emit("hide-loading");
 }
 
 @media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+
   .blog-list {
     padding: 3rem 0;
   }

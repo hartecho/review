@@ -249,7 +249,9 @@ emit("hide-loading");
 .wrapper {
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
-  height: 100vh;
+  height: auto;
+  min-height: 90vh;
+  padding-bottom: 2rem;
 }
 
 .page-header {

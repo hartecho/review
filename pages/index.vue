@@ -10,6 +10,7 @@
 
     <section class="about">
       <!-- prettier-ignore -->
+      <WebSectionsAbout/>
     </section>
 
     <section>
@@ -41,10 +42,6 @@ onMounted(() => {
   emit("hide-loading");
   const searchSection = document.getElementById("search-section");
 
-  // console.log("config.public.JWT: ", config.public.JWT_SECRET);
-  // console.log("config.public.CLIENT: ", config.public.GOOGLE_CLIENT_ID);
-  // console.log("config.public.SEC: ", config.public.GOOGLE_CLIENT_SECRET);
-
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
     const offset = scrollPosition * 0.5; // Adjust this multiplier to change the effect
@@ -70,7 +67,6 @@ onMounted(() => {
 }
 
 .search-section {
-  /* margin-top: -10rem; */
   position: relative;
   height: 45rem;
   width: 100%;
@@ -84,9 +80,8 @@ onMounted(() => {
 }
 
 .about {
-  /* height: 45rem;
-  background: url("/aboutBG.webp") no-repeat center top;
-  background-size: cover; */
+  background: black;
+  width: 100%;
 }
 </style>
 
