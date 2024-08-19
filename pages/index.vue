@@ -1,7 +1,3 @@
-<!-- #005ba0 rgb(0,91,160) DarkBlue -->
-<!-- #01c5ee rgb(1, 197, 238) LightBlue -->
-<!-- #f0f2f5 rgb(240, 242, 245) OffWhite -->
-
 <template>
   <div class="home">
     <section id="search-section" class="search-section ramp-black">
@@ -18,7 +14,6 @@
     </section>
   </div>
 </template>
-
 
 <script setup>
 import { onMounted, onUnmounted } from "vue";
@@ -44,6 +39,7 @@ onMounted(() => {
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
+
     const offset = scrollPosition * 0.5; // Adjust this multiplier to change the effect
     searchSection.style.backgroundPosition = `center ${offset}px`;
   };
@@ -56,8 +52,7 @@ onMounted(() => {
 });
 </script>
 
-
-<style scoped media="screen">
+<style scoped>
 .home {
   display: flex;
   flex-direction: column;
@@ -68,7 +63,7 @@ onMounted(() => {
 
 .search-section {
   position: relative;
-  height: 45rem;
+  height: 50rem;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -77,6 +72,9 @@ onMounted(() => {
   align-items: center;
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
+  z-index: 1;
+  margin-top: -20px; /* Adjust this to the height of your navbar */
+  padding-top: 20px; /* Adjust this to maintain the original padding */
 }
 
 .about {
@@ -84,4 +82,3 @@ onMounted(() => {
   width: 100%;
 }
 </style>
-

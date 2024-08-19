@@ -80,7 +80,7 @@ h1 {
 }
 
 h1 span {
-  color: #ffb400; /* Highlighted words color */
+  color: #ff8210; /* Highlighted words color */
 }
 
 p {
@@ -118,13 +118,13 @@ p {
 }
 
 .primary-button {
-  background-color: #ffb400;
+  background-color: #ff8210;
   color: #000000;
   border: none;
 }
 
 .primary-button:hover {
-  background-color: #ff9f00;
+  background-color: #faaa4a;
 }
 
 .secondary-button {

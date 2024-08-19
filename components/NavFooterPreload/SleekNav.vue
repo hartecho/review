@@ -199,7 +199,7 @@ function toggleMobileNav() {
 }
 
 .top-nav {
-  background-color: rgba(30, 30, 30, 0.9); /* Color for top section */
+  background-color: rgba(30, 30, 30, 1); /* Color for top section */
   width: 100%;
 }
 
@@ -269,7 +269,7 @@ function toggleMobileNav() {
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
-  background-color: #ff8210;
+  background-color: #ff8210; /* orange */
   color: white;
   text-shadow: 1px 1px 5px black;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
