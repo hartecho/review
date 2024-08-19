@@ -135,7 +135,7 @@ async function submitReview() {
   if (newReview.value.comment.trim() && newReview.value.rating) {
     loading.value = true;
     error.value = "";
-    console.log("Business name: " + props.business.company);
+    // console.log("Business name: " + props.business.company);
     try {
       const response = await $fetch("/api/reviews", {
         method: "POST",

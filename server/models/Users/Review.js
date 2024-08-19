@@ -1,5 +1,22 @@
 import mongoose from 'mongoose';
 
+// Combine both tag description arrays
+const combinedTags = [
+  // Construction and Engineering (from tagDescriptions)
+  'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CKE', 'CLE', 'CLG', 'CTP', 'CON', 'CUR', 
+  'DB', 'DEM', 'DRY', 'DTCM', 'ELEC', 'ELEV', 'ENG', 'ENV', 'ENVC', 'EXC', 'FAC', 
+  'FIN', 'FLR', 'FPS', 'FRM', 'GLS', 'GRD', 'HVAC', 'HIS', 'IEQ', 'INS', 'LND', 
+  'LEAD', 'LOG', 'LMEQ', 'PNT', 'PLM', 'REN', 'REM', 'ROF', 'SEC', 'SID', 'SOL', 
+  'SPC', 'SPEQ', 'STL', 'TLE', 'UTIL', 'WARE', 'WND', 'WTR', 'OTH',
+
+  // Material Suppliers (from supplierTagDescriptions)
+  'ACOUST', 'AGG', 'BRK', 'CABL', 'CAB', 'CKE', 'CMP', 'CNTN', 'CONV', 'CNVY', 
+  'DRY', 'ELE', 'ENG', 'ENV', 'FAB', 'FRM', 'FURN', 'GLAS', 'GRDN', 'HRDW', 
+  'HVACS', 'INSUL', 'LGT', 'LMEQ', 'LOG', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 
+  'PLST', 'RFMS', 'SAF', 'SAND', 'SEAL', 'SPEQ', 'STON', 'SURF', 'TAP', 'TEMP', 
+  'TOOLS', 'WARE', 'WALL', 'WNDW', 'WTRS',
+];
+
 const reviewUpdateSchema = new mongoose.Schema({
   rating: {
     type: Number,
@@ -71,25 +88,7 @@ const reviewSchema = new mongoose.Schema(
     tags: [
       {
         type: String,
-        enum: [
-          // Construction and Engineering
-          'GEN', 'ARC', 'ENG', 'DB', 'CON', 'EXC', 'GRD', 'STL', 'FRM', 'DRY', 'FLR',
-          'ROF', 'SID', 'INS', 'WTR', 'REN', 'REM', 'DEM', 'FIN', 'FAC', 'HIS', 
-          'LND', 'CAB', 'CTP', 'CUR', 'TLE', 'GLS', 'ELEC', 'HVAC', 'PLM', 'AV',
-          'SEC', 'ELEV', 'UTIL', 'SOL', 'SPC', 'SPEQ', 'CLG', 'IEQ', 'LOG', 'WND',
-          'WARE',
-          // Environmental and Safety
-          'ENV', 'ENVC', 'ASB', 'LEAD', 'FPS', 'SAF',
-          // Specialized Services
-          'CKE', 'LMEQ', 'DTCM', 'IEQ',
-          // Material Suppliers
-          'ACOUST', 'AGG', 'BRK', 'CAB', 'CMP', 'CNTN', 'CONV', 'CNVY', 'DRY', 'ELE',
-          'ENG', 'ENV', 'FAB', 'FRM', 'FURN', 'GLAS', 'GRDN', 'HRDW', 'HVACS', 
-          'INSUL', 'LGT', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 'PLST', 'RFMS', 
-          'SAND', 'SEAL', 'STON', 'SURF', 'TAP', 'TEMP', 'TOOLS', 'WTRS',
-          // Other
-          'OTH',
-        ],
+        enum: combinedTags,
         required: true,
       },
     ],

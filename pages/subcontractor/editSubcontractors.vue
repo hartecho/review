@@ -31,6 +31,31 @@
           <input type="text" v-model="subcontractor.picture" placeholder=" " />
           <label>Picture</label>
         </div>
+
+        <!-- New field for specifying Group or Individual -->
+        <div class="input-wrappe">
+          <label class="individual-group-label"
+            >Is this subcontractor an individual or a group?</label
+          >
+          <div class="individual-group-options">
+            <label class="option">
+              <input
+                type="radio"
+                v-model="subcontractor.isIndividual"
+                :value="false"
+              />
+              Group
+            </label>
+            <label class="option">
+              <input
+                type="radio"
+                v-model="subcontractor.isIndividual"
+                :value="true"
+              />
+              Individual
+            </label>
+          </div>
+        </div>
       </div>
 
       <div class="section">
@@ -205,6 +230,7 @@ const subcontractor = ref({
   },
   operatingStates: [],
   tags: [],
+  isIndividual: false, // Default to group (false)
 });
 
 const deleteConfirmation = ref("");
@@ -289,6 +315,11 @@ function initializeSubcontractorFields(subcontractor) {
     needsUpdate = true;
   }
 
+  if (subcontractor.isIndividual === undefined) {
+    subcontractor.isIndividual = false; // Default to group if undefined
+    needsUpdate = true;
+  }
+
   return needsUpdate;
 }
 
@@ -324,6 +355,7 @@ function loadSubcontractor() {
       },
       operatingStates: [],
       tags: [],
+      isIndividual: false, // Default to group
     };
   }
 }
@@ -525,6 +557,17 @@ h1 {
 label {
   display: block;
   margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.individual-group-options {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.option {
   font-weight: 500;
   color: #333;
 }

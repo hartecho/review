@@ -33,6 +33,25 @@
           :selectedRating="selectedRating"
           @update:selectedRating="selectedRating = $event"
         />
+        <!-- New Filter for Group vs. Individual -->
+        <div class="individual-group-filter">
+          <label>
+            <input
+              type="checkbox"
+              v-model="showIndividuals"
+              @change="handleIndividualChange"
+            />
+            Show Individuals Only
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              v-model="showGroups"
+              @change="handleGroupChange"
+            />
+            Show Groups Only
+          </label>
+        </div>
         <button @click="resetFilters" class="reset-button">
           Reset Filters
         </button>
@@ -66,6 +85,8 @@ const selectedStates = ref([]);
 const selectedRating = ref("0");
 const showJobDropdown = ref(false);
 const showStateDropdown = ref(false);
+const showIndividuals = ref(false); // New state for individual filter
+const showGroups = ref(false); // New state for group filter
 const loading = ref(true); // Loading state
 
 useSeoMeta({
@@ -157,6 +178,13 @@ const filteredSubcontractors = computed(() => {
     }
   }
 
+  // Filter by individual or group
+  if (showIndividuals.value) {
+    filtered = filtered.filter((subcontractor) => subcontractor.isIndividual);
+  } else if (showGroups.value) {
+    filtered = filtered.filter((subcontractor) => !subcontractor.isIndividual);
+  }
+
   // Sort alphabetically, with non-zero ratings at the top
   filtered.sort((a, b) => {
     if ((a.ratings || 0) > 0 && (b.ratings || 0) === 0) {
@@ -174,6 +202,18 @@ const filteredSubcontractors = computed(() => {
 
   return filtered;
 });
+
+function handleIndividualChange() {
+  if (showIndividuals.value) {
+    showGroups.value = false; // Uncheck the group checkbox if individuals are selected
+  }
+}
+
+function handleGroupChange() {
+  if (showGroups.value) {
+    showIndividuals.value = false; // Uncheck the individual checkbox if groups are selected
+  }
+}
 
 function toggleJobDropdown() {
   showJobDropdown.value = !showJobDropdown.value;
@@ -198,6 +238,8 @@ function resetFilters() {
   selectedRating.value = "0";
   showJobDropdown.value = false;
   showStateDropdown.value = false;
+  showIndividuals.value = false; // Reset the individual filter
+  showGroups.value = false; // Reset the group filter
 }
 
 const emit = defineEmits(["hide-loading"]);
@@ -244,6 +286,21 @@ emit("hide-loading");
 
 .left-panel {
   margin-top: 1rem;
+}
+
+.individual-group-filter {
+  margin-top: 10px;
+}
+
+label {
+  color: white;
+  margin-left: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.individual-group-filter label {
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
 .reset-button {

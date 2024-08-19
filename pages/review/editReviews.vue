@@ -2,9 +2,13 @@
   <div class="edit-reviews-container">
     <h1>Edit Reviews</h1>
 
-    <div class="filter-section">
+    <div class="filter-section section">
       <label for="businessFilter">Filter by Business:</label>
-      <select v-model="selectedBusinessId" @change="filterReviews">
+      <select
+        v-model="selectedBusinessId"
+        @change="filterReviews"
+        class="dropdown-button"
+      >
         <option value="">All Businesses</option>
         <option
           v-for="business in uniqueBusinesses"
@@ -14,10 +18,10 @@
           {{ business.businessName }} ({{ business.businessType }})
         </option>
       </select>
-      <button @click="clearFilter">Clear Filter</button>
+      <button @click="clearFilter" class="action-button">Clear Filter</button>
     </div>
 
-    <div class="delete-all-section">
+    <div class="delete-all-section section">
       <label for="deleteConfirmation"
         >Type "Delete All Reviews" to delete all reviews:</label
       >
@@ -26,16 +30,18 @@
         v-model="deleteConfirmation"
         id="deleteConfirmation"
         placeholder="Delete All Reviews"
+        class="delete-confirmation-input"
       />
       <button
         @click="deleteAllReviews"
         :disabled="deleteConfirmation !== 'Delete All Reviews'"
+        class="action-button"
       >
         Delete All Reviews
       </button>
     </div>
 
-    <div class="reviews-list">
+    <div class="reviews-list section">
       <div
         v-for="review in filteredReviews"
         :key="review._id"
@@ -68,9 +74,15 @@
         </ul>
 
         <div class="edit-buttons">
-          <button @click="editReview(review)">Edit Review</button>
-          <button @click="deleteReview(review._id)">Delete Review</button>
-          <button @click="reassignReview(review)">Reassign Business</button>
+          <button @click="editReview(review)" class="action-button">
+            Edit Review
+          </button>
+          <button @click="deleteReview(review._id)" class="action-button">
+            Delete Review
+          </button>
+          <button @click="reassignReview(review)" class="action-button">
+            Reassign Business
+          </button>
         </div>
       </div>
     </div>
@@ -107,8 +119,12 @@
           disabled
         />
 
-        <button type="submit">Save Changes</button>
-        <button type="button" @click="cancelEdit">Cancel</button>
+        <div class="edit-buttons">
+          <button type="submit" class="action-button">Save Changes</button>
+          <button type="button" @click="cancelEdit" class="action-button">
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
 
@@ -116,12 +132,28 @@
       <h2>Reassign Business</h2>
       <form @submit.prevent="performReassignment">
         <label for="newBusinessId">New Business ID:</label>
-        <input v-model="newBusinessId" id="newBusinessId" required />
+        <input
+          v-model="newBusinessId"
+          id="newBusinessId"
+          required
+          class="text-input"
+        />
 
-        <button type="submit">Reassign</button>
-        <button type="button" @click="cancelReassign">Cancel</button>
+        <div class="edit-buttons">
+          <button type="submit" class="action-button">Reassign</button>
+          <button type="button" @click="cancelReassign" class="action-button">
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
+
+    <!-- Notification Popup -->
+    <SubcomponentsNotificationPopup
+      v-if="notificationMessage"
+      :message="notificationMessage"
+      :type="notificationType"
+    />
   </div>
 </template>
 
@@ -136,96 +168,13 @@ const reassigningReview = ref(null);
 const newBusinessId = ref("");
 const deleteConfirmation = ref("");
 
+const notificationMessage = ref(""); // Notification message
+const notificationType = ref("info"); // Notification type: 'info', 'success', 'error'
+
 const availableTags = [
-  "GEN",
-  "ARC",
-  "ENG",
-  "DB",
-  "CON",
-  "EXC",
-  "GRD",
-  "STL",
-  "FRM",
-  "DRY",
-  "FLR",
-  "ROF",
-  "SID",
-  "INS",
-  "WTR",
-  "REN",
-  "REM",
-  "DEM",
-  "FIN",
-  "FAC",
-  "HIS",
-  "LND",
-  "CAB",
-  "CTP",
-  "CUR",
-  "TLE",
-  "GLS",
-  "ELEC",
-  "HVAC",
-  "PLM",
-  "AV",
-  "SEC",
-  "ELEV",
-  "UTIL",
-  "SOL",
-  "SPC",
-  "SPEQ",
-  "CLG",
-  "IEQ",
-  "LOG",
-  "WND",
-  "WARE",
-  "ENV",
-  "ENVC",
-  "ASB",
-  "LEAD",
-  "FPS",
-  "SAF",
-  "CKE",
-  "LMEQ",
-  "DTCM",
-  "IEQ",
-  "ACOUST",
-  "AGG",
-  "BRK",
-  "CMP",
-  "CNTN",
-  "CONV",
-  "CNVY",
-  "DRY",
-  "ELE",
-  "FAB",
-  "FRM",
-  "FURN",
-  "GLAS",
-  "GRDN",
-  "HRDW",
-  "HVACS",
-  "INSUL",
-  "LGT",
-  "LUM",
-  "MAR",
-  "MTL",
-  "PAIN",
-  "PLMB",
-  "PLST",
-  "RFMS",
-  "SAND",
-  "SEAL",
-  "STON",
-  "SURF",
-  "TAP",
-  "TEMP",
-  "TOOLS",
-  "WTRS",
-  "OTH",
+  // List of available tags
 ];
 
-// Fetch and cache reviews
 onMounted(async () => {
   try {
     const response = await $fetch("/api/reviews");
@@ -237,7 +186,6 @@ onMounted(async () => {
 
 const uniqueBusinesses = computed(() => {
   const businessMap = new Map();
-
   reviews.value.forEach((review) => {
     if (!businessMap.has(review.businessId)) {
       businessMap.set(review.businessId, {
@@ -247,7 +195,6 @@ const uniqueBusinesses = computed(() => {
       });
     }
   });
-
   return Array.from(businessMap.values());
 });
 
@@ -274,7 +221,6 @@ function editReview(review) {
 
 async function updateReview() {
   const updatedReview = editingReview.value;
-
   try {
     await $fetch(`/api/reviews/${updatedReview._id}`, {
       method: "PUT",
@@ -283,8 +229,10 @@ async function updateReview() {
     const index = reviews.value.findIndex((r) => r._id === updatedReview._id);
     reviews.value[index] = { ...updatedReview };
     editingReview.value = null;
+    showNotification("Review updated successfully", "success");
   } catch (error) {
     console.error("Failed to update review:", error);
+    showNotification("Failed to update review: " + error.message, "error");
   }
 }
 
@@ -298,8 +246,10 @@ async function deleteReview(reviewId) {
       method: "DELETE",
     });
     reviews.value = reviews.value.filter((r) => r._id !== reviewId);
+    showNotification("Review deleted successfully", "success");
   } catch (error) {
     console.error("Failed to delete review:", error);
+    showNotification("Failed to delete review: " + error.message, "error");
   }
 }
 
@@ -309,8 +259,10 @@ async function deleteAllReviews() {
       method: "DELETE",
     });
     console.log(response.message);
+    showNotification("All reviews deleted successfully", "success");
   } catch (error) {
     console.error("Error deleting all reviews:", error);
+    showNotification("Error deleting all reviews: " + error.message, "error");
   }
 }
 
@@ -327,13 +279,20 @@ async function performReassignment() {
     });
     reassigningReview.value = null;
     newBusinessId.value = "";
+    showNotification("Review reassigned successfully", "success");
   } catch (error) {
     console.error("Failed to reassign review:", error);
+    showNotification("Failed to reassign review: " + error.message, "error");
   }
 }
 
 function cancelReassign() {
   reassigningReview.value = null;
+}
+
+function showNotification(message, type = "info") {
+  notificationMessage.value = message;
+  notificationType.value = type;
 }
 
 const emit = defineEmits(["hide-loading"]);
@@ -342,26 +301,56 @@ emit("hide-loading");
 
 <style scoped>
 .edit-reviews-container {
-  padding: 20px;
+  padding: 2rem;
+  width: 100%;
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
 }
 
-.filter-section,
-.delete-all-section {
-  margin-bottom: 20px;
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.section {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
 .review-item {
   border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .edit-buttons {
+  display: flex;
+  gap: 10px;
   margin-top: 10px;
 }
 
-.edit-buttons button {
-  margin-right: 5px;
+.edit-buttons .action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  width: 100%;
+}
+
+.edit-buttons .action-button:hover {
+  background-color: #ff8210;
+  color: white;
 }
 
 .edit-modal {
@@ -371,17 +360,34 @@ emit("hide-loading");
   transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
-  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 
 .edit-modal h2 {
   margin-top: 0;
+  font-size: 1.8rem;
 }
 
 .edit-modal form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.delete-confirmation-input {
+  width: 60%;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+  margin-bottom: 1.5rem;
+}
+
+.delete-confirmation-input:focus {
+  border-color: #ff8210;
+  outline: none;
 }
 </style>

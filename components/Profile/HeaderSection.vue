@@ -7,6 +7,13 @@
         </div>
         <div class="profile-details">
           <h1>{{ business.company }}</h1>
+          <!-- Conditionally display "Individual" or "Group" based on the existence of the isIndividual field -->
+          <p
+            v-if="business.hasOwnProperty('isIndividual')"
+            class="business-type"
+          >
+            Subcontractor {{ business.isIndividual ? "Individual" : "Group" }}
+          </p>
           <div class="ratings-section">
             <p v-if="business.ratings > 0" class="star-rating">
               {{ business.ratings.toFixed(1) }}
@@ -158,9 +165,18 @@ const claimBusiness = () => {
   margin-bottom: 10px;
 }
 
+.business-type {
+  font-size: 18px;
+  /* margin-bottom: 10px; */
+}
+
 @media (min-width: 768px) {
   .profile-details h1 {
     font-size: 48px;
+  }
+
+  .business-type {
+    font-size: 24px;
   }
 }
 

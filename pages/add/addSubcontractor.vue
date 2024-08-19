@@ -29,6 +29,31 @@
           />
         </div>
 
+        <!-- New field for specifying Group or Individual -->
+        <div class="input-wrappe">
+          <label class="individual-group-label"
+            >Is this subcontractor an individual or a group?</label
+          >
+          <div class="individual-group-options">
+            <label class="option">
+              <input
+                type="radio"
+                v-model="subcontractor.isIndividual"
+                :value="false"
+              />
+              Group
+            </label>
+            <label class="option">
+              <input
+                type="radio"
+                v-model="subcontractor.isIndividual"
+                :value="true"
+              />
+              Individual
+            </label>
+          </div>
+        </div>
+
         <div class="final-buttons">
           <SubcomponentsLoadingButton
             :isLoading="isLoading"
@@ -40,9 +65,8 @@
     </div>
   </div>
 </template>
-  
-    
-  <script setup>
+
+<script setup>
 import { tagDescriptions } from "~/utils/tagDescriptions.js";
 import { states } from "/utils/states.js";
 
@@ -51,6 +75,7 @@ const isLoading = ref(false);
 
 const subcontractor = ref({
   company: "",
+  isIndividual: false, // Set the default to Group (false)
   operatingStates: [],
   tags: [],
 });
@@ -58,6 +83,7 @@ const subcontractor = ref({
 const isFormValid = computed(() => {
   return (
     subcontractor.value.company &&
+    subcontractor.value.isIndividual !== null && // Ensure individual or group is selected
     subcontractor.value.operatingStates.length > 0 &&
     subcontractor.value.tags.length > 0
   );
@@ -79,7 +105,6 @@ async function addSubcontractor() {
         method: "POST",
         body: subcontractor.value,
       });
-      // console.log("response: " + JSON.stringify(response));
       router.push(`/subcontractor/${response._id}`);
     } catch (error) {
       isLoading.value = false;
@@ -95,6 +120,7 @@ async function addSubcontractor() {
 function resetForm() {
   subcontractor.value = {
     company: "",
+    isIndividual: false, // Reset the individual or group selection to Group
     operatingStates: [],
     tags: [],
   };
@@ -103,8 +129,8 @@ function resetForm() {
 const emit = defineEmits(["hide-loading"]);
 emit("hide-loading");
 </script>
-    
-  <style scoped>
+
+<style scoped>
 .wrapper {
   padding: 4rem 0;
   width: 100%;
@@ -113,7 +139,6 @@ emit("hide-loading");
   height: auto;
   font-family: "Roboto", sans-serif;
   background-size: cover;
-  /* background-color: #f5f5f5; */
 }
 
 h1 {
@@ -127,6 +152,7 @@ h1 {
 .content {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap; /* Allow content to wrap */
   gap: 2rem;
 }
 
@@ -177,6 +203,24 @@ h1 {
   left: 5px;
   font-size: 0.85rem;
   color: #4caf50;
+}
+
+.individual-group-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.individual-group-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.individual-group-options label {
+  font-weight: 500;
+  color: #333;
 }
 
 .custom-select {
@@ -332,5 +376,3 @@ button:disabled {
   }
 }
 </style>
-  
-  
