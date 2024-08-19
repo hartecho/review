@@ -32,8 +32,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-
 const store = useStore();
 const emailSignIn = ref(false);
 const email = ref("");
@@ -78,12 +76,12 @@ const handleGoogleLogin = async (response) => {
   const { credential } = response;
   if (credential) {
     try {
-      const res = await $fetch("/api/auth/google-login", {
+      const response = await $fetch("/api/auth/google-login", {
         method: "POST",
         body: { token: credential },
       });
-      store.setToken(res.token);
-      store.setUser(res.user);
+      store.setToken(response.token);
+      store.setUser(response.user);
       closeModal();
     } catch (error) {
       loginError.value = {
@@ -121,11 +119,21 @@ const handleSignUp = async (signUpData) => {
       password: signUpData.password,
     });
   } catch (error) {
-    isLoading.value = false;
     signUpError.value.general =
       error.data.message || "Sign-up failed. Please try again.";
+  } finally {
+    isLoading.value = false;
   }
 };
+
+// Mount Google One Tap on modal open
+onMounted(() => {
+  const script = document.createElement("script");
+  script.src = "https://accounts.google.com/gsi/client";
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+});
 </script>
 
 <style scoped>
@@ -240,12 +248,6 @@ h2 {
   opacity: 0;
 }
 
-* {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
-
 @media (max-width: 480px) {
   h1 {
     margin: 1rem 0 3rem 0;
@@ -266,10 +268,11 @@ body {
   text-shadow: 1px 1px 1px black;
 }
 
-@media (max-wdith: 480px) {
+@media (max-width: 480px) {
   .modal {
     overflow: hidden;
     overflow-y: scroll;
   }
 }
 </style>
+

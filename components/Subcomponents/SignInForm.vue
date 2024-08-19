@@ -6,10 +6,22 @@
         <img src="/EmailLogo.svg" alt="Email Logo" class="icon" />
         Sign in with Email
       </button>
-      <button class="button google-button" @click="onGoogleSignIn">
+      <!-- Custom Google Sign-In Button -->
+      <button class="button google-sign-in-button" @click="triggerGoogleSignIn">
         <img src="/GoogleLogo.svg" alt="Google Logo" class="icon" />
         Sign in with Google
       </button>
+      <!-- Hidden Google Sign-In Element -->
+      <div
+        id="g_id_onload"
+        :data-client_id="googleClientId"
+        data-callback="handleCredentialResponse"
+        data-auto_select="false"
+        data-context="signin"
+        data-itp_support="true"
+        class="hidden"
+      ></div>
+      <div class="g_id_signin hidden" data-type="standard"></div>
     </div>
   </div>
 </template>
@@ -18,11 +30,21 @@
 import { onMounted } from "vue";
 
 const config = useRuntimeConfig();
-
 const emit = defineEmits(["emailSignIn", "googleLogin", "loginError"]);
+
+const googleClientId = config.public.GOOGLE_CLIENT_ID;
 
 const onEmailSignIn = () => {
   emit("emailSignIn");
+};
+
+const triggerGoogleSignIn = () => {
+  const googleSignInButton = document.querySelector(
+    '.g_id_signin div[role="button"]'
+  );
+  if (googleSignInButton) {
+    googleSignInButton.click();
+  }
 };
 
 onMounted(() => {
@@ -32,36 +54,12 @@ onMounted(() => {
   script.async = true;
   script.defer = true;
   document.head.appendChild(script);
-});
 
-const onGoogleSignIn = () => {
-  try {
-    google.accounts.id.initialize({
-      client_id: config.public.GOOGLE_CLIENT_ID,
-      callback: handleGoogleLogin,
-      use_fedcm_for_prompt: true, // Opt-in to FedCM API
-    });
-
-    google.accounts.id.prompt((notification) => {
-      if (notification.isSkippedMoment()) {
-        console.error("Google Sign-In prompt skipped");
-        emit("loginError", new Error("Google Sign-In prompt skipped"));
-      }
-    });
-  } catch (error) {
-    console.error("Google Sign-In initialization failed", error);
-    emit("loginError", error);
-  }
-};
-
-const handleGoogleLogin = (response) => {
-  if (response.credential) {
+  // Define the callback function for handling the sign-in response
+  window.handleCredentialResponse = (response) => {
     emit("googleLogin", response);
-  } else {
-    console.error("Google Sign-In failed");
-    emit("loginError", new Error("Google Sign-In failed"));
-  }
-};
+  };
+});
 </script>
 
 <style scoped>
@@ -115,16 +113,15 @@ h2 {
   background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
 }
 
-.google-button {
+.google-sign-in-button {
   background: white;
-  border: 1px solid #4285f4;
   color: black;
   font-weight: bold;
+  border: 1px solid #4285f4;
 }
 
-.google-button:hover {
+.google-sign-in-button:hover {
   background: #ff8310;
-  text-shadow: 2px 2px 2px black;
   color: white;
 }
 
@@ -132,6 +129,10 @@ h2 {
   width: 20px;
   height: 20px;
   margin-right: 8px;
+}
+
+.hidden {
+  display: none;
 }
 
 @media (max-width: 480px) {

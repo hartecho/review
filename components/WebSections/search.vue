@@ -90,7 +90,7 @@ async function fetchDataAndCache() {
     !store.lastFetchTime ||
     Date.now() - store.lastFetchTime >= store.CACHE_DURATION
   ) {
-    console.log("Data is not valid, fetching new data...");
+    // console.log("Data is not valid, fetching new data...");
 
     try {
       const contractors = await $fetch("/api/contractors");
