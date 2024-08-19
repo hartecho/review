@@ -26,7 +26,7 @@ async function updateBusinessRating(businessId, businessType) {
   const reviews = await Review.find({ businessId: businessId, businessType: businessType });
 
   if (reviews.length === 0) {
-    console.log(`Found no reviews for ${businessId}`);
+    // console.log(`Found no reviews for ${businessId}`);
     await BusinessModel.findByIdAndUpdate(businessId, { ratings: 0 });
     return;
   }

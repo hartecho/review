@@ -171,7 +171,8 @@ function openLoginModal() {
 function closeLoginModal() {
   showLoginModal.value = false;
   document.body.classList.remove("no-scroll");
-  toggleMobileNav();
+  showMobileNav.value = false;
+  document.body.classList.toggle("no-scroll", showMobileNav.value);
 }
 
 function toggleMobileNav() {
