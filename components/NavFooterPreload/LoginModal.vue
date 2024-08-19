@@ -3,13 +3,14 @@
     <div class="modal" key="modal">
       <button @click="closeModal" class="close-button">×</button>
       <transition name="fade" mode="out-in">
-        <div v-if="!emailSignIn" key="signInOptions">
-          <h1>Join to Leave Reviews</h1>
+        <div v-if="!emailSignIn" key="signInOptions" class="content-wrapper">
+          <h2>Join to Leave Reviews</h2>
           <div class="form-wrapper">
             <SubcomponentsSignInForm
               @emailSignIn="handleEmailSignIn"
               @googleLogin="handleGoogleLogin"
               @loginError="handleLoginError"
+              @closeModal="closeModal"
             />
             <SubcomponentsSignUpForm
               :isLoading="isLoading"
@@ -259,7 +260,7 @@ h2 {
   }
 
   .modal {
-    height: 55rem;
+    height: 50rem;
   }
 }
 

@@ -10,6 +10,10 @@ const subcontractorSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
+  isIndividual: {
+    type: Boolean,
+    default: false,
+  },
   picture: {
     type: String,
     required: false,

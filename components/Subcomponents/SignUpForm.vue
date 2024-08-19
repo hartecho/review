@@ -167,7 +167,7 @@ const isFormValid = computed(() => {
   width: 48%;
   position: relative;
   margin: 0 auto; /* Center the form container */
-  height: 28rem;
+  height: auto;
 }
 
 h2 {

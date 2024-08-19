@@ -30,7 +30,12 @@
 import { onMounted } from "vue";
 
 const config = useRuntimeConfig();
-const emit = defineEmits(["emailSignIn", "googleLogin", "loginError"]);
+const emit = defineEmits([
+  "emailSignIn",
+  "googleLogin",
+  "loginError",
+  "closeModal",
+]);
 
 const googleClientId = config.public.GOOGLE_CLIENT_ID;
 
@@ -39,6 +44,7 @@ const onEmailSignIn = () => {
 };
 
 const triggerGoogleSignIn = () => {
+  emit("closeModal");
   const googleSignInButton = document.querySelector(
     '.g_id_signin div[role="button"]'
   );
