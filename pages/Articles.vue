@@ -183,6 +183,7 @@ emit("hide-loading");
 .blog-title h1 {
   font-size: 3rem;
   text-shadow: 1px 1px 2px black;
+  color: white;
 }
 
 .filters {

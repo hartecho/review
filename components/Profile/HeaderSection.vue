@@ -16,6 +16,9 @@
                 {{ n <= roundedRating ? "★" : "☆" }}
               </span>
             </div>
+            <p v-if="business.ratings > 0" class="star-rating">
+              ({{ business.reviewCount }})
+            </p>
             <p v-else class="no-reviews">Be the first to leave a review!</p>
           </div>
           <ul class="job-types">

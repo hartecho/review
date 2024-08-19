@@ -68,7 +68,7 @@ function getRoute(link) {
   height: auto;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 5rem;
+  padding: 1rem 5rem;
   width: 100%;
   position: relative;
 }
@@ -170,7 +170,7 @@ a.router-link-exact-active {
 @media (max-width: 768px) {
   /*  ------------  MOBILE  ------------   */
   .footer-wrapper {
-    padding: 0 1.5rem;
+    padding: 1rem 1.5rem;
   }
 
   .upper-content {
@@ -180,7 +180,7 @@ a.router-link-exact-active {
 
 @media (max-width: 480px) {
   .footer-wrapper {
-    padding: 0 1rem;
+    padding: 1rem 1rem;
   }
   .upper-content {
     gap: 1.5rem;

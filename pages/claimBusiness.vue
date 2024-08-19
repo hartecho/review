@@ -15,46 +15,57 @@
 
     <div class="content" v-else>
       <div class="left">
-        <input
-          type="text"
-          v-model="claimant.fullName"
-          placeholder="Full Name"
-        />
-        <input
-          type="email"
-          v-model="claimant.email"
-          placeholder="Email Address"
-        />
-        <input type="tel" v-model="claimant.phone" placeholder="Phone Number" />
-        <input
-          type="text"
-          v-model="claimant.businessAddress"
-          placeholder="Business Address"
-        />
-        <input
-          type="tel"
-          v-model="claimant.businessPhone"
-          placeholder="Business Phone Number"
-        />
-        <input
-          type="url"
-          v-model="claimant.businessWebsite"
-          placeholder="Business Website"
-        />
-        <input
-          type="text"
-          v-model="claimant.role"
-          placeholder="Your Role/Title in Business"
-        />
-        <input
-          type="number"
-          v-model="claimant.yearsInBusiness"
-          placeholder="Years in Business"
-        />
-        <textarea
-          v-model="claimant.additionalComments"
-          placeholder="Additional Comments"
-        ></textarea>
+        <div class="input-wrapper">
+          <input type="text" v-model="claimant.fullName" placeholder=" " />
+          <label>Full Name</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="email" v-model="claimant.email" placeholder=" " />
+          <label>Email Address</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="tel" v-model="claimant.phone" placeholder=" " />
+          <label>Phone Number</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            v-model="claimant.businessAddress"
+            placeholder=" "
+          />
+          <label>Business Address</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="tel" v-model="claimant.businessPhone" placeholder=" " />
+          <label>Business Phone Number</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="url"
+            v-model="claimant.businessWebsite"
+            placeholder=" "
+          />
+          <label>Business Website</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="text" v-model="claimant.role" placeholder=" " />
+          <label>Your Role/Title in Business</label>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            v-model="claimant.yearsInBusiness"
+            placeholder=" "
+          />
+          <label>Years in Business</label>
+        </div>
+        <div class="input-wrapper">
+          <textarea
+            v-model="claimant.additionalComments"
+            placeholder=" "
+          ></textarea>
+          <label>Additional Comments</label>
+        </div>
 
         <div class="final-buttons">
           <SubcomponentsLoadingButton
@@ -67,8 +78,8 @@
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 const isLoading = ref(false);
 const successMessage = ref("");
 const router = useRouter();
@@ -109,15 +120,15 @@ async function submitClaim() {
         body: claimant.value,
       });
       successMessage.value =
-        "Claim submitted successfully! Redirecting to the business page...";
+        "Claim submitted successfully! Redirecting to home page...";
       window.scrollTo({
         top: 0,
         left: 0,
         behavior: "smooth",
       });
       setTimeout(() => {
-        router.push(`/contractor/${route.query._id}`);
-      }, 2000); // Redirect after 2 seconds
+        router.push("/");
+      }, 5000); // Redirect after 5 seconds
     } catch (error) {
       isLoading.value = false;
       alert("Error submitting claim: " + error.message);
@@ -132,8 +143,8 @@ async function submitClaim() {
 const emit = defineEmits(["hide-loading"]);
 emit("hide-loading");
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .wrapper {
   padding: 4rem 0;
   width: 90%;
@@ -141,7 +152,6 @@ emit("hide-loading");
   min-height: 55rem;
   height: auto;
   font-family: "Roboto", sans-serif;
-  /* background: url("/LoginBG.jpg") no-repeat center top; */
   background-size: cover;
 }
 
@@ -157,6 +167,7 @@ h1 {
   text-align: center;
   font-size: 1.2rem;
   color: #555;
+  padding: 0 1rem;
   margin-bottom: 2rem;
 }
 
@@ -181,40 +192,69 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="url"],
-input[type="number"],
-textarea {
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper input[type="text"],
+.input-wrapper input[type="email"],
+.input-wrapper input[type="tel"],
+.input-wrapper input[type="url"],
+.input-wrapper input[type="number"],
+.input-wrapper textarea {
   display: block;
   width: 100%;
-  margin-bottom: 1.5rem;
   padding: 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   transition: border-color 0.3s, box-shadow 0.3s;
+  resize: none;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-input[type="url"]:focus,
-input[type="number"]:focus,
-textarea:focus {
+.input-wrapper input[type="text"]:focus,
+.input-wrapper input[type="email"]:focus,
+.input-wrapper input[type="tel"]:focus,
+.input-wrapper input[type="url"]:focus,
+.input-wrapper input[type="number"]:focus,
+.input-wrapper textarea:focus {
   border-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
   outline: none;
 }
 
+.input-wrapper label {
+  position: absolute;
+  top: 18px;
+  left: 10px;
+  padding: 0 5px;
+  background: #fff;
+  color: #999;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  transform: translateY(0);
+  font-weight: normal;
+}
+
+.input-wrapper input:not(:placeholder-shown) + label,
+.input-wrapper textarea:not(:placeholder-shown) + label,
+.input-wrapper input:focus + label,
+.input-wrapper textarea:focus + label {
+  top: -18px;
+  left: 5px;
+  font-size: 0.75rem;
+  color: #4caf50;
+}
+
 textarea {
   height: 100px;
+  resize: none;
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
   font-weight: 500;
   color: #333;
 }
@@ -272,4 +312,3 @@ label {
   }
 }
 </style>
-  

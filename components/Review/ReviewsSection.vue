@@ -4,13 +4,13 @@
     <div class="left-column">
       <div class="filters">
         <div class="star-rating-breakdown">
-          <h2>Customer reviews</h2>
+          <h2>Search Reviews</h2>
           <div class="average-rating">
-            <span class="average-rating-score">{{ businessRating }}</span>
+            <span class="average-rating-score">{{ business.ratings }}</span>
             <span class="average-rating-text">out of 5</span>
             <div class="stars">
               <span v-for="n in 5" :key="n" class="star">
-                {{ n <= businessRating ? "★" : "☆" }}
+                {{ n <= roundedBusinessRating ? "★" : "☆" }}
               </span>
             </div>
           </div>
@@ -123,8 +123,8 @@ function updateRatingCounts() {
   }
 }
 
-const businessRating = computed(() => {
-  return props.business ? props.business.ratings : 0;
+const roundedBusinessRating = computed(() => {
+  return props.business ? Math.round(props.business.ratings) : 0;
 });
 
 const ratingPercentages = computed(() => {

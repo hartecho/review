@@ -2,20 +2,26 @@
   <div class="form-container">
     <h2>Sign Up</h2>
     <form @submit.prevent="handleSignUp">
-      <input
-        v-model="signUpName"
-        type="text"
-        placeholder="Name"
-        required
-        class="input"
-      />
-      <input
-        v-model="signUpEmail"
-        type="email"
-        placeholder="Email"
-        required
-        class="input"
-      />
+      <div class="input-wrapper">
+        <input
+          v-model="signUpName"
+          type="text"
+          placeholder=" "
+          required
+          class="input"
+        />
+        <label>Name</label>
+      </div>
+      <div class="input-wrapper">
+        <input
+          v-model="signUpEmail"
+          type="email"
+          placeholder=" "
+          required
+          class="input"
+        />
+        <label>Email</label>
+      </div>
       <SubcomponentsPasswordInput
         v-model="signUpPassword"
         placeholder="Password"
@@ -31,7 +37,7 @@
           @click="toggleRequirements"
           class="requirements-button"
         >
-          Password Requirements?
+          Password Requirements
         </button>
         <transition name="fade">
           <div v-if="showRequirements" class="password-requirements">
@@ -83,6 +89,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+
 const props = defineProps({
   isLoading: {
     type: Boolean,
@@ -96,10 +103,10 @@ const props = defineProps({
 
 const emit = defineEmits(["signUp"]);
 
+const signUpName = ref("");
 const signUpEmail = ref("");
 const signUpPassword = ref("");
 const signUpPasswordConfirm = ref("");
-const signUpName = ref("");
 
 const showRequirements = ref(false);
 
@@ -160,7 +167,7 @@ const isFormValid = computed(() => {
   width: 48%;
   position: relative;
   margin: 0 auto; /* Center the form container */
-  height: 25rem;
+  height: 28rem;
 }
 
 h2 {
@@ -169,18 +176,69 @@ h2 {
   text-decoration: underline;
 }
 
-.input {
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem; /* Adjust this if needed for vertical spacing */
+  text-shadow: none;
+}
+
+.input-wrapper input {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid #ddd;
+  text-shadow: none;
   border-radius: 5px;
   font-size: 1rem;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.input-wrapper input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: black;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.input-wrapper input:not(:placeholder-shown) + label,
+.input-wrapper input:focus + label {
+  top: -10px;
+  left: 5px;
+  font-size: 1rem;
+  color: white;
+  background: transparent;
+  text-shadow: 2px 2px 0px black;
+}
+
 .password-requirements-toggle {
   margin-bottom: 1rem;
+  text-align: center;
+}
+
+.requirements-button {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.requirements-button:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
 }
 
 .password-requirements {
@@ -188,6 +246,7 @@ h2 {
   text-shadow: none;
   border-radius: 10px;
   padding: 1rem;
+  /* margin-top: 1rem; */
 }
 
 .password-requirements div {
@@ -199,11 +258,13 @@ h2 {
 }
 
 .password-requirements .valid {
-  color: green;
+  color: #28a745;
+  font-weight: bold;
 }
 
 .password-requirements .invalid {
-  color: red;
+  color: #dc3545;
+  font-weight: bold;
 }
 
 .error-message {
@@ -227,24 +288,6 @@ h2 {
 
 .sign-up-button {
   width: 100%;
-}
-
-.requirements-button {
-  width: 100%;
-  background: white;
-  border-radius: 5px;
-  border: 1px solid black;
-  cursor: pointer;
-  min-height: 1.5rem;
-  padding: 5px 0;
-}
-
-.requirements-button:hover {
-  width: 100%;
-  background: #f1f1f1;
-  border-radius: 10px;
-  border: 1px solid black;
-  cursor: pointer;
 }
 
 .sign-up-button:disabled {

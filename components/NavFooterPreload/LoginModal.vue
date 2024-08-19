@@ -4,7 +4,7 @@
       <button @click="closeModal" class="close-button">×</button>
       <transition name="fade" mode="out-in">
         <div v-if="!emailSignIn" key="signInOptions">
-          <h1>Join to Leave Reviews!</h1>
+          <h1>Join to Leave Reviews</h1>
           <div class="form-wrapper">
             <SubcomponentsSignInForm
               @emailSignIn="handleEmailSignIn"
@@ -32,6 +32,8 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+
 const store = useStore();
 const emailSignIn = ref(false);
 const email = ref("");
@@ -60,13 +62,10 @@ const handleEmailLogin = async (loginData) => {
       method: "POST",
       body: { email: loginData.email, password: loginData.password },
     });
-    // console.log("JWT Token from email sign in:", response.token);
     store.setToken(response.token);
     store.setUser(response.user);
     closeModal();
-    // window.location.reload();
   } catch (error) {
-    console.error("Login failed:", error);
     loginError.value = {
       general: error.data.message || "Invalid email or password",
     };
@@ -79,16 +78,14 @@ const handleGoogleLogin = async (response) => {
   const { credential } = response;
   if (credential) {
     try {
-      const response = await $fetch("/api/auth/google-login", {
+      const res = await $fetch("/api/auth/google-login", {
         method: "POST",
         body: { token: credential },
       });
-      store.setToken(response.token);
-      store.setUser(response.user);
+      store.setToken(res.token);
+      store.setUser(res.user);
       closeModal();
-      // window.location.reload();
     } catch (error) {
-      console.error("Google login failed:", error);
       loginError.value = {
         general: error.data.message || "Google login failed",
       };
@@ -97,7 +94,6 @@ const handleGoogleLogin = async (response) => {
 };
 
 const handleLoginError = (error) => {
-  console.error("Login failed", error);
   loginError.value = { general: "Google login failed" };
 };
 
@@ -105,7 +101,6 @@ const handleSignUp = async (signUpData) => {
   isLoading.value = true;
   signUpError.value = {};
   if (signUpData.password !== signUpData.passwordConfirm) {
-    console.error("Passwords do not match");
     signUpError.value.passwordConfirm = "Passwords do not match";
     isLoading.value = false;
     return;
@@ -119,17 +114,14 @@ const handleSignUp = async (signUpData) => {
         name: signUpData.name,
       },
     });
-    // console.log("User registered:", response);
     email.value = signUpData.email;
     password.value = signUpData.password;
     await handleEmailLogin({
       email: signUpData.email,
       password: signUpData.password,
     });
-    // window.location.reload();
   } catch (error) {
     isLoading.value = false;
-    console.error("Sign-up failed:", error);
     signUpError.value.general =
       error.data.message || "Sign-up failed. Please try again.";
   }
@@ -249,10 +241,9 @@ h2 {
 }
 
 * {
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  /* -ms-user-select: none; Internet Explorer/Edge */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 @media (max-width: 480px) {
@@ -266,7 +257,7 @@ h2 {
   }
 
   .modal {
-    height: 45rem;
+    height: 55rem;
   }
 }
 

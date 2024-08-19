@@ -2,13 +2,16 @@
   <div class="login-form-container full-width">
     <h2>Login</h2>
     <form @submit.prevent="handleEmailLogin" class="login-form-content">
-      <input
-        v-model="email"
-        type="email"
-        placeholder="Email"
-        required
-        class="input"
-      />
+      <div class="input-wrapper">
+        <input
+          v-model="email"
+          type="email"
+          placeholder=" "
+          required
+          class="input"
+        />
+        <label>Email</label>
+      </div>
       <SubcomponentsPasswordInput v-model="password" placeholder="Password" />
       <SubcomponentsLoadingButton
         :isLoading="isLoading"
@@ -30,8 +33,10 @@
     />
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
+import { ref, computed } from "vue";
+
 const props = defineProps({
   isLoading: {
     type: Boolean,
@@ -63,8 +68,8 @@ const isFormValid = computed(() => {
   return email.value && password.value;
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .login-form-container {
   padding: 2rem;
 }
@@ -83,14 +88,45 @@ h2 {
   right: 0;
 }
 
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
 .input {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1rem;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: black;
+  text-shadow: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.input:not(:placeholder-shown) + label,
+.input:focus + label {
+  top: -10px;
+  left: 5px;
+  font-size: 1rem;
+  color: white;
+  text-shadow: 2px 2px 0px black;
 }
 
 .error-message {
@@ -100,7 +136,7 @@ h2 {
   font-size: 1rem;
   margin-top: 0.5rem;
   text-align: center;
-  width: 25%;
+  width: 100%;
   border-radius: 5px;
   opacity: 1;
   transition: opacity 0.3s ease;
@@ -139,4 +175,3 @@ h2 {
   opacity: 0;
 }
 </style>
-  

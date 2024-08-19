@@ -38,7 +38,6 @@ import { tagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
 const store = useStore();
-const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
 const { data: contractor, pending: contractorPending } = await useFetch(
@@ -51,20 +50,14 @@ const { data: reviews } = await useFetch(
 
 // console.log("Contractor: " + JSON.stringify(contractor.value));
 
-const siftReviews = (reviews) => {
-  // console.log("reviews: " + JSON.stringify(reviews));
-  if (isLoggedIn.value) {
-    const userReview = reviews.find(
-      (review) => review.reviewer._id === store.user._id
+const existingReview = computed(() => {
+  if (isLoggedIn.value && reviews.value) {
+    return (
+      reviews.value.find((review) => review.reviewer._id === store.user._id) ||
+      null
     );
-    existingReview.value = userReview || null;
   }
-};
-
-onMounted(() => {
-  if (reviews.value) {
-    siftReviews(reviews.value);
-  }
+  return null;
 });
 
 useSeoMeta({

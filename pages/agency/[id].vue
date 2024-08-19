@@ -36,7 +36,6 @@
     <script setup>
 const route = useRoute();
 const store = useStore();
-const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
 const { data: agency, pending: agencyPending } = await useFetch(
@@ -47,19 +46,14 @@ const { data: reviews } = await useFetch(
   `/api/reviews?agencyId=${agency.value._id}`
 );
 
-const siftReviews = (reviews) => {
-  if (isLoggedIn.value) {
-    const userReview = reviews.find(
-      (review) => review.reviewer._id === store.user._id
+const existingReview = computed(() => {
+  if (isLoggedIn.value && reviews.value) {
+    return (
+      reviews.value.find((review) => review.reviewer._id === store.user._id) ||
+      null
     );
-    existingReview.value = userReview || null;
   }
-};
-
-onMounted(() => {
-  if (reviews.value) {
-    siftReviews(reviews.value);
-  }
+  return null;
 });
 
 useSeoMeta({

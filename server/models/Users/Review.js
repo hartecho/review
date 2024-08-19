@@ -95,6 +95,10 @@ const reviewSchema = new mongoose.Schema(
     ],
     updates: [reviewUpdateSchema],
     businessReplies: [businessReplySchema],
+    isPro: {
+      type: Boolean,
+      default: false,
+    },
     date: {
       type: Date,
       default: Date.now,

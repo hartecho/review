@@ -17,7 +17,7 @@ const props = defineProps({
   <style scoped>
 .search-input {
   width: 100%;
-  max-width: 600px;
+  /* max-width: 600px; */
   padding: 10px 20px;
   margin-bottom: 20px;
   border: 1px solid #ccc;

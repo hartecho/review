@@ -38,7 +38,6 @@ import { supplierTagDescriptions } from "~/utils/tagDescriptions.js";
 
 const route = useRoute();
 const store = useStore();
-const existingReview = ref(null);
 const isLoggedIn = computed(() => !!store.token);
 
 const { data: supplier, pending: supplierPending } = await useFetch(
@@ -49,20 +48,14 @@ const { data: reviews } = await useFetch(
   `/api/reviews?supplierId=${supplier.value._id}`
 );
 
-const siftReviews = (reviews) => {
-  // console.log("reviews: ", reviews);
-  if (isLoggedIn.value) {
-    const userReview = reviews.find(
-      (review) => review.reviewer._id === store.user._id
+const existingReview = computed(() => {
+  if (isLoggedIn.value && reviews.value) {
+    return (
+      reviews.value.find((review) => review.reviewer._id === store.user._id) ||
+      null
     );
-    existingReview.value = userReview || null;
   }
-};
-
-onMounted(() => {
-  if (reviews.value) {
-    siftReviews(reviews.value);
-  }
+  return null;
 });
 
 useSeoMeta({
