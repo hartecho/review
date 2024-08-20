@@ -52,6 +52,7 @@
               :class="{ filled: n <= Math.round(subcontractor.ratings) }"
               >&#9733;</span
             >
+            <span class="review-count">({{ subcontractor.reviewCount }})</span>
           </template>
           <p v-else>No Reviews</p>
         </div>
@@ -237,6 +238,12 @@ function highlightMatch(text) {
 
 .star.filled {
   color: #ffd700;
+}
+
+.review-count {
+  font-size: 16px;
+  margin-left: 5px;
+  margin-bottom: 20px;
 }
 
 .no-results {

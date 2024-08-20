@@ -241,8 +241,8 @@ async function submitReply() {
   background: #fff;
   border: 1px solid #ddd;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* border-radius: 8px; */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
@@ -250,7 +250,7 @@ async function submitReply() {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   position: relative;
 }
 
@@ -300,8 +300,9 @@ async function submitReply() {
 
 .review-date {
   font-size: 12px;
-  color: #999;
+  color: black;
   margin-bottom: 10px;
+  margin-left: 3px;
 }
 
 .update {
