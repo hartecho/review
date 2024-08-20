@@ -61,7 +61,7 @@ async function addContractor() {
         method: "POST",
         body: contractor.value,
       });
-      // console.log("response: " + JSON.stringify(response));
+      await fetchContractorsAndCache();
       router.push(`/contractor/${response._id}`);
     } catch (error) {
       isLoading.value = false;
@@ -71,6 +71,15 @@ async function addContractor() {
   } else {
     isLoading.value = false;
     alert("Please fill out all required fields.");
+  }
+}
+
+async function fetchContractorsAndCache() {
+  try {
+    const contractors = await $fetch("/api/contractors");
+    store.setContractors(contractors);
+  } catch (error) {
+    console.log("Error: " + error);
   }
 }
 

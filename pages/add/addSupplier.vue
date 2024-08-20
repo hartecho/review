@@ -75,7 +75,7 @@ async function addSupplier() {
         method: "POST",
         body: supplier.value,
       });
-      // console.log("response: " + JSON.stringify(response));
+      await fetchSuppliersAndCache();
       router.push(`/supplier/${response._id}`);
     } catch (error) {
       isLoading.value = false;
@@ -85,6 +85,15 @@ async function addSupplier() {
   } else {
     isLoading.value = false;
     alert("Please fill out all required fields.");
+  }
+}
+
+async function fetchSuppliersAndCache() {
+  try {
+    const suppliers = await $fetch("/api/suppliers");
+    store.setSuppliers(suppliers);
+  } catch (error) {
+    console.log("Error: " + error);
   }
 }
 

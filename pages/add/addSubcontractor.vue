@@ -105,6 +105,7 @@ async function addSubcontractor() {
         method: "POST",
         body: subcontractor.value,
       });
+      await fetchSubcontractorsAndCache();
       router.push(`/subcontractor/${response._id}`);
     } catch (error) {
       isLoading.value = false;
@@ -114,6 +115,15 @@ async function addSubcontractor() {
   } else {
     isLoading.value = false;
     alert("Please fill out all required fields.");
+  }
+}
+
+async function fetchSubcontractorsAndCache() {
+  try {
+    const subcontractors = await $fetch("/api/subcontractors");
+    store.setSubcontractors(subcontractors);
+  } catch (error) {
+    console.log("Error: " + error);
   }
 }
 

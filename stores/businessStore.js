@@ -7,7 +7,7 @@ export const useBusinessStore = defineStore('businessStore', () => {
   const agencies = ref([]);
   const lastFetchTime = ref(0);
 
-  const CACHE_DURATION = 1000 * 60 * 15; // 15 minutes
+  const CACHE_DURATION = 1000 * 60 * 2; // 5 minutes
 
   const setContractors = (newContractors) => {
     contractors.value = newContractors;

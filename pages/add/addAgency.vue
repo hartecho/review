@@ -55,7 +55,7 @@ async function addAgency() {
         method: "POST",
         body: agency.value,
       });
-      // console.log("response: " + JSON.stringify(response));
+      await fetchAgenciesAndCache();
       router.push(`/agency/${response._id}`);
     } catch (error) {
       isLoading.value = false;
@@ -65,6 +65,15 @@ async function addAgency() {
   } else {
     isLoading.value = false;
     alert("Please fill out all required fields.");
+  }
+}
+
+async function fetchAgenciesAndCache() {
+  try {
+    const agencies = await $fetch("/api/agencies");
+    store.setAgencies(agencies);
+  } catch (error) {
+    console.log("Error: " + error);
   }
 }
 
