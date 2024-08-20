@@ -63,7 +63,7 @@ onMounted(() => {
 
 .search-section {
   position: relative;
-  height: 50rem;
+  height: 45rem;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -73,8 +73,8 @@ onMounted(() => {
   background: url("/IntroBG.jpg") no-repeat center top;
   background-size: cover;
   z-index: 1;
-  margin-top: -20px; /* Adjust this to the height of your navbar */
-  padding-top: 20px; /* Adjust this to maintain the original padding */
+  margin-top: -50px; /* Adjust this to the height of your navbar */
+  padding-top: 100px; /* Adjust this to maintain the original padding */
 }
 
 .about {
