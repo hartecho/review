@@ -257,7 +257,7 @@ emit("hide-loading");
 .page-header {
   text-align: center;
   padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.9);
   color: white;
   box-shadow: 0 0 10px white;
   margin-bottom: 4rem;
