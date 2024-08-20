@@ -64,6 +64,9 @@
 
     <!-- Main Section for Reviews -->
     <div class="reviews-container">
+      <p v-if="filteredReviews.length === 0" class="no-reviews-message">
+        No reviews yet. Reviews will show up here once submitted.
+      </p>
       <ReviewReviews
         v-for="review in filteredReviews"
         :key="review._id"
@@ -338,6 +341,13 @@ html {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.no-reviews-message {
+  font-size: 1.5rem;
+  color: #555;
+  text-align: center;
+  margin: 2rem 0;
 }
 
 @media (max-width: 1024px) {
