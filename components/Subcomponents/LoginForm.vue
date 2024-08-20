@@ -72,6 +72,7 @@ const isFormValid = computed(() => {
 <style scoped>
 .login-form-container {
   padding: 2rem;
+  min-height: 100%;
 }
 
 h2 {

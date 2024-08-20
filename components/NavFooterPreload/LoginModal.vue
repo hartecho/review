@@ -159,7 +159,7 @@ onMounted(() => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   max-width: 90%;
   max-height: 70vh; /* Set to 70% of the viewport height */
-  height: auto;
+  min-height: 70vh;
   width: 50rem;
   text-align: center;
   position: relative;
@@ -264,6 +264,7 @@ h2 {
   .modal {
     height: auto;
     max-height: 80vh; /* Adjust height for smaller screens */
+    min-height: 80vh;
   }
 }
 
