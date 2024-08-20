@@ -42,6 +42,13 @@ router.beforeEach((to, from, next) => {
   showLoadingScreen();
   next();
 });
+
+// Set the lang attribute of the HTML tag to English
+useHead({
+  htmlAttrs: {
+    lang: "en",
+  },
+});
 </script>
 
 <style scoped>
