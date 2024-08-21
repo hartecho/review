@@ -66,15 +66,16 @@ const subcontractorSchema = new mongoose.Schema({
   tags: [{
     type: String,
     enum: [
-      'FLR', 'CTP', 'CAB', 'CON', 'STL', 'FRM', 'ROF', 'SID', 'WND',
-      'LND', 'DRY', 'PNT', 'INS', 'CLG', 'HVAC', 'PLM', 'ELEC', 'EXC', 'DEM',
-      'GRD', 'FPS', 'SEC', 'AV', 'ELEV', 'SOL', 'UTIL', 'FIN', 'CAR', 'TLE',
-      'GLS', 'SPC', 'REN', 'HIS', 'REM', 'WTR', 'ENV', 'ASB', 'LEAD', 'ENVC',
-      'DB', 'ARC', 'ENG', 'LOG', 'WARE', 'IEQ', 'SPEQ', 'CKE', 'LMEQ', 'FAC',
-      'CUR', 'OTH'
+      'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CKE', 'CLE', 'CLG', 'CTP', 'CON', 
+      'CUR', 'DB', 'DEM', 'DRY', 'DTCM', 'ELEC', 'ELEV', 'ENG', 'ENV', 
+      'ENVC', 'EXC', 'FAC', 'FIN', 'FLR', 'FPS', 'FRM', 'GLS', 'GRD', 
+      'HVAC', 'HIS', 'IEQ', 'INS', 'LND', 'LEAD', 'LOG', 'LMEQ', 
+      'PNT', 'PLM', 'REN', 'REM', 'ROF', 'SEC', 'SID', 'SOL', 'SPC', 
+      'SPEQ', 'STL', 'TLE', 'UTIL', 'WARE', 'WND', 'WTR', 'OTH'
     ],
     required: true
   }],
+
   isClaimed: {
     type: Boolean,
     default: false
