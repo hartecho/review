@@ -66,10 +66,10 @@ const subcontractorSchema = new mongoose.Schema({
   tags: [{
     type: String,
     enum: [
-      'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CKE', 'CLE', 'CLG', 'CTP', 'CON', 
+      'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CLE', 'CLG', 'CTP', 'CON', 
       'CUR', 'DB', 'DEM', 'DRY', 'DTCM', 'ELEC', 'ELEV', 'ENG', 'ENV', 
       'ENVC', 'EXC', 'FAC', 'FIN', 'FLR', 'FPS', 'FRM', 'GLS', 'GRD', 
-      'HVAC', 'HIS', 'IEQ', 'INS', 'LND', 'LEAD', 'LOG', 'LMEQ', 
+      'HVAC', 'HIS', 'IEQ', 'INS', 'KE', 'LND', 'LEAD', 'LOG', 'LMEQ', 
       'PNT', 'PLM', 'REN', 'REM', 'ROF', 'SEC', 'SID', 'SOL', 'SPC', 
       'SPEQ', 'STL', 'TLE', 'UTIL', 'WARE', 'WND', 'WTR', 'OTH'
     ],

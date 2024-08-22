@@ -62,7 +62,7 @@ const supplierSchema = new mongoose.Schema({
   tags: [{
     type: String,
     enum: [
-      'ACOUST', 'AGG', 'BRK', 'CAB', 'CABL', 'CKE', 'CMP', 'CNVY', 'CNTN', 'CONV', 'DRY', 'ELE', 'ENG', 'ENV', 'FAB', 'FRM', 'FURN', 'GLAS', 'GRDN', 'HRDW', 'HVACS', 'INSUL', 'LGT', 'LOG', 'LMEQ', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 'PLST', 'RFMS', 'SAF', 'SAND', 'SEAL', 'SPEQ', 'STON', 'SURF', 'TAP', 'TEMP', 'TOOLS', 'WARE', 'WALL', 'WNDW', 'WTRS'
+      'ACOUST', 'AGG', 'BRK', 'CAB', 'CABL', 'CMP', 'CNVY', 'CNTN', 'CONV', 'DRY', 'ELE', 'ENG', 'ENV', 'FAB', 'FRM', 'FURN', 'GLAS', 'GRDN', 'HRDW', 'HVACS', 'INSUL', 'KE', 'LGT', 'LNDY', 'LOG', 'LMEQ', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 'PLST', 'RFMS', 'SAF', 'SAND', 'SEAL', 'SPEQ', 'STON', 'SURF', 'TAP', 'TEMP', 'TOOLS', 'WARE', 'WALL', 'WNDW', 'WTRS'
     ],
     required: true
   }],

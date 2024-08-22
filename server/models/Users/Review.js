@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 // Combine both tag description arrays
 const combinedTags = [
   // Construction and Engineering (from tagDescriptions)
-  'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CKE', 'CLE', 'CLG', 'CTP', 'CON', 'CUR', 
+  'ARC', 'ASB', 'AV', 'CAB', 'CAR', 'CLE', 'CLG', 'CTP', 'CON', 'CUR', 
   'DB', 'DEM', 'DRY', 'DTCM', 'ELEC', 'ELEV', 'ENG', 'ENV', 'ENVC', 'EXC', 'FAC', 
-  'FIN', 'FLR', 'FPS', 'FRM', 'GLS', 'GRD', 'HVAC', 'HIS', 'IEQ', 'INS', 'LND', 
+  'FIN', 'FLR', 'FPS', 'FRM', 'GLS', 'GRD', 'HVAC', 'HIS', 'IEQ', 'INS', 'KE', 'LND', 
   'LEAD', 'LOG', 'LMEQ', 'PNT', 'PLM', 'REN', 'REM', 'ROF', 'SEC', 'SID', 'SOL', 
   'SPC', 'SPEQ', 'STL', 'TLE', 'UTIL', 'WARE', 'WND', 'WTR', 'OTH',
 
   // Material Suppliers (from supplierTagDescriptions)
-  'ACOUST', 'AGG', 'BRK', 'CABL', 'CAB', 'CKE', 'CMP', 'CNTN', 'CONV', 'CNVY', 
+  'ACOUST', 'AGG', 'BRK', 'CABL', 'CAB', 'CMP', 'CNTN', 'CONV', 'CNVY', 
   'DRY', 'ELE', 'ENG', 'ENV', 'FAB', 'FRM', 'FURN', 'GLAS', 'GRDN', 'HRDW', 
-  'HVACS', 'INSUL', 'LGT', 'LMEQ', 'LOG', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 
+  'HVACS', 'INSUL', 'KE', 'LGT', 'LNDY', 'LMEQ', 'LOG', 'LUM', 'MAR', 'MTL', 'PAIN', 'PLMB', 
   'PLST', 'RFMS', 'SAF', 'SAND', 'SEAL', 'SPEQ', 'STON', 'SURF', 'TAP', 'TEMP', 
   'TOOLS', 'WARE', 'WALL', 'WNDW', 'WTRS',
 ];
