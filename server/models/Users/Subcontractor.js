@@ -14,6 +14,10 @@ const subcontractorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  ownSupplies: {
+    type: Boolean,
+    default: false,
+  },
   picture: {
     type: String,
     required: false,

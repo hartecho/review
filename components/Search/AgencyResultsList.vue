@@ -68,7 +68,7 @@ function goToAgencyPage(agencyId) {
 }
 
 function goToAddAgencyPage() {
-  router.push(`/add/addAgency`);
+  router.push(`/addBusiness`);
 }
 
 function splitText(text) {

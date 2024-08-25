@@ -15,11 +15,16 @@
         />
         <SearchJobTypeDropdown
           :showDropdown="showJobDropdown"
-          :selectedTags="selectedTags"
-          :tagDescriptions="tagDescriptions"
+          :selectedFirstTags="selectedRoughInTags"
+          :selectedSecondTags="selectedFinishTags"
+          :firstTagDescriptions="roughInTagDescriptions"
+          :secondTagDescriptions="finishTagDescriptions"
+          firstSectionLabel="Rough-In Jobs"
+          secondSectionLabel="Finish Jobs"
           @toggleDropdown="toggleJobDropdown"
           @closeDropdown="closeJobDropdown"
-          @update:selectedTags="selectedTags = $event"
+          @update:selectedFirstTags="selectedRoughInTags = $event"
+          @update:selectedSecondTags="selectedFinishTags = $event"
         />
         <SearchStateFilter
           :showDropdown="showStateDropdown"
@@ -73,13 +78,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { tagDescriptions } from "~/utils/tagDescriptions.js";
+import {
+  tagDescriptions,
+  roughInTagDescriptions,
+  finishTagDescriptions,
+} from "~/utils/tagDescriptions.js";
 import { states } from "~/utils/states.js";
 
 const store = useBusinessStore();
 
 const searchQuery = ref("");
-const selectedTags = ref([]);
+const selectedRoughInTags = ref([]);
+const selectedFinishTags = ref([]);
 const selectedStates = ref([]);
 const selectedRating = ref("0");
 const showJobDropdown = ref(false);
@@ -141,10 +151,17 @@ const filteredSubcontractors = computed(() => {
     );
   }
 
-  // Filter by selected tags
-  if (selectedTags.value.length) {
+  // Filter by selected rough-in tags
+  if (selectedRoughInTags.value.length) {
     filtered = filtered.filter((subcontractor) =>
-      selectedTags.value.every((tag) => subcontractor.tags.includes(tag))
+      selectedRoughInTags.value.every((tag) => subcontractor.tags.includes(tag))
+    );
+  }
+
+  // Filter by selected finish tags
+  if (selectedFinishTags.value.length) {
+    filtered = filtered.filter((subcontractor) =>
+      selectedFinishTags.value.every((tag) => subcontractor.tags.includes(tag))
     );
   }
 
@@ -232,7 +249,8 @@ function closeStateDropdown() {
 
 function resetFilters() {
   searchQuery.value = "";
-  selectedTags.value = [];
+  selectedRoughInTags.value = [];
+  selectedFinishTags.value = [];
   selectedStates.value = [];
   selectedRating.value = "0";
   showJobDropdown.value = false;

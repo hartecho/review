@@ -15,11 +15,20 @@
         />
         <SearchJobTypeDropdown
           :showDropdown="showJobDropdown"
-          :selectedTags="selectedTags"
-          :tagDescriptions="supplierTagDescriptions"
+          :selectedFirstTags="selectedRoughInTags"
+          :selectedSecondTags="selectedFinishTags"
+          :selectedThirdTags="selectedGeneralTags"
+          :firstTagDescriptions="roughInSupplierTagDescriptions"
+          :secondTagDescriptions="finishSupplierTagDescriptions"
+          :thirdTagDescriptions="generalSupplierTagDescriptions"
+          firstSectionLabel="Rough-In Supplies"
+          secondSectionLabel="Finish Supplies"
+          thirdSectionLabel="General Supplies"
           @toggleDropdown="toggleJobDropdown"
           @closeDropdown="closeJobDropdown"
-          @update:selectedTags="selectedTags = $event"
+          @update:selectedFirstTags="selectedRoughInTags = $event"
+          @update:selectedSecondTags="selectedFinishTags = $event"
+          @update:selectedThirdTags="selectedGeneralTags = $event"
         />
         <SearchStateFilter
           :showDropdown="showStateDropdown"
@@ -54,13 +63,20 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { supplierTagDescriptions } from "~/utils/tagDescriptions.js";
+import {
+  supplierTagDescriptions,
+  roughInSupplierTagDescriptions,
+  finishSupplierTagDescriptions,
+  generalSupplierTagDescriptions,
+} from "~/utils/tagDescriptions.js";
 import { states } from "~/utils/states.js";
 
 const store = useBusinessStore();
 
 const searchQuery = ref("");
-const selectedTags = ref([]);
+const selectedRoughInTags = ref([]);
+const selectedFinishTags = ref([]);
+const selectedGeneralTags = ref([]);
 const selectedStates = ref([]);
 const selectedRating = ref("0");
 const showJobDropdown = ref(false);
@@ -114,16 +130,34 @@ const filteredSuppliers = computed(() => {
         supplier.operatingStates.some((state) =>
           state.toLowerCase().includes(query)
         ) ||
-        supplier.tags.some((tag) =>
-          supplierTagDescriptions[tag].toLowerCase().includes(query)
+        supplier.tags.some(
+          (tag) =>
+            roughInSupplierTagDescriptions[tag]
+              ?.toLowerCase()
+              .includes(query) ||
+            finishSupplierTagDescriptions[tag]?.toLowerCase().includes(query)
         )
     );
   }
 
-  // Filter by selected tags
-  if (selectedTags.value.length) {
+  // Filter by selected rough-in tags
+  if (selectedRoughInTags.value.length) {
     filtered = filtered.filter((supplier) =>
-      selectedTags.value.every((tag) => supplier.tags.includes(tag))
+      selectedRoughInTags.value.every((tag) => supplier.tags.includes(tag))
+    );
+  }
+
+  // Filter by selected finish tags
+  if (selectedFinishTags.value.length) {
+    filtered = filtered.filter((supplier) =>
+      selectedFinishTags.value.every((tag) => supplier.tags.includes(tag))
+    );
+  }
+
+  // Filter by selected finish tags
+  if (selectedGeneralTags.value.length) {
+    filtered = filtered.filter((supplier) =>
+      selectedGeneralTags.value.every((tag) => supplier.tags.includes(tag))
     );
   }
 
@@ -191,7 +225,8 @@ function closeStateDropdown() {
 
 function resetFilters() {
   searchQuery.value = "";
-  selectedTags.value = [];
+  selectedRoughInTags.value = [];
+  selectedFinishTags.value = [];
   selectedStates.value = [];
   selectedRating.value = "0";
   showJobDropdown.value = false;

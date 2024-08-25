@@ -81,7 +81,7 @@ function goToSupplierPage(supplierId) {
 }
 
 function goToAddSupplierPage() {
-  router.push(`/add/addSupplier`);
+  router.push(`/addBusiness`);
 }
 
 function splitText(text) {

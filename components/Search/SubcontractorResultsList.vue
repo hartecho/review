@@ -81,7 +81,7 @@ function goToSubcontractorPage(subcontractorId) {
 }
 
 function goToAddSubcontractorPage() {
-  router.push(`/add/addSubcontractor`);
+  router.push(`/addBusiness`);
 }
 
 function splitText(text) {

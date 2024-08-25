@@ -77,7 +77,7 @@ function goToContractorPage(contractorId) {
 }
 
 function goToAddContractorPage() {
-  router.push(`/add/addContractor`);
+  router.push(`/addBusiness`);
 }
 
 function splitText(text) {

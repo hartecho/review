@@ -1,86 +1,65 @@
 <template>
-  <div class="wrapper">
-    <h1>Add Supplier</h1>
+  <div class="inner-wrapper">
+    <div class="input-wrapper">
+      <input type="text" v-model="contractor.company" placeholder=" " />
+      <label>Company</label>
+    </div>
 
-    <div class="content">
-      <div class="left">
-        <input type="text" v-model="supplier.company" placeholder="Company" />
+    <div class="operating-states">
+      <label>Select all states this contractor operates in:</label>
+      <ProfileDropdown
+        :items="states"
+        :selected-items="contractor.operatingStates"
+        @update:selectedItems="updateOperatingStates"
+        label="Select Operating States"
+      />
+    </div>
 
-        <div class="operating-states">
-          <label>Select all states this supplier operates in:</label>
-          <ProfileDropdown
-            :items="states"
-            :selected-items="supplier.operatingStates"
-            @update:selectedItems="updateOperatingStates"
-            label="Select Operating States"
-          />
-        </div>
-
-        <div class="tags">
-          <label>Select all services provided by this supplier:</label>
-          <ProfileDropdown
-            :items="supplierTagDescriptions"
-            :selected-items="supplier.tags"
-            @update:selectedItems="updateTags"
-            label="Select Supply Types"
-          />
-        </div>
-
-        <div class="final-buttons">
-          <SubcomponentsLoadingButton
-            :isLoading="isLoading"
-            text="Add Supplier"
-            @click="addSupplier"
-          />
-        </div>
-      </div>
+    <div class="final-buttons">
+      <SubcomponentsLoadingButton
+        :isLoading="isLoading"
+        text="Add Contractor"
+        @click="addContractor"
+      />
     </div>
   </div>
 </template>
-    
-  <script setup>
-import { supplierTagDescriptions } from "/utils/tagDescriptions.js";
+  
+<script setup>
 import { states } from "/utils/states.js";
 
 const router = useRouter();
 const isLoading = ref(false);
 
-const supplier = ref({
+const contractor = ref({
   company: "",
   operatingStates: [],
-  tags: [],
 });
 
 const isFormValid = computed(() => {
   return (
-    supplier.value.company &&
-    supplier.value.operatingStates.length > 0 &&
-    supplier.value.tags.length > 0
+    contractor.value.company && contractor.value.operatingStates.length > 0
   );
 });
 
 const updateOperatingStates = (states) => {
-  supplier.value.operatingStates = states;
+  contractor.value.operatingStates = states;
 };
 
-const updateTags = (tags) => {
-  supplier.value.tags = tags;
-};
-
-async function addSupplier() {
+async function addContractor() {
   isLoading.value = true;
   if (isFormValid.value) {
     try {
-      const response = await $fetch("/api/suppliers", {
+      const response = await $fetch("/api/contractors", {
         method: "POST",
-        body: supplier.value,
+        body: contractor.value,
       });
-      await fetchSuppliersAndCache();
-      router.push(`/supplier/${response._id}`);
+      await fetchContractorsAndCache();
+      router.push(`/contractor/${response._id}`);
     } catch (error) {
       isLoading.value = false;
-      alert("Error adding supplier: " + error.message);
-      console.error("Error adding supplier:", error);
+      alert("Error adding contractor: " + error.message);
+      console.error("Error adding contractor:", error);
     }
   } else {
     isLoading.value = false;
@@ -88,32 +67,29 @@ async function addSupplier() {
   }
 }
 
-async function fetchSuppliersAndCache() {
+async function fetchContractorsAndCache() {
   try {
-    const suppliers = await $fetch("/api/suppliers");
-    store.setSuppliers(suppliers);
+    const contractors = await $fetch("/api/contractors");
+    store.setContractors(contractors);
   } catch (error) {
     console.log("Error: " + error);
   }
 }
 
 function resetForm() {
-  supplier.value = {
+  contractor.value = {
     company: "",
     operatingStates: [],
     tags: [],
   };
 }
-
-const emit = defineEmits(["hide-loading"]);
-emit("hide-loading");
 </script>
-    
-  <style scoped>
-.wrapper {
-  padding: 4rem 0;
-  width: 90%;
-  margin: 0 auto;
+  
+<style scoped>
+.inner-wrapper {
+  /* padding: 4rem 0; */
+  width: 100%;
+  /* margin: 0 auto; */
   min-height: 55rem;
   height: auto;
   font-family: "Roboto", sans-serif;
@@ -129,24 +105,14 @@ h1 {
   font-weight: 700;
 }
 
-.content {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
 }
 
-.left {
-  width: 60%;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-input[type="text"] {
+.input-wrapper input[type="text"] {
   display: block;
   width: 100%;
-  margin-bottom: 1.5rem;
   padding: 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -154,10 +120,30 @@ input[type="text"] {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input[type="text"]:focus {
+.input-wrapper input[type="text"]:focus {
   border-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
   outline: none;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  transition: all 0.3s ease;
+  background: #fff;
+  padding: 0 5px;
+  color: #999;
+  pointer-events: none;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 5px;
+  font-size: 0.85rem;
+  color: #4caf50;
 }
 
 .custom-select {
@@ -221,7 +207,7 @@ label {
   color: #333;
 }
 
-.add-supplier-button {
+.add-contractor-button {
   background-color: #ff8210;
   border: none;
   color: white;
@@ -252,20 +238,11 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
-  .content {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .left {
-    width: 80%;
-  }
-
   h1 {
     font-size: 2rem;
   }
 
-  input[type="text"] {
+  .input-wrapper input[type="text"] {
     padding: 0.8rem;
     font-size: 0.9rem;
   }
@@ -294,7 +271,7 @@ button:disabled {
     font-size: 1.5rem;
   }
 
-  input[type="text"] {
+  .input-wrapper input[type="text"] {
     padding: 0.6rem;
     font-size: 0.8rem;
   }
@@ -313,4 +290,4 @@ button:disabled {
   }
 }
 </style>
-  
+

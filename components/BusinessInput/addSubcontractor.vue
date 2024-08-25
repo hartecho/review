@@ -1,91 +1,104 @@
 <template>
-  <div class="wrapper">
-    <h1>Add Subcontractor</h1>
+  <div class="inner-wrapper">
+    <div class="input-wrapper">
+      <input type="text" v-model="subcontractor.company" placeholder=" " />
+      <label>Company</label>
+    </div>
 
-    <div class="content">
-      <div class="left">
-        <div class="input-wrapper">
-          <input type="text" v-model="subcontractor.company" placeholder=" " />
-          <label>Company</label>
-        </div>
+    <div class="operating-states">
+      <label>Select all states this subcontractor operates in:</label>
+      <SearchStateFilter
+        :showDropdown="showStateDropdown"
+        :selectedStates="subcontractor.operatingStates"
+        :states="states"
+        @toggleDropdown="toggleStateDropdown"
+        @closeDropdown="closeStateDropdown"
+        @update:selectedStates="updateOperatingStates"
+      />
+    </div>
 
-        <div class="operating-states">
-          <label>Select all states this subcontractor operates in:</label>
-          <ProfileDropdown
-            :items="states"
-            :selected-items="subcontractor.operatingStates"
-            @update:selectedItems="updateOperatingStates"
-            label="Select Operating States"
+    <div class="tags">
+      <label>Select all services provided by this subcontractor:</label>
+      <SearchJobTypeDropdown
+        :showDropdown="showJobDropdown"
+        :selectedFirstTags="subcontractor.selectedRoughInTags"
+        :selectedSecondTags="subcontractor.selectedFinishTags"
+        :firstTagDescriptions="roughInTagDescriptions"
+        :secondTagDescriptions="finishTagDescriptions"
+        firstSectionLabel="Rough-In Jobs"
+        secondSectionLabel="Finish Jobs"
+        @toggleDropdown="toggleJobDropdown"
+        @closeDropdown="closeJobDropdown"
+        @update:selectedFirstTags="updateRoughInTags"
+        @update:selectedSecondTags="updateFinishTags"
+      />
+    </div>
+
+    <!-- New field for specifying Group or Individual -->
+    <div class="">
+      <label class="individual-group-label"
+        >Is this subcontractor an individual or a group?</label
+      >
+      <div class="individual-group-options">
+        <label class="option">
+          <input
+            type="radio"
+            v-model="subcontractor.isIndividual"
+            :value="false"
           />
-        </div>
-
-        <div class="tags">
-          <label>Select all services provided by this subcontractor:</label>
-          <ProfileDropdown
-            :items="tagDescriptions"
-            :selected-items="subcontractor.tags"
-            @update:selectedItems="updateTags"
-            label="Select Job Types"
+          Group
+        </label>
+        <label class="option">
+          <input
+            type="radio"
+            v-model="subcontractor.isIndividual"
+            :value="true"
           />
-        </div>
-
-        <!-- New field for specifying Group or Individual -->
-        <div class="input-wrappe">
-          <label class="individual-group-label"
-            >Is this subcontractor an individual or a group?</label
-          >
-          <div class="individual-group-options">
-            <label class="option">
-              <input
-                type="radio"
-                v-model="subcontractor.isIndividual"
-                :value="false"
-              />
-              Group
-            </label>
-            <label class="option">
-              <input
-                type="radio"
-                v-model="subcontractor.isIndividual"
-                :value="true"
-              />
-              Individual
-            </label>
-          </div>
-        </div>
-
-        <div class="final-buttons">
-          <SubcomponentsLoadingButton
-            :isLoading="isLoading"
-            text="Add Subcontractor"
-            @click="addSubcontractor"
-          />
-        </div>
+          Individual
+        </label>
       </div>
+    </div>
+
+    <div class="final-buttons">
+      <SubcomponentsLoadingButton
+        :isLoading="isLoading"
+        text="Add Subcontractor"
+        @click="addSubcontractor"
+      />
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { tagDescriptions } from "~/utils/tagDescriptions.js";
-import { states } from "/utils/states.js";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import {
+  roughInTagDescriptions,
+  finishTagDescriptions,
+} from "~/utils/tagDescriptions.js";
+import { states } from "~/utils/states.js";
 
 const router = useRouter();
 const isLoading = ref(false);
+const showJobDropdown = ref(false);
+const showStateDropdown = ref(false);
 
 const subcontractor = ref({
   company: "",
-  isIndividual: false, // Set the default to Group (false)
+  isIndividual: false,
   operatingStates: [],
-  tags: [],
+  selectedRoughInTags: [],
+  selectedFinishTags: [],
 });
 
 const isFormValid = computed(() => {
   return (
     subcontractor.value.company &&
-    subcontractor.value.isIndividual !== null && // Ensure individual or group is selected
+    subcontractor.value.isIndividual !== null &&
     subcontractor.value.operatingStates.length > 0 &&
-    subcontractor.value.tags.length > 0
+    subcontractor.value.selectedRoughInTags.length > 0 &&
+    subcontractor.value.selectedFinishTags.length > 0
   );
 });
 
@@ -93,8 +106,12 @@ const updateOperatingStates = (states) => {
   subcontractor.value.operatingStates = states;
 };
 
-const updateTags = (tags) => {
-  subcontractor.value.tags = tags;
+const updateRoughInTags = (tags) => {
+  subcontractor.value.selectedRoughInTags = tags;
+};
+
+const updateFinishTags = (tags) => {
+  subcontractor.value.selectedFinishTags = tags;
 };
 
 async function addSubcontractor() {
@@ -130,15 +147,30 @@ async function fetchSubcontractorsAndCache() {
 function resetForm() {
   subcontractor.value = {
     company: "",
-    isIndividual: false, // Reset the individual or group selection to Group
+    isIndividual: false,
     operatingStates: [],
-    tags: [],
+    selectedRoughInTags: [],
+    selectedFinishTags: [],
   };
 }
 
-const emit = defineEmits(["hide-loading"]);
-emit("hide-loading");
+function toggleJobDropdown() {
+  showJobDropdown.value = !showJobDropdown.value;
+}
+
+function closeJobDropdown() {
+  showJobDropdown.value = false;
+}
+
+function toggleStateDropdown() {
+  showStateDropdown.value = !showStateDropdown.value;
+}
+
+function closeStateDropdown() {
+  showStateDropdown.value = false;
+}
 </script>
+
 
 <style scoped>
 .wrapper {

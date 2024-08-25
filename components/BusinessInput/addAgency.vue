@@ -1,29 +1,23 @@
 <template>
-  <div class="wrapper">
-    <h1>Add Agency</h1>
+  <div class="inner-wrapper">
+    <input type="text" v-model="agency.company" placeholder="Company" />
 
-    <div class="content">
-      <div class="left">
-        <input type="text" v-model="agency.company" placeholder="Company" />
+    <div class="operating-states">
+      <label>Select all states this agency operates in:</label>
+      <ProfileDropdown
+        :items="states"
+        :selected-items="agency.operatingStates"
+        @update:selectedItems="updateOperatingStates"
+        label="Select Operating States"
+      />
+    </div>
 
-        <div class="operating-states">
-          <label>Select all states this agency operates in:</label>
-          <ProfileDropdown
-            :items="states"
-            :selected-items="agency.operatingStates"
-            @update:selectedItems="updateOperatingStates"
-            label="Select Operating States"
-          />
-        </div>
-
-        <div class="final-buttons">
-          <SubcomponentsLoadingButton
-            :isLoading="isLoading"
-            text="Add Agency"
-            @click="addAgency"
-          />
-        </div>
-      </div>
+    <div class="final-buttons">
+      <SubcomponentsLoadingButton
+        :isLoading="isLoading"
+        text="Add Agency"
+        @click="addAgency"
+      />
     </div>
   </div>
 </template>
@@ -83,9 +77,6 @@ function resetForm() {
     operatingStates: [],
   };
 }
-
-const emit = defineEmits(["hide-loading"]);
-emit("hide-loading");
 </script>
     
   <style scoped>
@@ -117,7 +108,7 @@ h1 {
 .left {
   width: 60%;
   background: #fff;
-  padding: 2rem;
+  padding: 0rem;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
