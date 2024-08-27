@@ -31,14 +31,11 @@ export default defineNuxtConfig({
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
       DB_URI: process.env.DB_URI,
-      
-    public: {
-      JWT_SECRET: process.env.JWT_SECRET,
-      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
       GOOGLE_LOGIN_URI: process.env.GOOGLE_LOGIN_URI,
       GOOGLE_LOGIN_URI_TEST: process.env.GOOGLE_LOGIN_URI_TEST,
-      DB_URI: process.env.DB_URI,
+      
+    public: {
+      // GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     }
   },
 
