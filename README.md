@@ -4,7 +4,7 @@
 
 ## Overview
 
-Subsource is a centralized review platform where users can discover, rate, and review products and services. It leverages Nuxt 3’s server‑side rendering for top‑tier performance and SEO, structured JSON‑LD metadata, and secure Google login for frictionless authentication.
+Subsource is a centralized review platform where users can discover, rate, and review commercial contractors and related businesses. It leverages Nuxt 3’s server‑side rendering for top‑tier performance and SEO, structured JSON‑LD metadata, and secure Google login for frictionless authentication.
 
 ## Tech Stack
 
