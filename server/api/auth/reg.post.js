@@ -7,22 +7,36 @@ export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event);
-        // console.log("Request Body:", body);  // Log request body for debugging
-        const { email, password, name } = body;
+        const { email, password, name, reCaptchaToken } = body;
 
-        // Check if user already exists
+        // Step 1: Verify reCAPTCHA token with Google API using $fetch
+        if (!reCaptchaToken) {
+            throw createError({ statusCode: 400, message: 'No reCAPTCHA token provided' });
+        }
+
+        const config = useRuntimeConfig();
+        console.log("Secret key: " + config.private.RECAPTCHA_SECRET_KEY);
+        const recaptchaVerificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${config.private.RECAPTCHA_SECRET_KEY}&response=${reCaptchaToken}`;
+        const recaptchaResponse = await $fetch(recaptchaVerificationUrl, {
+            method: 'POST',
+        });
+
+        if (!recaptchaResponse.success) {
+            throw createError({ statusCode: 400, message: 'Invalid reCAPTCHA' });
+        }
+
+        // Step 2: Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             throw createError({ statusCode: 409, message: 'User already exists' });
         }
 
-        // Create new user
+        // Step 3: Create a new user
         const user = new User({
             email,
             password,
-            name
+            name,
         });
-        console.log("User to Save:", user);  // Log user data for debugging
 
         await user.save(); // Save the user, password will be hashed automatically by the model
 

@@ -26,16 +26,19 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {    
-    // Public keys that are exposed to the client
-    JWT_SECRET: process.env.JWT_SECRET,
-      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    private: {
+      JWT_SECRET: process.env.JWT_SECRET,
       GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
       DB_URI: process.env.DB_URI,
-      GOOGLE_LOGIN_URI: process.env.GOOGLE_LOGIN_URI,
-      GOOGLE_LOGIN_URI_TEST: process.env.GOOGLE_LOGIN_URI_TEST,
+      RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
+    },
       
+
+      // Public keys that are exposed to the client
     public: {
       // GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
     }
   },
 

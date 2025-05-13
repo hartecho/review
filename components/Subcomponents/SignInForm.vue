@@ -2,34 +2,75 @@
   <div class="form-container">
     <h2>Sign In</h2>
     <div class="form-content">
+      <!-- Button to trigger email sign-in -->
       <button class="button sign-in-button" @click="onEmailSignIn">
         <img src="/EmailLogo.svg" alt="Email Logo" class="icon" />
         Sign in with Email
       </button>
+
+      <!-- Google Sign-In Button -->
       <GoogleSignInButton
         @success="handleGoogleLogin"
         @error="handleLoginError"
         class="google-button"
       ></GoogleSignInButton>
+
+      <!-- reCAPTCHA widget only shows if Google sign-in is successful -->
+      <!-- <div class="recap">
+        <form action="?" method="POST">
+          <div
+            class="g-recaptcha"
+            :data-sitekey="config.public.RECAPTCHA_SITE_KEY"
+          ></div>
+          <br />
+          <input type="submit" value="Submit" />
+        </form>
+      </div> -->
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
+import { ref, onMounted, watch } from "vue";
 import { GoogleSignInButton } from "vue3-google-signin";
+
+const config = useRuntimeConfig(); // Access runtime configuration for reCAPTCHA site key
+const showRecaptcha = ref(false); // Track whether to show reCAPTCHA
+const googleResponse = ref(null); // Store Google sign-in response
+
+// Dynamically load reCAPTCHA script using useHead
+// useHead({
+//   script: [
+//     {
+//       src: "https://www.google.com/recaptcha/api.js",
+//       async: true,
+//       defer: true,
+//     },
+//   ],
+// });
 
 const emit = defineEmits(["emailSignIn", "googleLogin", "loginError"]);
 
 const handleGoogleLogin = (response) => {
-  emit("googleLogin", response);
+  // googleResponse.value = response; // Store Google sign-in response
+  const element = document.querySelector(".recap");
+  if (element) {
+    element.classList.add(".show");
+  }
+};
+
+// reCAPTCHA success callback
+const onRecaptchaSuccess = (token) => {
+  // Proceed with Google login after reCAPTCHA success
+  emit("googleLogin", googleResponse.value);
 };
 
 const handleLoginError = (error) => {
-  emit("loginError", error);
+  emit("loginError", error); // Emit login error
 };
 
 const onEmailSignIn = () => {
-  emit("emailSignIn");
+  emit("emailSignIn"); // Emit email sign-in event
 };
 </script>
   
@@ -94,6 +135,21 @@ h2 {
   width: 20px;
   height: 20px;
   margin-right: 8px;
+}
+
+.recap {
+  display: none;
+}
+
+.recap.show {
+  display: inline-block;
+}
+
+.g-recaptcha {
+  /* height: 40rem;
+  width: 40rem;
+  z-index: 10000;
+  background: blue; */
 }
 
 @media (max-width: 480px) {

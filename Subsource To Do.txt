@@ -1,0 +1,34 @@
+Subsource To Do
+
+Site
+
+-- Keep job types broad but let people write specifics in their bio
+-- Just put a flag that specifies if you supply your own supplies or not -- Also user generated
+- Decide on colors for the login form x and back arrow
+- Add security to the edit pages
+- Take away double "Leave a Review" text
+- Make it so when a user refreshes page on app.vue that it refetches the user object so changes don't need to be propagated with a logout and login. Maybe use token to verify this and logout if failed.
+- "Update review" button styling improvements
+- Make sure when business or user is deleted, all associated reviews are deleted, and all ratings are adjusted.
+- Make it so if _id isn't present when clicking on [id] business page, it fetches all businesses of that type again and redirects back to the search page.
+ 
+Later
+- Migrate updated blog features to Subsource.
+- Make sure isPro functionality works on all 4 types.
+- Create profile page for users
+- Create way to sign up for Pro and save credit cards for the subscription
+- Create pro features and ability for pro business users to leave official reviews for other contractors. If user has business, also load contractor info into the pinia store so we can see if they're pro. May have to implement pro into 
+reviews themselves so that everyone can see the design changes.
+- Create language change on nav bar.
+
+Maybe
+- Make it so blogs are also cached on local storage? Same with reviews for companies?
+- Make more reviews appear when you scroll further?
+- Add personality test type section. Can choose one or the other. Color code it? Put personality results?
+- Figure out svg page dividers?
+
+
+Business
+- Create official business and create google account with domain name for email to go to.
+- Create new lambda functions that will send contact form submissions to the subsource emails.
+- Connect business bank account to things that require potential payments like AWS Amplify, MongoDB, Google Account, Google Cloud Console, and perhaps GoDaddy for domain renewal. Maybe transfer domain to company account?
