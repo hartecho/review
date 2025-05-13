@@ -1,75 +1,88 @@
-# Nuxt 3 Minimal Starter
+# Subsource Review Platform
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**Live demo:** https://subsource.vercel.app/
 
-## Setup
+## Overview
 
-Make sure to install the dependencies:
+Subsource is a centralized review platform where users can discover, rate, and review products and services. It leverages Nuxt 3’s server‑side rendering for top‑tier performance and SEO, structured JSON‑LD metadata, and secure Google login for frictionless authentication.
 
-```bash
-# npm
-npm install
+## Tech Stack
 
-# pnpm
-pnpm install
+- **Frontend:**  
+  - Nuxt 3 (Vue 3 w/ SSR)  
+  - Pinia (state management)  
+  - @nuxt/image (optimized images)  
+  - @nuxtjs/google-fonts  
+- **Authentication & Security:**  
+  - nuxt-vue3-google-signin (Google OAuth)  
+  - google-auth-library  
+  - jsonwebtoken & bcrypt (JWT‑based sessions)  
+  - vue-recaptcha-v3 (reCAPTCHA v3 anti‑spam)  
+- **Backend & API:**  
+  - Node.js & Nuxt Server Routes  
+  - Mongoose & MongoDB Atlas  
+- **Visualization:**  
+  - Chart.js (real‑time review analytics)  
+- **DevOps & Deployment:**  
+  - Vercel (CI/CD pipeline)  
+  - GitHub (version control)  
 
-# yarn
-yarn install
+## Key Features
 
-# bun
-bun install
-```
+- **Server‑side rendering** for fast load times and SEO  
+- **Modular, auto‑imported components**  
+- **JSON‑LD structured metadata** for rich search snippets  
+- **WCAG‑compliant responsive design**  
+- **Google OAuth login**  
+- **JWT‑secured API routes**  
+- **User reviews & ratings** with interactive charts  
+- **reCAPTCHA v3** to block spam  
+- **Auto‑deploy** on push to `main`  
 
-## Development Server
+## Getting Started
 
-Start the development server on `http://localhost:3000`:
+### Prerequisites
 
-```bash
-# npm
-npm run dev
+- Node.js v16+  
+- npm, yarn, or pnpm  
+- MongoDB Atlas account  
+- Google OAuth credentials  
+- reCAPTCHA v3 site key  
 
-# pnpm
-pnpm run dev
+### Installation & Running Locally
 
-# yarn
-yarn dev
+    git clone https://github.com/hartecho/subsource.git
+    cd subsource
+    npm install
 
-# bun
-bun run dev
-```
+Create a `.env` in the project root:
 
-## Production
+    DB_URI=your_mongodb_connection_string
+    GOOGLE_CLIENT_ID=your_google_oauth_client_id
+    GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+    JWT_SECRET=your_jwt_secret
+    RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+    RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+    CLIENT_USERNAME=Subsource
 
-Build the application for production:
+Start the development server:
 
-```bash
-# npm
-npm run build
+    npm run dev
 
-# pnpm
-pnpm run build
+### Build & Production
 
-# yarn
-yarn build
+    npm run build
+    npm run start
 
-# bun
-bun run build
-```
+## Deployment
 
-Locally preview production build:
+This repository is linked to Vercel. Any push to `main` triggers the CI/CD pipeline and publishes the latest version at https://subsource.vercel.app/.
 
-```bash
-# npm
-npm run preview
+## License
 
-# pnpm
-pnpm run preview
+© 2025 HARTECHO LLC. All rights reserved.
 
-# yarn
-yarn preview
+## Contact
 
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Thomas Hart  
+Email: thomas@hartecho.com  
